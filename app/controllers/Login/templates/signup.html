@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <link rel="shortcut icon" href="{{url_for('static', filename='favicon.ico')}}" type="image/x-icon">
+    
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hit the Dot</title>
+
+    {% include 'common-imports.html' %}
+
+    <link rel="stylesheet" href="{{url_for('login.static', filename='css/registro.css')}}">
+</head>
+<body>    
+    <button title="Voltar" onclick='window.location.href = "/listar-funcionarios"' class='btn mx-auto bck-btn'><i class="fa fa-arrow-left"
+        aria-hidden="true"></i></button>
+    <div class="signup-container">
+
+        <a href="/" class="link-dark text-decoration-none ml-3 my-auto">
+            <img src="{{url_for('static', filename='images/logo.png')}}" alt="">
+        </a>
+        <br>
+        {% if success %}
+        <p class='text-success'>Cadastrado com Sucesso!</p>
+        {% endif %}
+    
+        {% if error %}
+        <p class='text-danger'>{{error}}</p>
+        {% endif %}
+        <form method="POST" enctype="multipart/form-data" class="row row-cols-lg-auto g-3 align-items-center mb-4 mt-3">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <div class="input-group mt-3">
+                    <input class="form-control mt-0 me-3" type="text" placeholder="Nome do Funcionário" name='name' required>
+
+                    <input class="form-control mt-0" type="tel"  placeholder="Celular -> 61 912346789" name="celular"
+                        pattern="^\s*(\d{2})[-. ]?(\d{5}|\d{4})[-. ]?(\d{4})[-. ]?\s*$" id="phoneNumber">
+            </div>
+
+            <label id="form-label mb-0">Envie a imagem de perfil</label>        
+            <input type="file" accept="image/jpeg, image/png" class="form-control form-control-sm mt-0" required name="profile_image" />
+            
+            <label class="form-label mb-0" for="email">Email</label>
+            <input class="form-control mt-0 " type="email" placeholder="Email" name='email' required>
+
+            
+            <span class="mb-0">Senha</span>
+            <div class="input-group mt-0">
+                <input class="form-control mt-0 me-3" type="password" placeholder="Senha" name="password" required>
+    
+                <input class="form-control mt-0" type="password" placeholder="Confirmação da Senha" name="password-confirm" required>
+            </div>
+
+            <label class="form-label mb-0" for="cargo">Cargo</label>
+            <select name="cargo" class="form-control mt-0">
+                {% for cargo in cargos %}
+                <option value="{{cargo['id']}}">{{cargo['nome']}}</option>
+                {% endfor %}
+            </select>
+
+            <label for="inicio_trabalho" class="form-label mb-0">Data de Inicio</label>
+            <input type="date" name="inicio_trabalho" class="form-control mt-0" placeholder="dd-mm-yyyy" required>
+
+            <span class="mb-0">Turno</span>
+            <div class="input-group mt-0">
+                <input class="form-control mt-0 me-3" type="number" min='1' max='8' step="1" name='turno' placeholder="Turno Diário" required>
+                
+                <input class="form-control mt-0" type="number" min='1' max='6' step="1" name='dias_trabalho' placeholder='Dias de Trabalho por Semana' required>
+            </div>
+
+    
+            <input class="btn btn-dark mx-auto" type="submit" value="Cadastrar">
+            
+        </form>
+    
+    </div>
+
+    <svg viewBox="0 0 1920 634" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path
+            d="M954 95.001C526.4 -75.399 140.167 23 0 94L-1 634.088L1920 634.001V94.0006C1775.5 165.001 1381.6 265.401 954 95.001Z"
+            fill="#F8BE00" />
+    </svg>
+</body>
+
+{# <footer>
+    <script src="{{url_for('login.static', filename='js/signup.js')}}"></script>
+</footer> #}
+</html>

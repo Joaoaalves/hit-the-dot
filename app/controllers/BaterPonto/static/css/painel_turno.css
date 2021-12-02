@@ -1,0 +1,27 @@
+.flex-row{
+    display: flex;
+    height: 80%;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+}
+
+.container-progress-ring{
+    height: 80%;
+    width: 50%;
+}
+
+.progress-circle{
+    height: 100%!important;
+    width: 90%!important;
+    left: 0%!important;
+}
+
+.info{
+    width: 50%;
+    text-align: center;
+}
+.info ul li{
+    list-style-type: none;
+    margin: 3% 0;
+}

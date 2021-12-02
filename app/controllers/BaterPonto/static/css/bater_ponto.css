@@ -1,0 +1,187 @@
+.flex-box{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.flex{
+    display: flex;
+}
+
+.bck-btn{
+    color: black;
+    position: fixed;
+    top: 11vh;
+    left: 15px;
+    font-size: 1.4vw;
+    transition: 0.2s;
+}
+
+.bck-btn:hover{
+    font-size: 1.5vw;
+    color: #f8be00;
+}
+.timer,.stats{
+    margin-bottom: 2.5vh;
+    margin-top: 2.5vh;
+    text-align: center;
+    margin-left: 17.5vw;
+}
+
+.timer{
+    width: 45vw;
+    height: 50vh;
+}
+
+.stats{
+    text-align: center;
+    width: 80vw;
+    height: 85vh;
+}
+
+.progress-circle{
+    top: 0!important;
+}
+
+.right-panel{
+    width: 50vw;
+    height: 90vh;
+}
+
+.ponto{
+    width: 100vw;
+    text-align: center;
+}
+
+form.bater-ponto{
+    display: flex;
+}
+
+
+.container-buttons{
+    text-align: center;
+    padding: 0 10%;
+    
+    width: 45vw;
+    margin: 5vh 0 0 17.5vw;
+    
+    height: 30vh;
+    
+}
+
+.container-buttons > button{
+    margin: 10px 0;
+}
+.container-buttons button{
+    width: 50%;
+    transition: ease-in-out 0.2s;
+}
+
+.container-buttons button:hover{
+    transform: scale(1.1);
+    background-color: #f8be00;
+    border: none;
+}
+
+
+input.btn{
+    transition: 0.2s ease-in-out;
+}
+
+input.btn:hover{
+    transform: scale(1.1);
+}
+.container-tasks{
+
+    text-align: center;
+    height: 85vh;
+    width: 45vw;
+    
+    margin: 2.5vh 2.5vw;
+
+    overflow-y: scroll;
+}
+
+.buttons-tasks button{
+    width: 20%;
+    margin: 0 15px;
+}
+
+.buttons-tasks button:active{
+    box-shadow: 0 5px black;
+    transform: translateY(2px);
+}
+
+fieldset{
+    display: flex;
+    flex-direction: column;
+    
+    width: 100%;
+    padding: 0 10%;
+}
+
+fieldset > input{
+    margin: 10px 0;
+}
+
+::-webkit-scrollbar{
+    width: 6px;
+    height: 6px;
+    }
+    ::-webkit-scrollbar-thumb{
+    background: #f8be00;
+    border-radius: 30px;
+    }
+    ::-webkit-scrollbar-thumb:hover{
+    background: #E0AD04;
+    }
+    ::-webkit-scrollbar-track{
+    background: #F0F0F0;
+    border-radius: 0px;
+    box-shadow: inset 0px 0px 0px 0px #F0F0F0;
+}
+
+div.progress-circle{
+    width: 50%;
+    left: 25%;
+    height: 50%;
+}
+
+circle.progress-ring__circle{
+    stroke-width: 6%;
+    r: 30%;
+}
+
+div.center{
+    width: 300px;
+    height: 300px;
+    margin-left: calc(40vw - 150px);
+    margin-top: calc(40vh + 64px - 150px);
+}
+
+div.center form{
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.grid{
+    margin-left: 1.5vw;
+    margin-top: 2vw;
+    display: grid;
+    grid-template-columns: 40vw 40vw;
+    grid-template-rows: 35vh 35vh;
+    gap: 2vw;
+}
+
+.turno, .extras, .almoco{
+    text-align: center;
+    padding-top: 4vh;
+}
+
+.progress-circle{
+    height: 60%!important;
+    width: 40%!important;
+    left: 30%!important;
+}
+

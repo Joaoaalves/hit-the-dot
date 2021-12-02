@@ -1,0 +1,235 @@
+body{
+    height: 100vh;
+    width: 100vw;
+    margin: 0;
+    padding: 0;
+    max-width:98vw;
+    overflow: hidden;
+}
+
+.container{
+    display: flex;
+    flex-direction: row;
+
+    margin: 0;
+    padding: 0;
+
+    width: 100%;
+    min-width: 99%;
+    
+    max-height: 90vh;
+    min-height: 90vh;
+}
+
+.col-2{
+    height: 90vh;
+    max-height: 90vh;
+    width: 15vw;
+    flex: 0 0 0% !important;
+    padding: 0 !important;
+}
+
+.col-6{
+    flex: 0 0 88.3% !important;
+    padding: 0 !important;
+}
+
+.content-container{
+    background-color: #f0f0f1!important;
+}
+
+.first-line,
+.second-line,
+.third-line{
+    margin: 0.5% 0 0px 5%;
+    display: flex;
+}
+
+.first-line{
+    height: 10%;
+}
+
+.second-line{
+    height: 30vh;
+}
+
+.third-line{
+    height: 40vh;
+}
+ 
+
+h1, h2, h3, h4{
+    font-family: 'Cairo', sans-serif;
+}
+
+.title{
+    font-size: 4vmin !important;
+    font-weight: bold;
+}
+
+.subtitle{
+    font-size: 1em;
+    font-weight: 600;
+    color: #a1a1a1 !important;
+}
+
+.date-picker{
+    margin-left: 30px;
+    display: flex;
+
+    position: absolute;
+    width: 23%;
+    max-width: 300px;
+    left: 40%;
+
+    height: 90%;
+    min-height: 6vh;
+    max-height: 8vh;
+
+    background: #FFFFFF;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.3);
+    border-radius: 14px;
+}
+
+i.fa.fa-calendar.my-auto{
+    margin-left: 10px;
+    color: #f8be00;
+    font-size: 3.5vmin;
+}
+
+.numero-horas{
+    font-size: 2.5em;
+}
+
+.contador-hora{
+    text-align: center;
+}
+
+.container-horas,
+.container-horas-extras,
+.container-ranking{
+    display: flex;
+    padding: 2vmin;
+    margin: 0 10px;
+
+    width: 30%;
+    max-width: 23vw;
+
+    height: 100%;    
+    max-height: 30vh;
+
+    background: #FFFFFF;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.3);
+    border-radius: 14px;
+}
+
+.container-horas-totais,
+.container-estatisticas{
+    padding: 1% 1.5% 0 1.5%;
+    margin: -10px 15px;
+
+    width: 50%;
+    max-width: 38vw;
+
+    background: #FFFFFF;
+    box-shadow: 0px 4px 4px #0000004d;
+    border-radius: 14px;
+
+    height: 100%;
+    max-height: 40vh;
+    min-height: 35vh;
+}
+
+.sub-container{
+    display: inline-block;
+    height: 50% ;
+}
+
+.btn-funcionarios{
+
+    background-color: #f8be00;
+    color: white;
+
+    border-radius: 14px;
+    
+    font-size: 1.2em;
+    font-weight: bold;
+    text-decoration: none;
+    
+    padding: 10px;
+
+
+    transition: 0.1s ease-in-out;
+}
+
+.flex{
+    display: flex;
+}
+
+.btn-funcionarios:hover{
+    color: white;
+    font-size: 1.5em;
+}
+
+.btn-salvar-relatorio{
+    color: #f8be00;
+    border-color: #f8be00;
+
+    border: 1px solid #f8be00;
+
+    background-color: transparent;
+
+    height: 40px;
+    border-radius: 8px;
+
+    transition: 0.2s ease-in-out;
+    margin-left: auto;
+    margin-right: 10px;
+}
+
+.btn-salvar-relatorio:hover{
+    transform: scale(1.1);
+    color: white;
+    background-color: #f8be00;
+}
+
+
+.subtitle-container{
+    display: inline-block;
+}
+
+.stats-title{
+    font-size: 1.5em;
+}
+
+.flex{
+    height: 8vw;
+    max-height: 70px;
+}
+
+canvas#chartRelatorio{
+    position: relative;
+    margin-top: 3%;
+    max-height: 60%;
+}
+
+.painel{
+    min-height: 90vh;
+
+    width: 100%;
+
+}
+
+.progress-circle{
+    width: 250px;
+}
+
+text.text-inside{
+    font-size: 1.5em;
+}
+
+canvas#chartRanking{
+    margin-top: 5%;
+    height: 90%;
+    width: 100%;
+}

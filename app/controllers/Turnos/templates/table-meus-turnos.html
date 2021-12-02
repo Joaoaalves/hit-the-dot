@@ -1,0 +1,22 @@
+<table>
+    <tr class="box-shadow">
+        <th>Dia</th>
+        <th>Tempo Total</th>
+        <th>Horário de Entrada</th>
+        <th>Horário de Saída</th>
+        <th>Ações</th>
+    </tr>
+    {% for turno in turnos %}
+    <tr class="box-shadow content">
+        <th>{{turno.dia}}</th>
+        <th>{{turno.get_total_time()}}</th>
+        <th>{{turno.hora_entrada}}</th>
+        <th>{{turno.hora_saida}}</th>
+        <th>
+            <button title="Ver" class="btn-success btn"
+                onclick="abrirTurno({{turno.user_id}}, '{{turno.dia}}')"><i
+                    class="fas fa-eye"></i></button>
+        </th>
+    </tr>
+    {% endfor %}
+</table>

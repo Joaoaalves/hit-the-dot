@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <link rel="shortcut icon" href="{{url_for('static', filename='favicon.ico')}}" type="image/x-icon">
+    
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hit the Dot</title>
+
+    {% include 'common-imports.html' %}
+    <link rel="stylesheet" href="{{url_for('painel.static', filename='css/painel.css')}}">
+    <link rel="stylesheet" href="{{url_for('turnos.static', filename='css/turnos.css')}}">
+    <link rel="stylesheet" href="{{url_for('turnos.static', filename='css/editar_turno.css')}}">
+
+    <!-- custom JS -->
+    <script src="{{url_for('turnos.static', filename='js/turnos.js')}}"></script>
+
+
+
+</head>
+
+<body>
+
+    {% include 'nav-bar.html' %}
+
+    <div class='container'>
+        <div class="col">
+            {% include "sidebar-admin.html" %}
+        </div>
+        <div class="col-6 content-container">
+            <div class="painel flex">
+                <div class="container-turno box-shadow">
+                    <h4>Editar Turno</h4>
+                    <form class="my-auto" method="POST">
+                        <input class="form-control" type="hidden" name="csrf_token" value="{{csrf_token()}}">
+                        <div class="date">
+                            <label for="dia" class="form-label">Data</label>
+                            <input class="form-control" type="date" name='dia' value='{{html_date}}' required>
+                        </div>
+
+                        <div class="input-group">
+                            <div>
+                                <label for="hora_entrada" class="form-label">Horário de Entrada</label>
+                                <input class="form-control me-3" type="time" name='hora_entrada' value="{{turno.hora_entrada}}" step="1" required>
+                            </div>
+                            <div>
+                                <label for="hora_saida" class="form-label ms-3">Horário de Saída</label>
+                                <input class="form-control ms-3" type="time" name="hora_saida" value="{{turno.hora_saida}}" step="1" required>
+                            </div>
+                        </div>
+
+                        {% if turno.inicio_almoco %}
+                        <div class="input-group">
+                            <div>
+                                <label for="inicio_almoco" class="form-label">Início no Almoço</label>
+                                <input class="form-control me-3" type="time" name="inicio_almoco" value="{{turno.inicio_almoco}}" step="1" required>
+                            </div>
+                            
+                            <div>
+                                <label for="fim_almoco" class="form-label ms-3">Retorno do Almoço</label>
+                                <input class="form-control ms-3" type="time" name="fim_almoco" value="{{turno.fim_almoco}}" step="1" required>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <input class="btn btn-dark my-auto" type="submit" value="Salvar">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <link rel="shortcut icon" href="{{url_for('static', filename='favicon.ico')}}" type="image/x-icon">
+    
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hit the Dot</title>
+
+    {% include 'common-imports.html' %}
+    <link rel="stylesheet" href="{{url_for('admin.static', filename='css/listar_funcionarios.css')}}">
+
+
+    <link rel="stylesheet" href="{{url_for('painel.static', filename='css/painel.css')}}">
+
+
+</head>
+
+<body>
+
+    {% include 'nav-bar.html' %}
+
+    <div class='container'>
+        <div class="col">
+            {% include "sidebar-admin.html" %}
+        </div>
+        <div class="col-6 content-container">
+            <div class='flex'>
+                <div class="container-table">
+                    <div class="funcionarios">
+                        {% if funcionarios %}
+                        {% include 'table_funcionarios.html' %}
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="utils-container">
+                    <div class="align-items-center container-filtro box-shadow">
+                        <h4 class="mx-auto mb-0">Filtro</h4>
+                        <form method="get" class="my-auto">
+                            <label for="cargo" class="mt-2">Cargo</label>
+                            <select name="cargo" id="cargo-select" class="form-control">
+                                <option disabled="disabled" selected hidden>Selecione um Cargo</option>
+                                {% for cargo in cargos %}
+                                <option value="{{cargo['nome']}}">{{cargo['nome']}}</option>
+                                {% endfor %}
+                            </select>
+                            <br>
+                            <input type="submit" value="Buscar" class="btn-dark btn">
+                            <br>
+                            <a href="/listar-funcionarios" class="btn btn-warning mt-3">Limpar Filtro</a>
+                        </form>
+                    </div>
+
+                    <div class="align-items-center container-buttons box-shadow">
+                        <a class="btn" href="/registrar">Registrar Funcionário</a>
+                        <br>
+                        <a class="btn" href="/cargos">Cargos Adicionados</a>
+                        <br>
+                        <a class="btn" href="/cargos/criar">Adicionar Cargo</a>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+</body>
+<footer>
+    <script src="{{url_for('admin.static', filename='js/listar_funcionarios.js')}}"></script>
+</footer>
+
+</html>

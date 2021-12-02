@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <link rel="shortcut icon" href="{{url_for('static', filename='favicon.ico')}}" type="image/x-icon">
+    
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hit the Dot</title>
+
+    {% include 'common-imports.html' %}
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{url_for('painel.static', filename='css/painel.css')}}">
+    <link rel="stylesheet" href="{{url_for('cargos.static', filename='css/cargos.css')}}">
+    
+
+    <!-- Custom JS -->
+    <script src="{{url_for('cargos.static', filename='js/cargos.js')}}"></script>
+</head>
+
+<body>
+    {% include 'nav-bar.html' %}
+
+    <div class='container'>
+        <div class="col">
+            {% include "sidebar-admin.html" %}
+        </div>
+        <div class="col-6 content-container">
+            <div class="painel flex">
+                <div class="container-table">
+                    <div class="cargos">
+                        {% include 'table-cargos.html' %}
+                    </div>
+                </div>
+                <div class="utils box-shadow">
+                    <a class="btn btn-warning form-control mt-auto" href='criar'>Adicionar Cargo</a>
+                    <a class="btn btn-warning form-control mt-3 mb-auto" href='/listar-funcionarios'>Funcionários</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+
+</html>

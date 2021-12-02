@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <link rel="shortcut icon" href="{{url_for('static', filename='favicon.ico')}}" type="image/x-icon">
+    
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hit the Dot</title>
+
+    {% include 'common-imports.html' %}
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{url_for('painel.static', filename='css/painel.css')}}">
+    <link rel="stylesheet" href="{{url_for('perfil.static', filename='css/perfil-admin.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/progress-circle.css')}}">
+    <link rel="stylesheet" href="{{url_for('perfil.static', filename='css/progress_circle_style.css')}}">
+
+    <!-- Custom JS -->
+    <script src="{{url_for('static', filename='js/progress-circle.js')}}"></script>
+    <script src="{{url_for('perfil.static', filename='js/perfil.js')}}"></script>
+    
+</head>
+
+<body>
+    {% include 'nav-bar.html' %}
+    
+    <div class='container'>
+        <div class="col">
+            {% include "sidebar.html" %}
+        </div>
+        
+        <div class="col-6 content-container">
+            <div class='painel'>
+                <div class="main-container mx-auto">
+                    <h1>Meu Perfil</h1>
+                    <section class="user-info">
+                        <div class="user">
+                            <img src="{{url_for('protected.protected_file', filename=user['id']|string + '/profile.jpg')}}">
+                            <div>
+                                
+                                <span class="text-success"><b style="font-size: 2.5em;">·</b>Ativo</span>
+                                
+                                <h3>{{user['name']}}</h3>
+                                
+                                <span>Admin</span><br>
+                                
+                                <a href="editar" class="btn btn-editar mt-3">Editar Perfil</a>
+                            </div>
+                        </div>
+                        <div class="info mt-5">
+                            {% if user.celular %}
+                            <button href="https://api.whatsapp.com/send?phone={{international_phone(user.celular)}}" class="anchor-contact">
+                                <div class="container-contato me-5">
+                                    <div class="icon me-3">
+                                        <i class="fab fa-whatsapp"></i>
+                                    </div>
+
+                                    <div>
+                                        <span class="text-secondary">Whatsapp</span><br>
+                                        <span>{{national_phone(user.celular)}}</span>
+                                    </div>
+                                </div>
+                            </button>
+                            {% endif %}
+                            <a href="mailto:{{user['email']}}" class="anchor-contact">
+                                <div class="container-contato ms-5 pe-5">
+                                    <div class="icon me-3">
+                                        <i class="far fa-envelope mx-auto my-auto"></i>
+                                    </div>
+                                    <div>
+                                        <span class="text-secondary">Email</span><br>
+                                        <span>{{user['email']}}</span>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </section>
+                    <hr>
+                    <section class="work-info">
+                        <h5>Descrição do Trabalho</h5>
+                        
+                        <p class="text-secondary">Você é um administrador.</p>
+                    </section>
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</body>
+
+<footer>
+    
+    <script>
+        var config = [[{{total_percentage}}, '#E328AF', '#FFCFF2'], [{{extras_percentage}}, '#1CBBFF', '#DFEDF2', '{{horas_extras}}h']];
+        
+        setProgressCircles(config);
+    </script>
+
+
+</footer>
+
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <link rel="shortcut icon" href="{{url_for('static', filename='favicon.ico')}}" type="image/x-icon">
+
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hit the Dot</title>
+
+    {% include 'common-imports.html' %}
+
+    <!-- custom css -->
+    <link rel="stylesheet" href="{{url_for('painel.static', filename='css/painel.css')}}">
+    <link rel="stylesheet" href="{{url_for('feriado.static', filename='css/tavo-calendar.css')}}" />
+    <link rel="stylesheet" href="{{url_for('feriado.static', filename='css/calendario.css')}}">
+    <link rel="stylesheet" href="{{url_for('feriado.static', filename='css/adicionar-feriado.css')}}">
+    <!-- custom JS -->
+    <script src="{{url_for('turnos.static', filename='js/turnos.js')}}"></script>
+    <script src="{{url_for('feriado.static', filename='js/tavo-calendar.js')}}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+
+
+</head>
+
+<body>
+
+    {% include 'nav-bar.html' %}
+
+    <div class='container'>
+
+        <div class="col">
+            {% include "sidebar.html" %}
+        </div>
+        <div class="col-6 content-container">
+            <div id="my-calendar" class="box-shadow"></div>
+            <div class="form-container box-shadow">
+                <h4 class="mb-5">Detalhes do feriado</h4>
+                <form>
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    
+                    <label for="name" class="form-label">Nome do Feriado</label>
+                    <input type="text" name='name' class="form-control" required>
+    
+                    <div class="form-check">
+                        <label for="repetir-feriado" class="form-check-label">Este feriado se repete nesta data todo ano?</label>
+                        <input type="checkbox" class="form-check-input" name="repetir-feriado" id='repeat'>
+                    </div>
+    
+                    <input type="button" class="btn btn-dark form-control" id='sbt-btn' value="Adicionar Feriado">
+    
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+<footer>
+    <script>
+        var myCalendar = new TavoCalendar('#my-calendar', {
+            range_select: false,
+            format: "DD-MM-YYYY",
+            locale: 'pt-br',
+            future_select: true,
+            past_select: true,
+            highligh_sunday: true,
+            highlight_saturday: true,
+            blacklist: '{{ feriados | tojson}}'
+        });
+    </script>
+    <script src="{{url_for('feriado.static', filename='js/adicionar_feriado.js')}}"></script>
+</footer>
+
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <link rel="shortcut icon" href="{{url_for('static', filename='favicon.ico')}}" type="image/x-icon">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hit the Dot</title>
+
+    {% include 'common-imports.html' %}
+    <link rel="stylesheet" href="{{url_for('admin.static', filename='css/listar_funcionarios.css')}}">
+
+    <link rel="stylesheet" href="{{url_for('admin.static', filename='css/editar_funcionario.css')}}">
+
+    <link rel="stylesheet" href="{{url_for('painel.static', filename='css/painel.css')}}">
+
+
+</head>
+
+<body>
+
+    {% include 'nav-bar.html' %}
+
+    <div class='container'>
+
+        <div class="col">
+            {% include "sidebar-admin.html" %}
+        </div>
+        <div class="col-6 content-container">
+            <div class='painel'>
+                <div class="container-user box-shadow">
+                    <h1>Alterar Funcionario</h1>
+                    <form method="POST">
+                        <input type="hidden" value="{{csrf_token()}}" name="csrf_token">
+                        <div class="mb-3">
+                            <label for="nome" class="form-label">Nome do Funcionário</label>
+                            <input class="form-control" type="text" value="{{funcionario.name}}" name='nome'
+                                placeholder="Nome do Funcionário" required>
+                        </div>
+
+                        <section class="input-group mb-3 contato">
+                            <div>
+                                <label for="email" class="form-label">Email</label>
+                                <input class="form-control" type="text" value="{{funcionario.email}}" name='email'
+                                    placeholder="Email" disabled required>
+                            </div>
+                            <div>
+                                <label for="celular" class="form-label">Celular</label>
+                                <input class="form-control" type="text" value="{{funcionario.celular}}" name="celular"
+                                    placeholder="Celular -> 61 91234-5678" required>
+                            </div>
+                        </section>
+
+                        <div class="mb-3">
+                            <label for="cargo" class="form-label">Cargo</label>
+                            <select name="cargo" class="form-control" required>
+                                {% for cargo in cargos %}
+                                {% if cargo['id'] == funcionario.cargo %}
+                                <option value="{{cargo['id']}}" selected>{{cargo['nome']}}</option>
+                                {% else %}
+                                <option value="{{cargo['id']}}">{{cargo['nome']}}</option>
+                                {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <div>
+                                <label for="turno" class="form-label">Turno</label>
+                                <input class="form-control" type="number" step="1" min="1" max="8" name='turno'
+                                    placeholder="Turno do Funcionário" value='{{funcionario.turno}}' required>
+                            </div>
+                            <div>
+                                <label for="dias_trabalho" class="form-label">Dias de Trabalho /Semana</label>
+                                <input class="form-control" type="number" step="1" min="1" max="6" name='dias_trabalho'
+                                    placeholder="Dias de Trabalho por Semana" value='{{funcionario.dias_trabalho}}'
+                                    required>
+                            </div>
+
+                        </div>
+                        <input class="btn btn-dark form-control mt-5" type="submit" value="Alterar">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

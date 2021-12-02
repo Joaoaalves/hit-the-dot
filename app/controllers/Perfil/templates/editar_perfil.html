@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <link rel="shortcut icon" href="{{url_for('static', filename='favicon.ico')}}" type="image/x-icon">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hit the Dot</title>
+
+    {% include 'common-imports.html' %}
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{url_for('admin.static', filename='css/listar_funcionarios.css')}}">
+    <link rel="stylesheet" href="{{url_for('admin.static', filename='css/editar_funcionario.css')}}">
+    <link rel="stylesheet" href="{{url_for('painel.static', filename='css/painel.css')}}">
+
+    <!-- Custom JS -->
+    <script src="{{url_for('perfil.static', filename='js/alterar-perfil.js')}}"></script>
+</head>
+
+<body>
+
+    {% include 'nav-bar.html' %}
+
+    <div class='container'>
+
+        <div class="col">
+            {% include "sidebar-admin.html" %}
+        </div>
+        <div class="col-6 content-container">
+            <div class='painel'>
+                <div class="container-user box-shadow">
+                    <h1>Alterar Perfil</h1>
+                    <form method="POST">
+                        <input type="hidden" value="{{csrf_token()}}" name="csrf_token">
+                        <div class="mb-3">
+                            <label for="nome" class="form-label">Nome</label>
+                            <input class="form-control" type="text" value="{{user.name}}" name='nome'
+                                placeholder="Nome" required>
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <div>
+                                <label for="email" class="form-label">Email</label>
+                                <input class="form-control" style="width: 90%;margin-left: 5%;" type="text" value="{{user.email}}" name='email'
+                                    placeholder="Email" disabled required>
+                            </div>
+                            <div>
+                                <label for="celular" class="form-label">Celular</label>
+                                {% if user.celular %}
+                                <input class="form-control mt-0" style="width: 90%;margin-left: 5%;" type="tel"  placeholder="Celular (61 912345678)" name="celular"
+                                pattern="^\s*(\d{2})[-. ]?(\d{5}|\d{4})[-. ]?(\d{4})[-. ]?\s*$" id="phoneNumber" value='{{user.celular}}'>
+                                {% else %}
+                                <input class="form-control mt-0" style="width: 90%;margin-left: 5%;" type="tel"  placeholder="Celular (61 912345678)" name="celular"
+                                pattern="^\s*(\d{2})[-. ]?(\d{5}|\d{4})[-. ]?(\d{4})[-. ]?\s*$" id="phoneNumber">
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="cargo" class="form-label">Cargo</label>
+                            <select name="cargo" class="form-control" disabled required>
+                                {% for cargo in cargos %}
+                                {% if cargo['id'] == user.cargo %}
+                                <option value="{{cargo['id']}}" selected>{{cargo['nome']}}</option>
+                                {% else %}
+                                <option value="{{cargo['id']}}">{{cargo['nome']}}</option>
+                                {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <div>
+                                <label for="turno" class="form-label">Turno</label>
+                                <input class="form-control" type="number" step="1" min="1" max="8" name='turno'
+                                    placeholder="Turno do Funcionário" value='{{user.turno}}' required disabled>
+                            </div>
+                            <div>
+                                <label for="dias_trabalho" class="form-label">Dias de Trabalho /Semana</label>
+                                <input class="form-control" type="number" step="1" min="1" max="6" name='dias_trabalho'
+                                    placeholder="Dias de Trabalho por Semana" value='{{user.dias_trabalho}}' disabled
+                                    required>
+                            </div>
+
+                        </div>
+                        <div class="flex my-auto">
+                            <input class="btn btn-dark form-control" type="submit" value="Salvar Alterações">
+                            <input type="button" class="bnt btn-warning form-control" type="button" onclick="enviarAlteracaoSenha('{{user.email}}','{{csrf_token()}}')" value="Alterar Senha">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

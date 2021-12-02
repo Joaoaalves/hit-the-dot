@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <link rel="shortcut icon" href="{{url_for('static', filename='favicon.ico')}}" type="image/x-icon">
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Hit the Dot</title>
+
+    {% include 'common-imports.html' %}
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{url_for('painel.static', filename='css/painel.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/progress-circle.css')}}">
+
+    <!-- Custom JS -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+    {% include 'nav-bar.html' %}
+
+    <div class='container'>
+            <div class="col-2">
+                {% include "sidebar.html" %}
+            </div>
+            {% if is_admin %}
+            <div class="col-6 content-container">
+                <div class='painel'>
+                    <div class="first-line">
+                        <div class="title-container">
+                            <h1 class="title">Visão Geral</h1>
+                        </div>
+
+                        <div class="date-picker my-auto">
+                            <i class="fa fa-calendar my-auto" aria-hidden="true"></i>
+                            <div style="width: 15vw; text-align: center;" class="mx-auto my-auto">
+                                <b style="font-size: 1.2em">Filtrar Período</b>
+                                <p style="font-size: 0.8em">Mês: {{mes}}</p>
+                            </div>
+
+                        </div>
+                    </div>
+                    <br>
+                    <div class="second-line">
+                        <!-- MEDIDOR HORAS DO MES-->
+                        <div class='container-horas'>
+
+                            {% include 'progress-circle.html' %}
+                            <div class="contador-hora mx-auto my-auto">
+                                <b class="numero-horas">{{horas_mes}}</b>
+                                <p style="font-size: 1.2em; color: #a1a1a1">Horas / mes</p>
+                            </div>
+
+
+                        </div>
+
+                        <!-- MEDIDOR HORAS EXTRAS DO MES-->
+                        <div class='container-horas-extras'>
+                            {% include 'progress-circle.html' %}
+                            <div class="contador-hora mx-auto my-auto">
+                                <b class="numero-horas">{{horas_extras}}</b>
+                                <p style="font-size: 1.2em; color: #a1a1a1">Horas extras / mes</p>
+                            </div>
+                        </div>
+
+                        <!-- RANKING MENSAL-->
+                        <div class='container-ranking'>
+                            <canvas id="chartRanking" width="300" height="150"></canvas>
+
+                        </div>
+                    </div>
+                    <br>
+                    <div class="third-line">
+
+                        <!-- HORAS TOTAIS DE TRABALHO-->
+                        <div class="container-horas-totais">
+                            <div class="sub-container">
+                                <b style="font-size: 3vw;">{{horas_totais}}</b>
+                                <br>
+                                <b>Horas totais trabalhadas</b>
+                            </div>
+                            <div class="sub-container pt-auto">
+                                <p style="font-size: 1em; color: #a1a1a1;">Lorem ipsum dolor sit amet, consectetur
+                                    adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore</p>
+                                <a class="btn-funcionarios" href="/listar-funcionarios">Ver Funcionários</a>
+                            </div>
+                        </div>
+
+                        <!-- ESTATISTICAS -->
+                        <div class="container-estatisticas">
+                            <div class="flex">
+                                <div class="subtitle-container my-auto">
+                                    <b class="stats-title" style="color: black">Estatísticas</b>
+                                    <p style="color: #a1a1a1; font-size: 1em">Tarefas terminadas por dia da semana</p>
+                                </div>
+
+                                <button class="btn-salvar-relatorio my-auto"><i class="fa fa-download"
+                                        aria-hidden="true"></i> Salvar Relatório</button>
+                            </div>
+
+                            <canvas id="chartRelatorio"></canvas>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="col-6 content-container">
+                <div class='painel'>
+    
+                </div>
+            </div>
+            {% endif %}
+    </div>
+
+
+</body>
+<footer>
+    <script src="{{url_for('static', filename='js/progress-circle.js')}}"></script>
+    
+    <!-- Generate the progress rings -->
+    <script>
+        
+        var config = [[{{percentage}}, '#E328AF', '#FFCFF2'], [{{percentage_extras}}, '#1CBBFF', '#DFEDF2']];
+        
+        setProgressCircles(config);
+
+        var unordered = {{week_work|tojson}}
+
+        var days = ['Segunda','Terça','Quarta','Quinta','Sexta']
+        
+        var week_hours = {}
+
+        days.forEach(d =>{
+            week_hours[d] = unordered[d];    
+        })
+
+
+        var funcionarios = {{funcionarios|tojson}}
+    </script>
+        
+        <!-- Generate the charts -->
+        <script src="{{url_for('admin.static', filename='js/charts.js')}}"></script>
+        
+        </footer>
+        
+</html>

@@ -1,0 +1,42 @@
+<table>
+    <thead>
+        <tr class="box-shadow">
+            <th></th>
+            <th id="func-label">Funcionário</th>
+            <th>Turno</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for funcionario in funcionarios %}
+        <tr class="box-shadow">
+            <th class="imagem-funcionario">
+                <div class="my-auto">
+                    <img class="img-funcionario" src="{{url_for('protected.protected_file', filename=funcionario.id|string + '/profile.jpg')}}" alt="" srcset="">
+                </div>
+            </th>
+            <th>
+                <div class="funcionario">
+                    <div class="info-funcionario my-auto"> 
+                        <span>{{funcionario.name}}</span>
+                        <br>
+                        <span class="text-secondary">{{get_cargo_nome(cargos, funcionario.cargo)}}</span>
+                    </div>
+                </div>
+            </th>
+            <th>{{funcionario.turno}} horas</th>
+            <th>
+                <button class="btn btn-success" onclick="window.location.href='/funcionario/{{funcionario.id}}';">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn btn-warning" onclick="editarFuncionario({{funcionario.id}})">
+                    <i class="fas fa-pencil-alt"></i>
+                </button>
+                <button class="btn btn-danger" onclick="excluirFuncionario({{funcionario.id}}, '{{csrf_token()}}')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </th>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

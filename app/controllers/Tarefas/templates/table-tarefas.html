@@ -1,0 +1,29 @@
+{% if relatorios %}
+<table>
+    <tr class="box-shadow content">
+        <th>Funcionario</th>
+        <th>Dia</th>
+        <th>Ações</th>
+    </tr>
+    {% for relatorio in relatorios %}
+    <tr class="box-shadow content">
+        <th>{{func_dict[relatorio.func_id]}}</th>
+        <th>{{relatorio.get_dia_str()}}</th>
+        <th>
+            <button title="Excluir" class="btn-danger btn"
+                onclick="excluir_tarefa({{relatorio.id}}, '{{csrf_token()}}')"><i
+                    class="fas fa-times"></i>
+            </button>
+            <button title="Editar" class="btn-warning btn"
+                onclick="window.location.href = 'editar/{{relatorio.id}}'"><i
+                    class="fas fa-wrench"></i>
+            </button>
+            <button title="Ver" class="btn-success btn"
+                onclick="window.location.href = 'tarefa/{{relatorio.id}}'"><i
+                    class="fas fa-eye"></i>
+            </button>
+        </th>
+    </tr>
+    {% endfor %}
+</table>
+{% endif %}
