@@ -1,0 +1,11 @@
+.horas-extras-mes,
+.horas-totais-mes{    
+    height: 40%;
+}
+.progress-circle{
+    height: 100%;
+}
+
+circle.progress-ring__circle{
+    stroke-width: 6%;
+}

@@ -1,0 +1,120 @@
+table {
+    font-family: arial, sans-serif;
+    border-collapse: separate;
+    border-spacing: 0 1vh;
+    width: 100%;
+}
+td, th {
+    text-align: center;
+    padding: 8px;
+}
+tr {
+    background-color: white;
+    margin: 1vh 0;
+    height: 40px;
+}
+
+th#func-label {
+    text-align: left;
+}
+
+.container-table {
+    width: 60vw;
+    height: 80vh;
+    padding: 2vw;
+}
+table {
+    width: 100%;
+}
+table tr {
+    text-align: center;
+    font-size: 1em;
+}
+tr.content {
+    font-size: 1em;
+}
+tr.content th {
+    padding: 8px 0;
+    border-bottom: 1px solid black;
+}
+tr th button {
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    padding: 0 !important;
+    font-size: 12px;
+}
+
+.content-container{
+    display: flex;
+}
+
+.utils-container{
+    display: flex;
+    flex-direction: column;
+
+    width: 25%;
+    margin-left: auto;
+    margin-right: 2%;
+    min-height: 90vh;
+    max-height: calc(100vh - 64px);
+}
+
+.container-filtro {
+    display: flex;
+    flex-direction: column;
+    width: 90%;
+
+    margin-top: 10%;
+    
+    height: 40%;
+    max-height: 300px;
+    min-height: 250px;
+
+    text-align: center;
+    padding: 5%;
+}
+
+.container-filtro form {
+    position: relative;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+.container-filtro form input, .container-filtro form select {
+    margin: 5px 0;
+}
+input.btn-dark.btn.form-control,
+a.btn.btn-warning{
+    width: 60%;
+    color: white;
+}
+
+.container-buttons {
+    margin-top: auto;
+    margin-bottom: 10%;
+    width: 90%;
+    height: 20%;
+    display: flex;
+    flex-direction: column;
+
+    text-align: center;
+
+}
+.container-buttons a.btn {
+    width: 60%;
+    max-width: 90%;
+    margin: auto;
+    font-size: 1em;
+    background-color: #f8be00;
+    color: white;
+    transition: 0.2s;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+.container-buttons a.btn:hover {
+    transform: scale(1.1);
+}

@@ -1,0 +1,25 @@
+.progress-ring__circle {
+    transition: 0.75s stroke-dashoffset;
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+}
+
+.text-inside{
+    font: bold 30px sans-serif;
+    fill: black;
+}
+
+.progress-circle{
+    position: relative;
+}
+
+.progress-bck {
+    position: relative;
+    bottom: 12vw;
+    z-index: 0;
+}
+.progress-ring{
+    position: relative;
+    z-index: 1 !important;
+    
+}

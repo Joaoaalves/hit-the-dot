@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <link rel="shortcut icon" href="{{url_for('static', filename='favicon.ico')}}" type="image/x-icon">
+    
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hit the Dot</title>
+
+    {% include 'common-imports.html' %}
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{url_for('painel.static', filename='css/painel.css')}}">
+    <link rel="stylesheet" href="{{url_for('cargos.static', filename='css/criar-cargo.css')}}">
+    <link rel="stylesheet" href="{{url_for('cargos.static', filename='css/multi-select.css')}}">
+    
+    <!-- Custom JS -->
+    <script src="{{url_for('cargos.static', filename='js/cargos.js')}}"></script>
+    <script src="{{url_for('cargos.static', filename='js/multi-select.js')}}"></script>
+
+</head>
+
+<body>
+    {% include 'nav-bar.html' %}
+
+    <div class='container'>
+        <div class="col">
+            {% include "sidebar-admin.html" %}
+        </div>
+        <div class="col-6 content-container">
+            <div class="painel">
+                <div class="content box-shadow">
+                    <h3>Editar Cargo</h3>
+                    <form method="POST">
+                        <input type="hidden" value="{{csrf_token()}}" name='csrf_token'>
+
+
+                        <input type="text" name='nome' placeholder="Nome" class="form-control mb-3" required
+                            value="{{cargo.name}}">
+
+                        <div style="padding: 0 20%;">
+                            <label for="funcionarios" class="mb-1 mt-3">Funcionarios</label>
+                            <select multiple="multiple" id="funcionarios" name="funcionarios">
+                                {% for funcionario in funcionarios %}
+                                {% if funcionario.cargo == cargo.id %}
+                                <option value="{{funcionario.id}}" selected>{{funcionario.name}}</option>
+                                {% else %}
+                                <option value="{{funcionario.id}}">{{funcionario.name}}</option>
+                                {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <br>
+
+                        <label for="descricao" class="mt-2">Descrição do Cargo</label>
+                        <textarea name="descricao" class="form-control" required>{{cargo['descricao']}}</textarea>
+
+                        <input type="submit" class="btn btn-dark mt-3" value="Salvar Alterações">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<footer>
+    <script>
+        $('#funcionarios').multiSelect({
+            selectableHeader : "<div class='custom-header'>Em outros cargos</div>",
+            selectionHeader  : "<div class='custom-header'>Neste cargo</div>"}
+        );
+    </script>
+</footer>
+
+</html>

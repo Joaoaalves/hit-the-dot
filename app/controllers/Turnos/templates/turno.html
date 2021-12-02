@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <link rel="shortcut icon" href="{{url_for('static', filename='favicon.ico')}}" type="image/x-icon">
+    
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hit the Dot</title>
+
+    {% include 'common-imports.html' %}
+
+    <link rel="stylesheet" href="{{url_for('turnos.static', filename='css/turno.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/progress-circle.css')}}">
+
+    <script src="{{url_for('static', filename='js/progress-circle.js')}}"></script>
+
+</head>
+
+<body>
+    {% include 'nav-bar.html' %}
+
+    <div class='container'>
+        <div class="col-2">
+            {% include "sidebar.html" %}
+        </div>
+        <div class="col-6 content-container">
+            <div class='painel'>
+                <div class="first_line">
+                    <div class="ms-0 tempo-total box-shadow">
+                        {% include 'progress-circle.html' %}
+                        <div class="contador-hora">
+                            <b class="title">{{horas}}</b>
+                            <p class="subtitle">Horas</p>
+                        </div>
+                    </div>
+                    {% if extras_percentage|float > 0 %}
+                    <div class="horas-extras box-shadow">
+                        {% include 'progress-circle.html' %}
+                        <div class="contador-hora">
+                            <b class="title">{{horas_extras}}</b>
+                            <p class="subtitle">Horas extras</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                    <div class="container-funcionario box-shadow gradient-background ms-auto me-0">
+                        <img class="profile-image mt-auto"
+                            src="{{url_for('protected.protected_file', filename=funcionario.id|string + '/profile.jpg')}}">
+                        <p class="mt-auto func-label">{{funcionario.name}}</p>
+                        <p class="mb-auto func-label" style="color: gray; font-size: 1.2em;">{{cargo.name}}</p>
+                        {% if is_admin(user) %}
+                        <a href="/funcionario/{{funcionario.id}}" class="btn btn-warning mb-5">Ver Funcionario</a>
+                        {% else %}
+                        <a href="/perfil" class="btn btn-warning mb-5">Perfil</a>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="second_line">
+                    <div class="ms-0 dia box-shadow">
+                        <b class="title">{{turno.dia}}</b>
+                        <span class='subtitle'>Data</span>
+                    </div>
+                    <div class="entrada box-shadow">
+                        <b class="title">{{turno.hora_entrada[:5]}}</b>
+                        <span class="subtitle">Hora de Entrada</span>
+                    </div>
+
+                    <div class="saida box-shadow me-0">
+                        <b class="title">{{turno.hora_saida[:5]}}</b>
+                        <span class="subtitle">Hora de Saída</span>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<footer>
+
+    <!-- Seta Variáveis -->
+    <script>
+        var config = [[{{ percentage }}, '#E328AF', 'rgba(227,40,175,0.1)'] , [{{ extras_percentage }}, '#1CBBFF', 'rgba(28,187,255,0.1)']];
+        setProgressCircles(config);
+    </script>
+</footer>
+
+</html>

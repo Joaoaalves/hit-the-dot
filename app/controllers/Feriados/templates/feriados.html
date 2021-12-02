@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <link rel="shortcut icon" href="{{url_for('static', filename='favicon.ico')}}" type="image/x-icon">
+
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hit the Dot</title>
+
+    {% include 'common-imports.html' %}
+    <!-- custom css -->
+    <link rel="stylesheet" href="{{url_for('painel.static', filename='css/painel.css')}}">
+    <link rel="stylesheet" href="{{url_for('feriado.static', filename='css/feriados.css')}}">
+
+</head>
+
+
+{% include 'nav-bar.html' %}
+
+<div class='container'>
+    <div class="col">
+        {% include "sidebar.html" %}
+    </div>
+    <div class="col-6 content-container">
+        <div class="container-table">
+            <div class="feriados">
+                {% if feriados %}
+                {% include 'table-feriados.html' %}
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="utils-container">
+            <div class="align-items-center container-filtro box-shadow">
+                <h4 class="mx-auto">Filtro</h4>
+                <form method="get" class="my-auto">
+                    <label for="month" class="form-label">Mês</label>
+                    <input type="month" name='month' id="month" class="form-control">
+                    <br>
+                    <input type="submit" value="Buscar" class="btn-dark btn form-control">
+
+                    <a href="/feriados" class="btn btn-warning">Limpar Filtro</a>
+                </form>
+            </div>
+            {% if is_admin(user) %}
+            <div class="align-items-center container-buttons box-shadow">
+                <a href='/adicionar-feriado' class="btn btn-warning">Adicionar Feriado</i></a>
+                <a href="#" class="btn btn-warning">Adicionar Férias</a>
+            </div>
+            {% endif %}
+        </div>
+
+    </div>
+
+</div>
+</body>
+<footer>
+    <!-- custom js -->
+    <script src="{{url_for('feriado.static', filename='js/feriados.js')}}"></script>
+</footer>
+</html>

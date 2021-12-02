@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <link rel="shortcut icon" href="{{url_for('static', filename='favicon.ico')}}" type="image/x-icon">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Hit the Dot</title>
+
+    {% include 'common-imports.html' %}
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{url_for('painel.static', filename='css/painel.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/progress-circle.css')}}">
+
+    <!-- Custom JS -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Date Range -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+</head>
+
+<body>
+    {% include 'nav-bar.html' %}
+
+    <div class='container'>
+        <div class="col-2">
+            {% include "sidebar-admin.html" %}
+        </div>
+        <div class="col-6 content-container">
+            <div class='painel'>
+                <div class="first-line">
+                    <div class="title-container">
+                        <h1 class="title">Visão Geral</h1>
+                    </div>
+
+                    {% include 'month-picker.html' %}
+
+                    <div class="ms-auto">
+                        <form method='get'>
+                            <select name="funcionario" class="form-select" id="funcionario">
+                                <option value="">Todos os Funcionários</option>
+                                {% for funcionario in funcionarios %}
+                                <option value="{{funcionario.id}}">{{funcionario.name}}</option>
+                                {% endfor %}
+                            </select>
+                        </form>
+                    </div>
+                </div>
+                <br>
+                <div class="second-line">
+                    <!-- MEDIDOR HORAS DO MES-->
+                    <div class='ms-0 container-horas box-shadow gradient-background'>
+
+                        {% include 'progress-circle.html' %}
+                        <div class="contador-hora my-auto">
+                            <b class="numero-horas">{{horas_mes}}</b>
+                            <p style="font-size: 1.2em; color: #a1a1a1">Horas</p>
+                        </div>
+
+
+                    </div>
+
+                    {% if assiduidade %}
+                    <div class="container-assiduidade box-shadow gradient-background">
+                        {% include 'progress-circle.html' %}
+                        <div class="contador-hora mx-auto my-auto">
+                            <b class="numero-horas">{{faltas}}</b>
+                            <p style="font-size: 1.2em; color: #a1a1a1;">Faltas</p>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- MEDIDOR HORAS EXTRAS DO MES-->
+                    <div
+                        class='me-0 container-horas-extras {%if not assiduidade%}ms-auto{%endif%}  box-shadow gradient-background'>
+                        {% include 'progress-circle.html' %}
+                        <div class="contador-hora mx-auto my-auto">
+                            <b class="numero-horas">{{horas_extras}}</b>
+                            <p style="font-size: 1.2em; color: #a1a1a1">Horas extras</p>
+                        </div>
+                    </div>
+
+                </div>
+                <br>
+                <div class="third-line">
+
+                    {% if horas_totais >= 0 
+                        and media_horas
+                        and dias_trabalhados >= 0 %}
+                    <!-- HORAS TOTAIS DE TRABALHO-->
+                    <div class="ms-0 grid-stats">
+                        <div class="horas-totais box-shadow">
+                            <b style="font-size: 6vmin;">{{horas_totais}}</b>
+
+                            <b class="subtitle">Horas totais trabalhadas</b>
+                        </div>
+                        <div class="media-horas box-shadow">
+                            <b style="font-size: 6vmin;">{{media_horas}}</b>
+
+                            <b class="subtitle">Média de horas trabalhadas por dia</b>
+                        </div>
+                        <div class="dias-trabalho box-shadow">
+                            <b style='font-size: 6vmin;'>{{dias_trabalhados}}</b>
+
+                            <b class="subtitle">Dias trabalhados</b>
+                        </div>
+
+                        {% if horas_devendo %}
+                        <div class="horas-devendo box-shadow">
+                            <b style='font-size: 6vmin'>{{horas_devendo}}</b>
+
+                            <b class="subtitle">Horas que está devendo</b>
+                        </div>
+                        {% endif %}
+
+                    </div>
+                        {% else %}
+                        <!-- HORAS TOTAIS DE TRABALHO-->
+                        <div class="ms-0 container-horas-totais box-shadow gradient-background">
+                            <div class="horas-totais">
+                                <div>
+                                    <b style="font-size: 6vmin;">{{horas_totais}}</b>
+                                    <br>
+                                    <b class="subtitle">Horas totais trabalhadas</b>
+                                </div>
+                            </div>
+                            <div class="sub-container">
+                                <p style="font-size: 1em; color: #a1a1a1;">Lorem ipsum dolor sit amet, consectetur
+                                    adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore</p>
+                                <a class="btn-funcionarios" href="/listar-funcionarios">Ver Funcionários</a>
+                            </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- ESTATISTICAS -->
+                    <div class="me-0 container-estatisticas box-shadow gradient-background">
+                        <div class="flex">
+                            <div class="subtitle-container my-auto">
+                                <b class="stats-title" style="color: black">Estatísticas</b>
+                                <p style="color: #a1a1a1; font-size: 1em">Tarefas terminadas por dia da semana</p>
+                            </div>
+
+                            <!-- <button class="btn-salvar-relatorio my-auto"><i class="fa fa-download"
+                                    aria-hidden="true"></i> Salvar Relatório</button> -->
+                        </div>
+
+                        <canvas id="chartRelatorio"></canvas>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+<footer>
+    <script src="{{url_for('static', filename='js/progress-circle.js')}}"></script>
+    <!-- Generate the progress rings -->
+    <script>
+
+        {% if assiduidade %}
+        var config = [[{{ percentage }}, '#E328AF', 'rgba(227,40,175,0.1)'], [{{ assiduidade }}, '#19facc', 'rgba(25,250,204,0.1)'], [{{ percentage_extras }}, '#1CBBFF', 'rgba(28,187,255,0.1)']];
+        {% else %}
+        var config = [[{{ percentage }}, '#E328AF', 'rgba(227,40,175,0.1)'] , [{{ percentage_extras }}, '#1CBBFF', 'rgba(28,187,255,0.1)']];
+        {% endif %}
+        setProgressCircles(config);
+
+        var unordered = { 'Segunda': 5, 'Terça': 2, 'Quarta': 6, 'Quinta': 3, 'Sexta': 7 };
+
+        var days = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'];
+
+        var week_hours = {};
+
+        days.forEach(d => {
+            week_hours[d] = unordered[d];
+        })
+
+        minDate = '01/10/2021';
+        maxDate = new Date().toLocaleString('pt-BR');
+
+        $(function () {
+            $('input[name="daterange"]').daterangepicker({
+                opens: 'center',
+                startDate: '{{start_date}}',
+                endDate: '{{end_date}}',
+                minDate: minDate,
+                maxDate: maxDate,
+                locale: {
+                    format: 'DD/MM/YYYY',
+                    cancelLabel: 'Cancelar',
+                    applyLabel: 'Filtrar',
+                    daysOfWeek: [
+                        'Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'
+                    ],
+                    monthNames: [
+                        'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+                        'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+                    ]
+                }
+            });
+        });
+    </script>
+
+    <!-- Generate the charts -->
+    <script src="{{url_for('painel.static', filename='js/charts.js')}}"></script>
+
+    <script src="{{url_for('painel.static', filename='js/config.js')}}"></script>
+
+</footer>
+
+</html>

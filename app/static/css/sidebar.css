@@ -1,0 +1,74 @@
+.sidebar {
+    height: 110vh;
+    width: 15vw !important;
+    min-width: 15vw;
+    max-width: 240px;
+    z-index: 1;
+    position: relative;
+    top: -10vh;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center;
+    justify-content: center;
+}
+
+ul{
+    text-align: left;
+}
+
+a.link-dark.text-decoration-none.mx-auto{
+    margin-top: 5vh;
+}
+
+form {
+    display: flex;
+}
+
+.nav-pills .nav-link.active, .nav-pills .show>.nav-link, .nav-link.active i{
+    background: none !important;
+    color: #f8be00;
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+li a.nav-link.link-dark,
+li i {
+    transition: ease-in-out 0.2s;
+    color: #a5a5a5;
+    line-height: 3vmin;
+    font-size: 1em;
+    font-weight: bold;
+}
+
+li:hover a.nav-link.link-dark,
+li:hover i {
+    color: #f8be00;
+}
+
+.disclaimer {
+    width: 65%;
+    margin: 0 auto 10vh auto;
+    font-weight: 400;
+    font-size: 0.8em;
+    text-align: center;
+    bottom: 0px;
+}
+
+.disclaimer p {
+    margin-bottom: 0px;
+    font-size: 0.8em;
+}
+
+a.yellow {
+    color: #f8be00;
+    text-decoration: none;
+    transition: ease-in-out;
+    font-size: 1em;
+}
+
+a.yellow:hover{
+    border-radius: 8px;
+    padding: 3px;
+    background-color: #f8be00;
+    color: white;
+}

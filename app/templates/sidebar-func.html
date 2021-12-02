@@ -1,0 +1,47 @@
+<link rel="stylesheet" href="{{url_for('static', filename='css/sidebar.css')}}">
+
+<div class="d-flex flex-column flex-shrink-0 bg-white sidebar" id="sidebar">
+  <a href="/" class="link-dark text-decoration-none mx-auto">
+    <img src="{{url_for('static', filename='images/logo.png')}}" alt="">
+  </a>
+  <ul class="nav nav-pills flex-column mt-auto mx-auto">
+    <li class="nav-item">
+      <a href="/painel" class="nav-link link-dark {{painel_active}}" aria-current="page">
+        <i class="fas fa-stream my-auto"></i>
+        Visão Geral
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="/bater-ponto" class="nav-link link-dark {{bater_ponto_active}}" aria-current="page">
+        <i class="fas fa-clock my-auto"></i>
+        Bater Ponto
+      </a>
+    </li>
+
+    <li>
+      <a href="/meus-turnos" class="nav-link link-dark {{turnos_active}}">
+        <i class="far fa-calendar-check my-auto"></i>
+        Meus Turnos
+      </a>
+    </li>
+    <li>
+      <a href="/feriados" class="nav-link link-dark {{feriados_active}}">
+        <i class="far fa-calendar my-auto"></i>
+        Feriados
+      </a>
+    </li>
+    <!-- <li>
+      <a href="#" class="nav-link link-dark {{tarefas_active}}">
+        <i class="fas fa-tasks my-auto"></i>
+        Tarefas
+      </a>
+    </li> -->
+
+  </ul>
+
+  <div class="disclaimer mt-auto">
+    <p class="text-muted">Plataforma Hit The Dot</p>
+    <p class="text-muted">Desenvolvida por:</p>
+    <a href="https://dbsweb.com.br/" class='yellow'>DBS WEB</a>
+  </div>
+</div>

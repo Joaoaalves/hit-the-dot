@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <link rel="shortcut icon" href="{{url_for('static', filename='favicon.ico')}}" type="image/x-icon">
+
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hit the Dot</title>
+
+    {% include 'common-imports.html' %}
+
+    <link rel="stylesheet" href="{{url_for('login.static', filename='css/login.css')}}">
+    <style>
+        .container-recuperacao{
+            font-family: 'Cairo', sans-serif;
+            display: inline-block;
+            background: #FFFFFF;
+            box-shadow: 15px 15px 15px rgba(0, 0, 0, 0.5);
+            border-radius: 14px;
+            height: 400px;
+
+            width: 28.75vw;
+            max-width: 650px;
+            padding: 3%;
+            margin: auto;
+            text-align: center;
+            z-index: 1;
+        }
+    </style>
+    <!-- Custom JS -->
+    <script src="{{url_for('login.static', filename='js/recuperar_senha.js')}}"></script>
+</head>
+
+<body>
+    <button title="Voltar à home" onclick='window.location.href = "/"' class='btn mx-auto bck-btn'><i
+            class="fa fa-arrow-left" aria-hidden="true"></i></button>
+    <div class="container-recuperacao">
+        <a href="/" class="link-dark text-decoration-none ml-3 my-auto">
+            <img src="{{url_for('static', filename='images/logo.png')}}" alt="">
+        </a>
+        <p class="subtitle">Recuperar Senha</p>
+
+        <form method="POST" class="row row-cols-lg-auto g-3 align-items-center my-auto">
+            <input type="hidden" value='{{csrf_token()}}' name='csrf_token'>
+
+            <input type="email" placeholder="Email" name="email" id='email' class="form-control mt-5 mb-3" required>
+
+            <input type="submit" value="Recuperar Senha" class="btn btn-dark form-control" onclick="beforeSubmit()">
+        </form>
+    </div>
+    <svg viewBox="0 0 1920 634" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path
+            d="M954 95.001C526.4 -75.399 140.167 23 0 94L-1 634.088L1920 634.001V94.0006C1775.5 165.001 1381.6 265.401 954 95.001Z"
+            fill="#F8BE00" />
+    </svg>
+</body>
+
+</html>

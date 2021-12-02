@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <link rel="shortcut icon" href="{{url_for('static', filename='favicon.ico')}}" type="image/x-icon">
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Hit the Dot</title>
+
+    {% include 'common-imports.html' %}
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{url_for('painel.static', filename='css/painel.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/progress-circle.css')}}">
+
+    <!-- Custom JS -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+    {% include 'nav-bar.html' %}
+
+    <div class='container'>
+        <div class="col-2">
+            {% include "sidebar-admin.html" %}
+        </div>
+        <div class="col-6 content-container">
+            <div class='painel'>
+                {% include 'table-tarefas.html' %}
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

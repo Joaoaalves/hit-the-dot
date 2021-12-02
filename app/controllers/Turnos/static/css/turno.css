@@ -1,0 +1,169 @@
+.content-container {
+    background-color: #f0f0f0;
+    border-top-left-radius: 14px;
+    height: 95vh;
+    max-height: calc(100vh - 64px);
+}
+
+.painel {
+    height: 100%;
+}
+
+.first_line div {
+    width: 32.5%;
+    height: 75%;
+}
+
+.progress-circle{
+    height: 100%!important;
+}
+
+text.text-inside{
+    font-size: 3vmin!important;
+}
+
+.first_line .container-funcionario{
+    height: 110%;
+    max-height: 350px;
+}
+
+.first_line, .second_line {
+    width: 90%;
+    display: flex;
+    align-items: center;
+    height: 40%;
+    margin-top: 3%;
+    margin-left: 5%;
+}
+
+.container-funcionario{
+    height: 70%;
+}
+.func-label{
+    font-size: 2.5vmin;
+    font-weight: 400;
+    font-family: revert;
+}
+.entrada, 
+.saida, 
+.dia {
+    margin-right: 1.5%;
+    width: 32.5%;
+    height: 70%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.second_line div {
+    height: 90%;
+    min-width: 30%;
+}
+
+.title {
+    font-size: 4vmin;
+    width: 100%;
+}
+
+.subtitle {
+    font-size: 2.5vmin;
+    color: #a1a1a1;
+}
+
+img.profile-image {
+    width: 80px;
+    height: 80px;
+    border-radius: 80px;
+    border: solid 1px lightgray;
+}
+
+.info-turno {
+    width: 60%;
+    max-width: 800px;
+    height: 85vh;
+    max-height: 700px;
+    margin-top: 3%;
+    margin-left: 3%;
+    padding: 5%;
+}
+
+.info-turno, .container-funcionario {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: white;
+    border-radius: 14px;
+}
+
+.contadores {
+    display: flex;
+    margin-top: 50px;
+}
+
+circle {
+    stroke-width: 6%;
+}
+
+.contador-hora{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+}
+.tempo-total.box-shadow *, .horas-extras.box-shadow *{
+    width: 100%;
+}
+
+
+.tempo-total, .horas-extras{
+    padding: 1%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 1.5%;
+}
+
+.tempo-total span, .horas-extras span {
+    font-size: 1.3em;
+}
+
+.horas {
+    margin-right: 25%;
+}
+
+.form-control {
+    width: 200px;
+    height: 40px;
+}
+
+.turno {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.horario {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 250px;
+}
+
+.form-control:disabled, .form-control[readonly] {
+    background-color: white;
+}
+
+.gradient-background {
+    background-image: linear-gradient(135deg, rgba(255, 255, 255, 1) 60%, rgba(211, 211, 211, 0.5) 100%);
+}
+
+circle.progress-ring__circle {
+    stroke-width: 7%;
+}
+
+text.text-inside{
+    font-size: 3.5vmin;
+}
