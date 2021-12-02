@@ -12,7 +12,7 @@ from app.models.database import Database
 rotina_turnos = BackgroundScheduler(daemon=True)
 
 # App
-app = Flask(__name__, instance_path='/home/joao-alves/DBS-HitTheDot-MVP/app/protected/')
+app = Flask(__name__, instance_path='/ABSOLUTE-PATH-TO-FOLDER')
 
 # Firebase Admin Config
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'config/firebase.json'
