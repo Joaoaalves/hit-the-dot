@@ -49,16 +49,26 @@ tr th button {
     font-size: 12px;
 }
 
+.utils-container{
+    height: 95vh;
+    max-height: calc(100vh - 64px);
+
+    margin-left: auto;
+    margin-right: 2%;
+    width: 25%;
+}
+
 .container-filtro {
     display: inline-block;
-    width: 25%;
-    height: 65vh;
+    width: 100%;
+    
+    height: auto;
     max-height: 450px;
-    text-align: center;
-    padding: 2.5%;
 
-    margin: auto;
-    margin-top: 2.5%;
+    text-align: center;
+    padding: 8% 5%;
+
+    margin-top: 10%;
 }
 
 .container-filtro form {
