@@ -32,13 +32,9 @@
         border-radius: 6vh;
     }
     .container-table {
-        width: 65%;
-        max-width: 80vw;
-
+        width: 60vw;
         height: 80vh;
-        
-        margin: 2%;
-        margin-right: 0;
+        padding: 2vw;
     }
     table {
         width: 100%;
@@ -65,20 +61,26 @@
     .utils-container{
         display: flex;
         flex-direction: column;
-        height: 90vh;
-        width: 25%;
+        align-items: center;
 
-        margin: auto;
-        margin-top: 2.5%;
+        height: 95vh;
+        max-height: calc(100vh - 64px);
+        width: 25%;
+        margin: 0px auto;
     }
     .container-filtro {
         display: flex;
         flex-direction: column;
         width: 100%;
-        height: 45vh;
-        max-height: 350px;
+    
+        margin-top: 10%;
+        
+        height: auto;
+        max-height: 300px;
+        min-height: 350px;
+    
         text-align: center;
-        padding: 5%;
+        padding: 8% 5%;
     }
 
     .container-filtro .btn{
@@ -86,9 +88,6 @@
         max-width: 250px;
     }
 
-    .container-filtro, .container-buttons {
-        margin: 2.5%;
-    }
     .container-filtro form {
         position: relative;
         bottom: 0;
@@ -106,17 +105,20 @@
         border-radius: 14px;
     } 
     .container-buttons {
-        display: block;
-        padding: 5%;
-        text-align: center;
-        width: 100%;
         margin-top: auto;
         margin-bottom: 10%;
+        width: 100%;
+        height: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
     }
     .container-buttons a.btn {
-        width: 90%;
-        max-width: 300px;
-        margin: 8px 0;
+        width: 80%;
+        max-width: 200px;
+        margin: 12px 0!important;
         background-color: #f8be00;
         color: white;
         transition: 0.2s;

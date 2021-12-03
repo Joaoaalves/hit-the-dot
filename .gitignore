@@ -134,6 +134,8 @@ htd/
 htd.ini
 htd.sock
 
+run.sh
+
 debug.log
 
 # Media files

@@ -63,16 +63,20 @@ tr th button {
 .container-filtro {
     display: flex;
     flex-direction: column;
-    width: 90%;
+    width: 100%;
 
     margin-top: 10%;
     
-    height: 40%;
+    height: auto;
     max-height: 300px;
-    min-height: 250px;
-
+    
     text-align: center;
-    padding: 5%;
+    padding: 8% 5%;
+}
+
+.container-filtro .btn{
+    width: 60%;
+    max-width: 250px;
 }
 
 .container-filtro form {
@@ -96,18 +100,18 @@ a.btn.btn-warning{
 .container-buttons {
     margin-top: auto;
     margin-bottom: 10%;
-    width: 90%;
-    height: 20%;
+    width: 100%;
+    height: auto;
     display: flex;
     flex-direction: column;
-
+    align-items: center;
+    justify-content: center;
     text-align: center;
-
 }
 .container-buttons a.btn {
-    width: 60%;
+    width: 80%;
     max-width: 90%;
-    margin: auto;
+    margin: 12px 0!important;
     font-size: 1em;
     background-color: #f8be00;
     color: white;
