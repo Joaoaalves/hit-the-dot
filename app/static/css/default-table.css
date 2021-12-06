@@ -1,0 +1,45 @@
+table {
+    font-family: arial, sans-serif;
+    border-collapse: separate;
+    border-spacing: 0 1vh;
+    width: 100%;
+}
+td, th {
+    text-align: center;
+    padding: 8px;
+}
+tr {
+    background-color: white;
+    margin: 1vh 0;
+    height: 40px;
+}
+
+th#func-label {
+    text-align: left;
+}
+
+.container-table {
+    width: 60vw;
+    height: 80vh;
+    padding: 2%;
+}
+table {
+    width: 100%;
+}
+table tr {
+    text-align: center;
+    font-size: 1em;
+}
+tr.content {
+    font-size: 1em;
+}
+tr.content th {
+    padding: 8px 0;
+}
+tr th button {
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    padding: 0 !important;
+    font-size: 12px;
+}
