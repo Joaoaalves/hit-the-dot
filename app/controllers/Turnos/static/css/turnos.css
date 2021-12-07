@@ -3,50 +3,6 @@
     max-width: 80vw;
 
     height: 80vw;
-
-    margin: 2%;
-    margin-right: 0;
-}
-
-table {
-    width: 100%;
-}
-table tr {
-    text-align: center;
-    font-size: 1em;
-}
-table {
-    font-family: arial, sans-serif;
-    border-collapse: separate;
-    border-spacing: 0 1vh;
-    width: 100%;
-    overflow-y: auto;
-}
-td, th {
-    text-align: center;
-    padding: 8px;
-}
-tr {
-    background-color: white;
-    margin: 1vh 0;
-    border-radius: 0px !important;
-}
-th#func-label{
-    text-align: left;
-}
-tr.table-content {
-    font-size: 0.8em;
-    font-weight: 200;
-}
-tr.table-content th {
-    padding: 8px 4px;
-}
-tr th button {
-    width: 30px;
-    height: 30px;
-    text-align: center;
-    padding: 0 !important;
-    font-size: 12px;
 }
 
 .utils-container{
@@ -95,7 +51,6 @@ tr th button {
     max-height: 100%;
     overflow-y: auto;
     background-color: #f0f0f1!important;
-    padding: 8px;
     border-radius: 14px;    
 }
 

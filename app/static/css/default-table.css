@@ -22,6 +22,7 @@ th#func-label {
     width: 60vw;
     height: 80vh;
     padding: 2%;
+    overflow: hidden;
 }
 table {
     width: 100%;

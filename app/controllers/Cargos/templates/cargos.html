@@ -14,6 +14,7 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{url_for('painel.static', filename='css/painel.css')}}">
     <link rel="stylesheet" href="{{url_for('cargos.static', filename='css/cargos.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/default-table.css')}}">
     
 
     <!-- Custom JS -->
@@ -34,9 +35,13 @@
                         {% include 'table-cargos.html' %}
                     </div>
                 </div>
-                <div class="utils box-shadow">
-                    <a class="btn btn-warning form-control mt-auto" href='criar'>Adicionar Cargo</a>
-                    <a class="btn btn-warning form-control mt-3 mb-auto" href='/listar-funcionarios'>Funcionários</a>
+
+                <div class="utils">
+                    <div class="container-buttons box-shadow">
+                        <a class="btn btn-warning form-control mt-auto" href='criar'>Adicionar Cargo</a>
+                        <a class="btn btn-warning form-control mt-3 mb-auto" href='/listar-funcionarios'>Funcionários</a>
+                    </div>
+
                 </div>
             </div>
         </div>

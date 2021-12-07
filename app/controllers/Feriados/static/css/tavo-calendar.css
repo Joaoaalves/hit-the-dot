@@ -122,11 +122,11 @@
     background-color: #f8be00;
     color: white; }
   .tavo-calendar__day_select span {
-    background-color: unset; }
-  .tavo-calendar__day_select span {
+    background-color: unset;
     background-color: #f8be00;
     border-radius: 32px;
-    }
+    color: white;
+  }
   .tavo-calendar__day_select day:hover {
     background-color: #f8be00; }
   .tavo-calendar__day_range-select {

@@ -1,0 +1,31 @@
+{% if all_ferias %}
+<table>
+    <thead>
+        <tr class="box-shadow">
+            <td>Inicio</td>
+            <td>Fim</td>
+            <td>Funcionários</td>
+            <td>Ações</td>
+        </tr>
+    </thead>
+    <tbody>
+        {% for ferias in all_ferias %}
+        <tr class="box-shadow">
+            <td>{{ferias.formated_inicio()}}</td>
+            <td>{{ferias.formated_fim()}}</td>
+            <td>{{ferias.get_total_funcs()}}</td>
+            <td>
+                <button class="btn btn-success" onclick="window.location.href='/ferias/{{ferias.id}}';">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn btn-warning" onclick="window.location.href='/ferias/editar/{{ferias.id}}'">
+                    <i class="fas fa-pencil-alt"></i>
+                </button>
+                <button title="Excluir" class="btn-danger btn"
+                onclick="excluirFerias({{ferias.id}}, '{{csrf_token()}}')"><i class="fas fa-times"></i></button>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}

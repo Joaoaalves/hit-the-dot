@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,12 +10,16 @@
     {% include 'common-imports.html' %}
 
     <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{url_for('painel.static', filename='css/painel.css')}}">
     <link rel="stylesheet" href="{{url_for('ferias.static', filename='css/ferias.css')}}">
-    
+    <link rel="stylesheet" href="{{url_for('static', filename='css/default-table.css')}}">
+
     <!-- Custom JS -->
     <script src="{{url_for('ferias.static', filename='js/excluir-ferias.js')}}"></script>
+    <script src="{{url_for('ferias.static', filename='js/ferias.js')}}"></script>
 
 </head>
+
 <body>
     {% include 'nav-bar.html' %}
 
@@ -23,12 +28,54 @@
             {% include "sidebar-admin.html" %}
         </div>
         <div class="col-6 content-container">
-            <div class='table-ferias'>
-                {% include 'table-ferias.html' %}
-            </div>
+            <section class="funcionarios">
+                <table>
+                    <thead>
+                        <tr class="box-shadow">
+                            <td></td>
+                            <td>Funcionario</td>
+                            <td>Ações</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for funcionario in funcionarios %}
+                        <tr class="box-shadow">
+                            <td>                
+                                <div class="my-auto">
+                                    <img class="img-funcionario" src="{{url_for('protected.protected_file', filename=funcionario.id|string + '/profile.jpg')}}" alt="" srcset="">
+                                </div>
+                            </td>
+                            <td>{{funcionario.name}}</td>
+                            <td>
+                                <button class="btn btn-danger" title="Remover Funcionário destas Férias" onclick="removerUsuarioFerias({{funcionario.id}}, '{{csrf_token()}}')">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </section>
+            <section class="info-ferias">
+                <div class="inicio-ferias box-shadow">
+                    <h2 class='subtitle'>Inicio</h2>
+                    <h4 class="date">{{ferias.formated_inicio()}}</h4>
+                </div>
+                <div class="fim-ferias box-shadow">
+                    <h2 class="subtitle">Fim</h2>
+                    <h4 class="date">{{ferias.formated_fim()}}</h4>
+                </div>
+
+                <div class="container-buttons box-shadow">
+                    <a class="btn btn-warning" href="/ferias">Listar Férias</a>
+                    <a class="btn btn-warning" href="/ferias/editar/{{ferias.id}}">Editar</a>
+                    <button onclick="excluirFerias({{ferias.id}}, '{{csrf_token()}}')" class="btn btn-danger">Excluir</button>
+                </div>
+            </section>
         </div>
     </div>
 
-    
+
 </body>
+
 </html>
