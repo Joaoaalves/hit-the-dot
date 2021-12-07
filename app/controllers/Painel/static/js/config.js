@@ -8,6 +8,8 @@ function add_filters(){
         window.location.href = '?range=' + month;
     }
 }
+
+
 $('input[name="daterange"]').on('apply.daterangepicker',function(ev, picker){
     add_filters();
 });
