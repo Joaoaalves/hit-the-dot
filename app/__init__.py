@@ -12,7 +12,7 @@ from app.models.database import Database
 rotina_turnos = BackgroundScheduler(daemon=True)
 
 # App
-app = Flask(__name__, instance_path='/home/joao-alves/DBS-HitTheDot-MVP/app/protected/')
+app = Flask(__name__, instance_path='/home/admin/hit-the-dot/app/protected/')
 
 # Firebase Admin Config
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'config/firebase.json'
@@ -63,7 +63,7 @@ def create_app():
     # from app.rotinas import contabiliza_turnos_mes
     
     # Scheduler Diária Turno para fechar turnos abertos
-    rotina_turnos.add_job(check_turnos, 'cron', hour=12, minute=33)
+    rotina_turnos.add_job(check_turnos, 'cron', hour=23, minute=59)
     
     # Scheduler Turno Semanal para contabilizar horas totais da semana
     # SATURDAY=5
