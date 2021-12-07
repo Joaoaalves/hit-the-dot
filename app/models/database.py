@@ -6,6 +6,8 @@ import firebase_admin
 from datetime import date, datetime, timedelta
 import os
 import subprocess
+from app.models.ferias import Ferias
+import random
 
 from app.models.relatorio import Relatorio
 
@@ -388,3 +390,55 @@ class Database():
         
         for result in query:
             f = result.to_dict()
+            
+    def create_ferias(self, data):
+        
+        ids = self.get_all_rows_from_firestore('Ferias', 'id')
+        while(True):
+            new_id = random.randint(1, 1000000)  
+            if new_id not in ids:
+                break
+            
+        data['id'] = new_id
+        ferias = Ferias(data)
+        
+        self.add_data_on_firestore('Ferias', ferias.to_json())
+        
+    def get_ferias(self, ferias_id):
+        stream = self.firestore.collection('Ferias').where(
+            'id', '==', ferias_id
+        ).stream()
+        
+        for f in stream:
+            return Ferias(f.to_dict())
+        
+        return None
+    
+    def get_ferias_user(self, user_id):
+    
+        stream = self.firestore.collection('Ferias').where(
+            'funcionarios', 'array_contains', user_id).stream()
+        
+        ferias_user = list()
+        
+        for f in stream:
+            ferias = Ferias(f.to_dict())
+            ferias_user.append(ferias) 
+            
+        if len(ferias_user):
+            return ferias_user
+        
+        return None
+       
+    def get_all_ferias(self):
+        
+        query = self.firestore.collection('Ferias').stream()
+        all_ferias = list()
+        for result in query:
+            ferias = Ferias(result.to_dict())
+            all_ferias.append(ferias)
+            
+        if len(all_ferias):
+            return all_ferias
+            
+        return None

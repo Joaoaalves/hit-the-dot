@@ -1,6 +1,11 @@
-
 .content-container{
     display: flex;
+}
+
+.table-ferias{
+    width: 60vw;
+    height: 80vh;
+    padding: 2vw;
 }
 
 .utils-container{
@@ -13,45 +18,27 @@
     min-height: 90vh;
     max-height: calc(100vh - 64px);
 }
-
-.container-filtro {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-
+.container-filtro{
     margin-top: 10%;
-    
-    height: auto;
-    max-height: 300px;
-    
+    padding: 5%;
     text-align: center;
-    padding: 8% 5%;
 }
-
-.container-filtro .btn{
-    width: 60%;
-    max-width: 250px;
-}
-
-.container-filtro form {
-    position: relative;
-    bottom: 0;
+.container-filtro form{
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 100%;
+
 }
-.container-filtro form input, .container-filtro form select {
-    margin: 5px 0;
-}
-input.btn-dark.btn.form-control,
-a.btn.btn-warning{
-    width: 60%;
-    color: white;
+form input{
+    margin-bottom: 10%;
 }
 
-.container-buttons {
+form .btn{
+    width: 60%;
+    margin-bottom: 2%;
+}
+.container-buttons{
     margin-top: auto;
     margin-bottom: 10%;
     width: 100%;
@@ -61,7 +48,9 @@ a.btn.btn-warning{
     align-items: center;
     justify-content: center;
     text-align: center;
+    padding: 5% 0;
 }
+
 .container-buttons a.btn {
     width: 80%;
     max-width: 90%;

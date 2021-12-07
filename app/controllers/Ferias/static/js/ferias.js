@@ -1,15 +1,15 @@
-function excluirFerias(ferias_id, csrf_token){
+function removerUsuarioFerias(func_id, csrf_token){
     if(confirm("Deseja realmente excluir as férias?")){
         
         // Request Delete
         rqst = $.ajax({
-            url : '/ferias/excluir',
+            url : window.location.pathname + '/remover-funcionario',
             method : 'delete',
             beforeSend: function(request) {
                 request.setRequestHeader("X-CSRFToken", csrf_token);
             },
             data : {
-                id : ferias_id
+                id : func_id
             },
             error: function (request, status, error) {
                 alert(request.responseText);
@@ -18,7 +18,7 @@ function excluirFerias(ferias_id, csrf_token){
         
         // Request done
         rqst.done(function(){   
-            window.location='/ferias';
+            location.reload();
         });
 
     }

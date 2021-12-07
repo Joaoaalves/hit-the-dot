@@ -38,9 +38,8 @@ def turnos():
 
                 except:
                     pass
-
-            else:
-                return render_template('turnos.html', turnos=turnos, turnos_active='active',
+            
+            return render_template('turnos.html', turnos=turnos, turnos_active='active',
                                                     funcionarios=funcionarios, dict_func_ids=dict_func_ids,
                                                     user=user)
 
