@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Férias</title>
+
+    {% include 'common-imports.html' %}
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{url_for('painel.static', filename='css/painel.css')}}">
+    <link rel="stylesheet" href="{{url_for('ferias.static', filename='css/listar-ferias.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/default-table.css')}}">
+
+    <!-- Custom JS -->
+    <script src="{{url_for('ferias.static', filename='js/excluir-ferias.js')}}"></script>
+
+</head>
+
+<body>
+    {% include 'nav-bar.html' %}
+
+    <div class='container'>
+        <div class="col-2">
+            {% include "sidebar-admin.html" %}
+        </div>
+        <div class="col-6 content-container">
+            <div class='table-ferias'>
+                {% include 'table-ferias.html' %}
+            </div>
+            <div class="utils-container">
+                <div class="container-filtro box-shadow">
+                    <h2>Filtro</h2>
+                    <form method='get'>
+                        <label for="mes" class="form-label">Mês</label>
+                        <input type="month" name="mes" class="form-control">
+
+                        <input type="submit" class="btn btn-dark" value="Filtrar">
+                        <a href="/ferias" class="btn btn-warning">Limpar Filtro</a>
+                    </form>
+                </div>
+                <div class="container-buttons box-shadow">
+                    <a class="btn btn-warning" href="/ferias/adicionar">
+                        Criar Férias
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+
+</html>

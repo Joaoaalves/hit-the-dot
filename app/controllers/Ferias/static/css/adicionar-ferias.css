@@ -1,0 +1,49 @@
+.col-6.content-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.main-content{
+    width: 80%;
+    max-width: 900px;
+    padding: 5%;
+    padding-top: 2%;
+    height: auto;
+    max-height: 550px;
+}
+
+.row{
+    width: 100%;
+    margin-bottom: 5%;
+}
+
+form{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.flex{
+    width: 50%;
+}
+
+div.flex{
+    margin-top: 5%;
+}
+
+input.btn.btn-warning,
+a.btn.btn-dark{
+    height: 32px;
+    width: 40%;
+    margin: 5%;
+    color: white;
+    transition: all ease-in-out 0.2s;
+}
+
+input.btn.btn-warning:hover,
+a.btn.btn-dark{
+    transform: scale(1.05);
+}
+
