@@ -169,7 +169,7 @@
         {% else %}
         var config = [[{{ percentage }}, '#E328AF', 'rgba(227,40,175,0.1)'] , [{{ percentage_extras }}, '#1CBBFF', 'rgba(28,187,255,0.1)']];
         {% endif %}
-        setProgressCircles(config);
+        
 
         var unordered = { 'Segunda': 5, 'Terça': 2, 'Quarta': 6, 'Quinta': 3, 'Sexta': 7 };
 
@@ -181,7 +181,7 @@
             week_hours[d] = unordered[d];
         })
 
-        minDate = '01/10/2021';
+        minDate = '01/12/2021';
         maxDate = new Date().toLocaleString('pt-BR');
 
         $(function () {
@@ -205,6 +205,8 @@
                 }
             });
         });
+
+        setProgressCircles(config);
     </script>
 
     <!-- Generate the charts -->
