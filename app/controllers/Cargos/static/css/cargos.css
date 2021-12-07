@@ -1,25 +1,4 @@
-::-webkit-scrollbar {
-    width: 9px;
-    height: 9px;
-}
-
-::-webkit-scrollbar-thumb {
-    background: #f8be00;
-    border-radius: 30px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: #F0B800;
-}
-
-::-webkit-scrollbar-track {
-    background: #F0F0F0;
-    border-radius: 0px;
-    box-shadow: inset 0px 0.6px 4px 0px #C2C2C2;
-}
-
 div.painel {
-    padding: 3vh 2vw;
     text-align: center;
     height: 90vh;
     overflow-y: scroll;
@@ -74,51 +53,34 @@ li.ms-hover{
 
 .utils {
     width: 25%;
-    height: 30vh;
-    max-height: 300px;
+    margin: 0 auto;
+    height: 95vh;
+    max-height: calc(100vh - 64px);
+
     display: flex;
     flex-direction: column;
     align-content: center;
-    align-items: center;
-    padding: 3%;
+    align-items: center;  
+     
 }
 
-table {
-    font-family: arial, sans-serif;
-    border-collapse: separate;
-    border-spacing: 0 1vh;
+.container-buttons{
+    display: flex;
+    flex-direction: column;
     width: 100%;
-}
-td, th {
+    margin-top: 10%;
+    height: auto;
+    max-height: 300px;
     text-align: center;
-    padding: 8px;
-}
-tr {
-    background-color: white;
-    margin: 1vh 0;
-    border-radius: 0px !important;
-}
-th#func-label {
-    text-align: left;
-}
-table {
-    width: 100%;
+    padding: 8% 5%;
 }
 
-table tr {
-    text-align: center;
-    font-size: 1em;
+
+a.btn.btn-warning{
+    color: white;
+    transition: all ease-in-out 0.2s;
 }
-tr.content {
-    font-size: 0.8em;
-}
-tr.content th {
-    padding: 8px 0;
-}
-tr th button {
-    width: 30px;
-    height: 30px;
-    text-align: center;
-    padding: 0 !important;
-    font-size: 12px;
+
+a.btn.btn-warning:hover{
+    transform: scale(1.05);
 }

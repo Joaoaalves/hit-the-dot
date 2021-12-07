@@ -1,0 +1,56 @@
+.content-container{
+    display: flex;
+}
+
+.funcionarios{
+    width: 60vw;
+    padding: 2vw;
+}
+
+.info-ferias{
+    width: 25%;
+    margin: 0 auto;
+    
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+}
+
+.inicio-ferias,
+.fim-ferias{
+    width: 100%;
+    margin-top: 10%;
+    padding: 10% 5%;
+    text-align: center;
+
+}
+
+.subtitle{
+    font-weight: 800!important;
+    font-size: 1.5em;
+    color: black!important;
+}
+
+.container-buttons{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    width: 100%;
+    height: auto;
+    margin-top: auto;
+    margin-bottom: 10%;
+}
+
+.container-buttons * {
+    width: 80%;
+    margin: 2% 0;
+    color: white;
+    transition: all ease-in-out 0.2s;
+}
+
+.container-buttons *:hover{
+    transform: scale(1.05);
+    color: white;
+}

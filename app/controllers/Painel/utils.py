@@ -11,17 +11,14 @@ def render_painel_func(funcionario, start_date, end_date):
     
     dias_uteis = dias_uteis_timedelta(start_date, end_date)
     
-    percentage = ('%.1f' % ((horas_trabalhadas * 100) / horas_totais_mes) 
-                  if horas_trabalhadas < horas_totais_mes and horas_totais_mes > 0
-                  else 100)
+    percentage = get_percentage_work(horas_trabalhadas, horas_totais_mes)
     
-    horas_extras_maximas = dias_uteis * 2
+    
     if horas_trabalhadas > horas_totais_mes:
         horas_extras = horas_trabalhadas - horas_totais_mes
         horas_trabalhadas = horas_trabalhadas - horas_extras
-        percentage_extras = ('%.1f' %((horas_extras * 100) / horas_extras_maximas)
-                            if horas_extras_maximas > 0
-                            else 0)
+        horas_extras_maximas = dias_uteis * 2
+        percentage_extras = get_percentage_work(horas_extras, horas_extras_maximas)
         horas_devendo = 0
     else:
         horas_devendo = horas_totais_mes - horas_trabalhadas
@@ -57,6 +54,7 @@ def render_painel_func(funcionario, start_date, end_date):
                                             media_horas=media_horas,
                                             dias_trabalhados=dias_trabalhados,
                                             horas_devendo=horas_devendo)
+
     
 def render_filtered_painel_admin(user, start_date, end_date, func_id):
     funcionario = db.get_funcionario(func_id)
@@ -70,17 +68,15 @@ def render_filtered_painel_admin(user, start_date, end_date, func_id):
     
     horas_trabalhadas = get_total_time(funcionario=funcionario)
     
-    percentage = ('%.1f' % ((horas_trabalhadas * 100) / horas_totais)
-                  if horas_trabalhadas < horas_totais and horas_totais > 0
-                  else 100)
+    percentage = get_percentage_work(horas_trabalhadas, horas_totais)
     
     horas_extras_maximas = dias_uteis * 2
+    
+    
     if horas_trabalhadas > horas_totais:
         horas_extras = horas_trabalhadas - horas_totais
         horas_trabalhadas = horas_trabalhadas - horas_extras
-        percentage_extras = ('%.1f' %((horas_extras * 100) / horas_extras_maximas)
-                            if horas_extras_maximas > 0
-                            else 0)
+        percentage_extras = get_percentage_work(horas_extras, horas_extras_maximas)
         horas_devendo = 0
         
     else:
@@ -124,24 +120,18 @@ def render_painel_admin(user, start_date, end_date):
         horas_totais_mes = horas_totais(start_date, end_date, funcionarios=funcionarios)
 
         horas_trabalhadas = get_total_time(funcionarios=funcionarios)
-        
 
-        percentage = ('%.1f' % ((horas_trabalhadas * 100) / horas_totais_mes) 
-                    if horas_trabalhadas < horas_totais_mes and horas_totais_mes > 0
-                    else 100)
+        percentage = get_percentage_work(horas_trabalhadas, horas_totais_mes)
         
         if horas_trabalhadas > horas_totais_mes:
             horas_extras = horas_trabalhadas - horas_totais_mes
             horas_extras_maximas = 40
             
-            percentage_extras = ('%.1f' %((horas_extras * 100) / horas_extras_maximas)
-                                if horas_extras_maximas > 0
-                                else 0)
+            percentage_extras = get_percentage_work(horas_extras, horas_extras_maximas)
         else:
             horas_extras = 0
             percentage_extras = 0
             
-        # week_work = get_week_work(funcionarios)
         
         month_work = get_total_work(funcionarios)
 
@@ -276,6 +266,11 @@ def get_start_date(start_date, inicio_trabalho):
     return (start_date if start_date > inicio_trabalho
                               else inicio_trabalho)
     
+def get_percentage_work(horas_trabalhadas, horas_totais):
+    return ('%.1f' % ((horas_trabalhadas * 100) / horas_totais)
+                  if horas_trabalhadas < horas_totais and horas_totais > 0
+                  else 100)
+    
 def calcula_assiduidade(funcionario, start_date, end_date):
     if not 'turnos' in vars(funcionario):
         return 0
@@ -287,6 +282,7 @@ def calcula_assiduidade(funcionario, start_date, end_date):
     dias_uteis = dias_uteis_timedelta(current_start_date, end_date)
     
     feriados = db.get_feriados()
+    ferias_user = db.get_ferias_user(funcionario.id)
     
     for i in range( (end_date - current_start_date).days + 1 ):
     
@@ -294,10 +290,19 @@ def calcula_assiduidade(funcionario, start_date, end_date):
 
         date_string = f"{'%.2d' % c_date.day}/{'%.2d' % c_date.month}/{c_date.year}"
         if cal.is_working_day(c_date) and date_string not in feriados:
-            if funcionario.worked_this_date(c_date):
-                trabalhou += 1
+            if ferias_user:
+                for f in ferias_user:
+                    if f.is_working_day(c_date.timestamp()):
+                        if funcionario.worked_this_date(c_date):
+                            trabalhou += 1
+                        else:
+                            faltas += 1
             else:
-                faltas += 1
+                if funcionario.worked_this_date(c_date):
+                    trabalhou += 1
+                    
+                else:
+                    faltas += 1
 
     return ((trabalhou * 100 / dias_uteis)
             if dias_uteis > 0

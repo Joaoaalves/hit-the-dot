@@ -11,7 +11,7 @@
 
     {% include 'common-imports.html' %}
     <link rel="stylesheet" href="{{url_for('admin.static', filename='css/listar_funcionarios.css')}}">
-
+    <link rel="stylesheet" href="{{url_for('static', filename='css/default-table.css')}}">
 
     <link rel="stylesheet" href="{{url_for('painel.static', filename='css/painel.css')}}">
 
@@ -38,9 +38,9 @@
 
                 <div class="utils-container">
                     <div class="align-items-center container-filtro box-shadow">
-                        <h4 class="mx-auto mb-0">Filtro</h4>
+                        <h4 class="mx-auto mb-5">Filtro</h4>
                         <form method="get" class="my-auto">
-                            <label for="cargo" class="mt-2">Cargo</label>
+                            <label for="cargo">Cargo</label>
                             <select name="cargo" id="cargo-select" class="form-control">
                                 <option disabled="disabled" selected hidden>Selecione um Cargo</option>
                                 {% for cargo in cargos %}
@@ -49,16 +49,14 @@
                             </select>
                             <br>
                             <input type="submit" value="Buscar" class="btn-dark btn">
-                            <br>
+
                             <a href="/listar-funcionarios" class="btn btn-warning mt-3">Limpar Filtro</a>
                         </form>
                     </div>
 
                     <div class="align-items-center container-buttons box-shadow">
                         <a class="btn" href="/registrar">Registrar Funcionário</a>
-                        <br>
-                        <a class="btn" href="/cargos">Cargos Adicionados</a>
-                        <br>
+                        <a class="btn" href="/cargos">Cargos Adicionados</a> 
                         <a class="btn" href="/cargos/criar">Adicionar Cargo</a>
                     </div>
                 </div>

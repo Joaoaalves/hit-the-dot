@@ -13,6 +13,7 @@
     <!-- custom css -->
     <link rel="stylesheet" href="{{url_for('painel.static', filename='css/painel.css')}}">
     <link rel="stylesheet" href="{{url_for('feriado.static', filename='css/feriados.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/default-table.css')}}">
 
 </head>
 
@@ -34,14 +35,14 @@
 
         <div class="utils-container">
             <div class="align-items-center container-filtro box-shadow">
-                <h4 class="mx-auto">Filtro</h4>
-                <form method="get" class="my-auto">
+                <h4 class="mx-auto ">Filtro</h4>
+                <form method="get" class="mt-3">
                     <label for="month" class="form-label">Mês</label>
                     <input type="month" name='month' id="month" class="form-control">
                     <br>
-                    <input type="submit" value="Buscar" class="btn-dark btn form-control">
-
-                    <a href="/feriados" class="btn btn-warning">Limpar Filtro</a>
+                    
+                    <input type="submit" value="Buscar" class="btn-dark btn form-control mt-3">
+                    <a href="/feriados" class="btn btn-warning mb-3">Limpar Filtro</a>   
                 </form>
             </div>
             {% if is_admin(user) %}

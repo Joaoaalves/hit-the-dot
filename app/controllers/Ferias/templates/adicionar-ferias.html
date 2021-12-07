@@ -1,6 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
+
 <head>
+    <link rel="shortcut icon" href="{{url_for('static', filename='favicon.ico')}}" type="image/x-icon">
+
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,9 +12,15 @@
     {% include 'common-imports.html' %}
 
     <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{url_for('painel.static', filename='css/painel.css')}}">
     <link rel="stylesheet" href="{{url_for('ferias.static', filename='css/adicionar-ferias.css')}}">
+    <link rel="stylesheet" href="{{url_for('cargos.static', filename='css/multi-select.css')}}">
+
+    <!-- Custom JS -->
+    <script src="{{url_for('cargos.static', filename='js/multi-select.js')}}"></script>
 
 </head>
+
 <body>
     {% include 'nav-bar.html' %}
 
@@ -20,11 +29,53 @@
             {% include "sidebar-admin.html" %}
         </div>
         <div class="col-6 content-container">
-            <div class='painel'>
+            
+            <div class="box-shadow main-content my-auto" style='text-align: center;'>
+                <h1 class="mb-3">Adicionar Férias</h1>
+                <form method='POST'>
+                    <input type="hidden" name="csrf_token" value='{{csrf_token()}}'>
+
+                    <div class="row">
+                        <div class="col">
+                            <label for="inicio" class="form-label">Data de Inicio</label>
+                            <input type="date" name='inicio' class="form-control">
+                        </div>
+                        
+                        <div class="col">
+                            <label for="fim" class="form-label">Fim das Férias</label>
+                            <input type="date" name='fim' class="form-control">
+                        </div>
+                    </div>
+
+                    <div style="padding: 0 20%; text-align: center;">
+                        <label for="funcionarios" class="mb-1">Funcionarios nestas Férias</label>
+                        <select multiple="multiple" id="funcionarios" name="funcionarios">
+                            {% for funcionario in funcionarios %}
+                            <option value="{{funcionario.id}}">{{funcionario.name}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="flex">
+                            <input type="submit" value="Criar" class="btn btn-warning">
+                        
+                            <a href="/ferias" class="btn btn-dark">Voltar</a>
+                    </div>
+                </form>
             </div>
+
         </div>
     </div>
 
 
 </body>
+<footer>
+    <script>
+        $('#funcionarios').multiSelect({
+            selectableHeader : "<div class='custom-header'>Normal</div>",
+            selectionHeader  : "<div class='custom-header'>De férias</div>"}
+        );
+    </script>
+</footer>
+
 </html>

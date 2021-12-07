@@ -2,7 +2,7 @@ from numpy import half
 from app import db, app
 from datetime import datetime, timedelta
 from workalendar.america import BrazilDistritoFederal
-#from uwsgidecorators import *
+# from uwsgidecorators import *
 
 def finaliza_turno(funcionario, turno):
     
@@ -24,7 +24,7 @@ def finaliza_turno(funcionario, turno):
     
     db.update_info('Turnos', turno.to_json(), query_arr=[['dia', turno.dia], ['user_id', funcionario.id]])
 
-#@cron(25, 12, -1,-1,-1)
+# @cron(0, 0, -1,-1,-1)
 def check_turnos():
     now = datetime.now()
     if BrazilDistritoFederal().is_working_day(day=now):
