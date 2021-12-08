@@ -12,12 +12,12 @@
         <tr class="box-shadow">
             <th class="imagem-funcionario">
                 <div class="my-auto">
-                    <img class="img-funcionario" src="{{url_for('protected.protected_file', filename=funcionario.id|string + '/profile.jpg')}}" alt="" srcset="">
+                    <img class="img-funcionario" width='64' height='64' src="{{url_for('protected.protected_file', filename=funcionario.id|string + '/profile.jpg')}}" alt="" srcset="">
                 </div>
             </th>
             <th>
                 <div class="funcionario">
-                    <div class="info-funcionario my-auto"> 
+                    <div class="info-funcionario my-auto" style="text-align: left;"> 
                         <span>{{funcionario.name}}</span>
                         <br>
                         <span class="text-secondary">{{get_cargo_nome(cargos, funcionario.cargo)}}</span>

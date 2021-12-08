@@ -10,7 +10,7 @@ def protected_file(filename):
     # 
     try:
         return flask.send_from_directory(
-                        os.path.join(app.instance_path, ''), filename)
+             os.path.join(app.instance_path, ''), filename)
 
     except Exception as e:
         print(e)
