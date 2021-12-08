@@ -3,7 +3,7 @@ import logging
 from flask_ipban import IpBan
 from flask_mail import Mail
 from flask_wtf import CSRFProtect
-import os
+import os, sys
 from apscheduler.schedulers.background import BackgroundScheduler
 
 from app.models.database import Database
@@ -12,7 +12,12 @@ from app.models.database import Database
 rotina_turnos = BackgroundScheduler(daemon=True)
 
 # App
-app = Flask(__name__, instance_path='/ABSOLUTE-PATH-TO-FOLDER')
+if not 'instance_path' in os.environ:
+    print('Adicione o instance_path nas variáveis de ambiente')
+    sys.exit()
+
+instance_path = os.environ['instance_path']
+app = Flask(__name__, instance_path=instance_path)
 
 # Firebase Admin Config
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'config/firebase.json'

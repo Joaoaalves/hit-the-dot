@@ -10,6 +10,7 @@ bater_ponto = Blueprint('bater_ponto', __name__,
 
 
 @bater_ponto.route("/", methods=['GET', 'POST'])
+@funcionario_required
 def baterponto():
     
     user = get_user_object(session['user'])

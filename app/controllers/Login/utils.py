@@ -149,7 +149,7 @@ def get_secure_file(filename, type):
         return None
     
 def save_profile_image(image, user_id):
-    os.makedirs(" app/protected/" + str(user_id), exist_ok=True)
+    os.makedirs("app/protected/" + str(user_id), exist_ok=True)
     image.save(os.path.join(app.config['PROFILE_UPLOAD_FOLDER'] + str(user_id),  "profile.jpg"))
 
 
