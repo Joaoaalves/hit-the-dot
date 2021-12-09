@@ -210,21 +210,22 @@ def dias_uteis_timedelta(start_date, end_date):
     return dias_totais
 
 def get_total_time(funcionarios=None, funcionario=None):
-    
-    total_time = timedelta(seconds=0)
+    total_time = 0
     
     if funcionarios:
         for f in funcionarios:
             for t in f.turnos:
                 tturno = t._horas_totais
                 
-                total_time += timedelta(hours=tturno.hour, minutes=tturno.minute, seconds=tturno.second)
+                total_time += timedelta(hours=tturno.hour, minutes=tturno.minute, seconds=tturno.second).seconds
+                
     else:  
         for t in funcionario.turnos:
             tturno = t._horas_totais
-            total_time += timedelta(hours=tturno.hour, minutes=tturno.minute, seconds=tturno.second)
+            total_time += timedelta(hours=tturno.hour, minutes=tturno.minute, seconds=tturno.second).seconds
             
-    return total_time.seconds // 3600
+
+    return total_time // 3600
 
 
 def get_total_work(funcionarios=None, funcionario=None):
