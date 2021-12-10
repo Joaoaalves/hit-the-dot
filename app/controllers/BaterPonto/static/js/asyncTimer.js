@@ -1,13 +1,12 @@
-MAX = 100;
+MAX_PERCENTAGE = 100;
 SECOND = 1000;
-MIN_IN_SEC = 3600;
 function startTimer(turno, inicio_turno) {
 
     var now = new Date();
     var start = getDate(inicio_turno);
 
     var progress = parseInt((now.getTime() - start.getTime()) / SECOND);
-    var time_in_seconds = (turno * MIN_IN_SEC);
+    var time_in_seconds = turno
     
     var percentage = 0;
 
@@ -32,7 +31,7 @@ function startTimer(turno, inicio_turno) {
     }
     else{
         document.getElementById('remaining-time').textContent = 'Finalizado!';
-        setProgressCircle([[MAX, '#f8be00', 'rgba(0, 0, 0, 0.1)']]);
+        setProgressCircle([[MAX_PERCENTAGE, '#f8be00', 'rgba(0, 0, 0, 0.1)']]);
     }
 
 }

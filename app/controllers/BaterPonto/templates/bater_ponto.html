@@ -129,7 +129,13 @@
     <script>
         // Seta o timestamp do inicio do turno
         // Para calcular o tempo total no front-end
-        startTimer({{ turno_funcionario }}, '{{turno.hora_entrada}}');
+        total = {{user.turno * 3600}};
+        {% if turno.almocou %}
+        inicio_almoco = new Date('1 {{turno.inicio_almoco}}');
+        fim_almoco = new Date('1 {{turno.fim_almoco}}');
+        total += (fim_almoco.getTime() - inicio_almoco.getTime()) / 1000 
+        {% endif %}
+        startTimer(total, '{{turno.hora_entrada}}')
     </script>
     {% else %}
     <script>
