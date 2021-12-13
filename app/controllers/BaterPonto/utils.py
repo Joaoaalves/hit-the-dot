@@ -23,5 +23,5 @@ def get_current_shift_time(turno):
     correct_date = datetime(day=now.day, month=now.month, year=now.year, 
                             hour=inicio_turno.hour, minute=inicio_turno.minute, 
                             second=inicio_turno.second)
-    
-    return int((now - correct_date).total_seconds()) 
+
+    return int((now - correct_date).total_seconds() - turno.get_tempo_almoco().seconds) if turno.almocou and 'fim_almoco' in vars(turno) else int((now - correct_date).total_seconds()) 
