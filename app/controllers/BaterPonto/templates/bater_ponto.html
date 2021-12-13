@@ -129,7 +129,7 @@
     <script>
         // Seta o timestamp do inicio do turno
         // Para calcular o tempo total no front-end
-        startTimer({{ turno_funcionario }}, '{{turno.hora_entrada}}');
+        startTimer({{ current_shift_time }}, {{user.turno}});
     </script>
     {% else %}
     <script>
@@ -138,7 +138,7 @@
 
         var [hours, minutes, seconds] = trabalho.split(':');
         trabalho_total = (parseInt(hours) * 3600) + (parseInt(minutes) * 60) + (parseInt(seconds));
-        turno_total = {{ turno_funcionario }} * 3600;
+        turno_total = {{ user.turno }} * 3600;
         percentage = (trabalho_total * 100 / turno_total).toFixed(1);
 
         // var [h_extras, min_extras, sec_extras] = hora_extra.split(':');

@@ -1,12 +1,8 @@
 MAX = 100;
 SECOND = 1000;
 MIN_IN_SEC = 3600;
-function startTimer(turno, inicio_turno) {
+function startTimer(progress, turno) {
 
-    var now = new Date();
-    var start = getDate(inicio_turno);
-
-    var progress = parseInt((now.getTime() - start.getTime()) / SECOND);
     var time_in_seconds = (turno * MIN_IN_SEC);
     
     var percentage = 0;
@@ -14,8 +10,7 @@ function startTimer(turno, inicio_turno) {
     if(progress <= time_in_seconds){
         var loop = setInterval(
             function(){
-                remaining_time = time_in_seconds - progress;
-                setTimer(parseInt(remaining_time));
+                setTimer(parseInt(progress));
     
                 percentage = parseInt(progress * 100 / time_in_seconds);
                 config = [[percentage, 'rgba(25, 250, 204, 1)', 'rgba(25, 250, 204, 0.2)']]
@@ -37,9 +32,9 @@ function startTimer(turno, inicio_turno) {
 
 }
 
-function setTimer(remaining_seconds){
+function setTimer(progress){
     var label = document.getElementById('remaining-time');
-    label.textContent = new Date(remaining_seconds * 1000).toISOString().substr(11, 8);
+    label.textContent = new Date(progress * 1000).toISOString().substr(11, 8);
 }
 
 function getDate(time){
