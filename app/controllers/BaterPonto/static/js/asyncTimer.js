@@ -1,10 +1,10 @@
-MAX = 100;
+MAX_PERCENTAGE = 100;
 SECOND = 1000;
 MIN_IN_SEC = 3600;
 function startTimer(progress, turno) {
 
     var time_in_seconds = (turno * MIN_IN_SEC);
-    
+
     var percentage = 0;
 
     if(progress <= time_in_seconds){
@@ -27,7 +27,7 @@ function startTimer(progress, turno) {
     }
     else{
         document.getElementById('remaining-time').textContent = 'Finalizado!';
-        setProgressCircle([[MAX, '#f8be00', 'rgba(0, 0, 0, 0.1)']]);
+        setProgressCircle([[MAX_PERCENTAGE, '#f8be00', 'rgba(0, 0, 0, 0.1)']]);
     }
 
 }
