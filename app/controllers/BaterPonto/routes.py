@@ -23,9 +23,9 @@ def baterponto():
     if request.method == 'GET':
         
         if turno:
-            print(vars(turno))
+            current_shift_time = get_current_shift_time(turno)
             return render_template('bater_ponto.html', 
-                                                        turno_funcionario=user.turno,
+                                                        current_shift_time=current_shift_time,
                                                         turno=turno,
                                                         user=user,
                                                         bater_ponto_active='active')
