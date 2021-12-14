@@ -149,6 +149,7 @@ def render_painel_admin(user, start_date, end_date):
                                                 start_date=start_date_html,
                                                 end_date=end_date_html)
     else:
+        
         return redirect(url_for('login.registrar'))
     
 def get_funcs(start_date, end_date):
@@ -174,24 +175,20 @@ def get_month(month):
 
 def horas_totais(start_date, end_date, funcionario=None, funcionarios=None):
     
+    if not funcionario and not funcionarios:
+        return 0
     
     hrs_totais = 0
     
-    if funcionarios:
-        for f in funcionarios:
-            current_start_date = get_start_date(start_date, f.get_datetime_inicio_trabalho())
-            dias_uteis = dias_uteis_timedelta(current_start_date, end_date)
-            turno = f.turno
-            coeficient = f.dias_trabalho / 5
-                
-            hrs_totais += turno * dias_uteis * coeficient
-    else:
-        current_start_date = get_start_date(start_date, funcionario.get_datetime_inicio_trabalho())
+    if not funcionarios:
+        funcionarios = list([funcionario])
+
+    for f in funcionarios:
+        current_start_date = get_start_date(start_date, f.get_datetime_inicio_trabalho())
         dias_uteis = dias_uteis_timedelta(current_start_date, end_date)
-        turno = funcionario.turno
-        coeficiente = funcionario.dias_trabalho / 5
-        
-        hrs_totais += turno * dias_uteis * coeficiente
+        turno = f.turno
+            
+        hrs_totais += turno * dias_uteis
     
     return int(hrs_totais)
 
@@ -210,48 +207,50 @@ def dias_uteis_timedelta(start_date, end_date):
     return dias_totais
 
 def get_total_time(funcionarios=None, funcionario=None):
-    total_time = 0
+    if not funcionarios and not funcionario:
+        return 0
     
-    if funcionarios:
-        for f in funcionarios:
-            for t in f.turnos:
-                tturno = t._horas_totais
-                
-                total_time += timedelta(hours=tturno.hour, minutes=tturno.minute, seconds=tturno.second).seconds
-                
-    else:  
-        for t in funcionario.turnos:
-            tturno = t._horas_totais
-            total_time += timedelta(hours=tturno.hour, minutes=tturno.minute, seconds=tturno.second).seconds
+    total_time_in_seconds = 0
+    
+    if not funcionarios:
+        funcionarios = list([funcionario])
+        
+    for f in funcionarios:
+        for t in f.turnos:
+            tempo_turno = t._horas_totais
             
-
-    return total_time // 3600
+            total_time_in_seconds += timedelta(
+                                            hours=tempo_turno.hour, 
+                                            minutes=tempo_turno.minute, 
+                                            seconds=tempo_turno.second
+                                    ).seconds
+                
+    return total_time_in_seconds // 3600
 
 
 def get_total_work(funcionarios=None, funcionario=None):
+    if not funcionarios and not funcionario:
+        return 0
+    
     month = str(datetime.now().month)
     
     month_work = dict()
     
-    if funcionarios:
-        for f in funcionarios:
-            total_time = timedelta(seconds = 0)
-            for t in f.turnos:
-                if t.dia[3:5] == month:
-                    ttotal = t._horas_totais
-                    total_time += timedelta(hours=ttotal.hour, minutes=ttotal.minute, seconds=ttotal.second)
-                
-            month_work[f.name] = str(total_time.seconds // 3600)    
-            
-    else:
-        total_time = timedelta(seconds = 0)
-        for t in funcionario.turnos:
-            if t.dia[3:5] == month:
-                ttotal = t._horas_totais
-                total_time += timedelta(hours=ttotal.hour, minutes=ttotal.minute, seconds=ttotal.second)
-            
-        month_work[funcionario.name] = str(total_time.seconds // 3600)  
+    if not funcionarios:
+        funcionarios = list([funcionario])
         
+    for f in funcionarios:
+        total_time = timedelta(seconds = 0)
+        for t in f.turnos:
+            if t.dia[3:5] == month:
+                tempo_turno = t._horas_totais
+                total_time += timedelta(
+                                hours=tempo_turno.hour, 
+                                minutes=tempo_turno.minute, 
+                                seconds=tempo_turno.second)
+            
+        month_work[f.name] = str(total_time.seconds // 3600)    
+            
     return month_work    
 
 
