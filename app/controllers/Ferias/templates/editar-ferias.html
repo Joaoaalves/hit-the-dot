@@ -47,19 +47,6 @@
                         </div>
                     </div>
 
-                    <div style="padding: 0 20%; text-align: center;">
-                        <label for="funcionarios" class="mb-1">Funcionarios</label>
-                        <select multiple="multiple" id="funcionarios" name="funcionarios">
-                            {% for funcionario in funcionarios %}
-                            {% if funcionario.id in ferias.funcionarios %}
-                            <option value="{{funcionario.id}}" selected>{{funcionario.name}}</option>
-                            {% else %}
-                            <option value="{{funcionario.id}}">{{funcionario.name}}</option>
-                            {% endif %}
-                            {% endfor %}
-                        </select>
-                    </div>
-
                     <div class="flex">
                             <input type="submit" value="Salvar" class="btn btn-warning">
                         

@@ -1,4 +1,3 @@
-from re import S
 from workalendar.america.brazil import BrazilDistritoFederal
 from . import *
 
@@ -118,7 +117,7 @@ def render_painel_admin(user, start_date, end_date):
     funcionarios = get_funcs(start_date, end_date)
     if funcionarios:
         horas_totais_mes = horas_totais(start_date, end_date, funcionarios=funcionarios)
-
+        
         horas_trabalhadas = get_total_time(funcionarios=funcionarios)
 
         percentage = get_percentage_work(horas_trabalhadas, horas_totais_mes)
@@ -128,23 +127,21 @@ def render_painel_admin(user, start_date, end_date):
             horas_extras_maximas = 40
             
             percentage_extras = get_percentage_work(horas_extras, horas_extras_maximas)
+            
         else:
             horas_extras = 0
             percentage_extras = 0
             
-        
-        month_work = get_total_work(funcionarios)
 
         start_date_html = f"{'%.2d' % start_date.day}/{'%.2d' % start_date.month}/{start_date.year}"
         end_date_html = f"{'%.2d' % end_date.day}/{'%.2d' % end_date.month}/{end_date.year}"
-
+        
         return render_template('painel-admin.html', user=user, painel_active='active',
                                                 percentage=percentage,
                                                 percentage_extras=percentage_extras,
-                                                horas_mes=horas_trabalhadas,
+                                                horas_mes=min(horas_trabalhadas, horas_totais_mes),
                                                 horas_extras=horas_extras,
-                                                horas_totais=horas_trabalhadas + horas_extras,
-                                                month_work=month_work,
+                                                horas_totais=horas_trabalhadas,
                                                 funcionarios=db.get_all_funcionarios(),
                                                 start_date=start_date_html,
                                                 end_date=end_date_html)
@@ -196,14 +193,22 @@ def dias_uteis_timedelta(start_date, end_date):
     cal = BrazilDistritoFederal()
     dias_totais = 0
     feriados = db.get_feriados()
-
+    all_ferias = db.get_all_ferias()
+    
     for i in range( (end_date - start_date).days + 1 ):
         dt = start_date + timedelta(days=i)
         dt_string = f"{'%.2d' % dt.day}/{'%.2d' % dt.month}/{dt.year}"
 
         if cal.is_working_day(dt) and not dt_string in feriados:
-            dias_totais += 1
-            
+            if not all_ferias:
+                dias_totais += 1
+
+            else:
+                for f in all_ferias:
+                    if f.is_working_day(dt.timestamp()):
+                        dias_totais += 1
+                        break
+    
     return dias_totais
 
 def get_total_time(funcionarios=None, funcionario=None):
@@ -275,34 +280,36 @@ def calcula_assiduidade(funcionario, start_date, end_date):
     if not 'turnos' in vars(funcionario):
         return 0
       
-    cal = BrazilDistritoFederal()
-    trabalhou = 0
-    faltas = 0
+    calendar = BrazilDistritoFederal()
+
     current_start_date = get_start_date(start_date, funcionario.get_datetime_inicio_trabalho())
     dias_uteis = dias_uteis_timedelta(current_start_date, end_date)
     
     feriados = db.get_feriados()
-    ferias_user = db.get_ferias_user(funcionario.id)
+    list_ferias = db.get_all_ferias()
     
+    trabalhou = 0
+    faltas = 0
     for i in range( (end_date - current_start_date).days + 1 ):
     
         c_date = current_start_date + timedelta(days=i)
 
         date_string = f"{'%.2d' % c_date.day}/{'%.2d' % c_date.month}/{c_date.year}"
-        if cal.is_working_day(c_date) and date_string not in feriados:
-            if ferias_user:
-                for f in ferias_user:
+        if calendar.is_working_day(c_date) and date_string not in feriados:
+            
+            if list_ferias:
+                for f in list_ferias:
                     if f.is_working_day(c_date.timestamp()):
+                        
                         if funcionario.worked_this_date(c_date):
                             trabalhou += 1
+                            break
+                        
                         else:
                             faltas += 1
+                            break
             else:
-                if funcionario.worked_this_date(c_date):
-                    trabalhou += 1
-                    
-                else:
-                    faltas += 1
+                trabalhou += 1
 
     return ((trabalhou * 100 / dias_uteis)
             if dias_uteis > 0

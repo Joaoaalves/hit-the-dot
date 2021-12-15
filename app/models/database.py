@@ -413,23 +413,7 @@ class Database():
             return Ferias(f.to_dict())
         
         return None
-    
-    def get_ferias_user(self, user_id):
-    
-        stream = self.firestore.collection('Ferias').where(
-            'funcionarios', 'array_contains', user_id).stream()
-        
-        ferias_user = list()
-        
-        for f in stream:
-            ferias = Ferias(f.to_dict())
-            ferias_user.append(ferias) 
-            
-        if len(ferias_user):
-            return ferias_user
-        
-        return None
-       
+           
     def get_all_ferias(self):
         
         query = self.firestore.collection('Ferias').stream()
