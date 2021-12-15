@@ -7,9 +7,6 @@ class Ferias():
         self.id = data['id']
         self.set_inicio_ferias(data['inicio'])
         self.set_fim_ferias(data['fim'])
-
-        if 'funcionarios' in data:
-            self.funcionarios = data['funcionarios']
     
     def set_inicio_ferias(self, inicio):
         self.inicio = datetime.fromtimestamp(inicio)
@@ -31,16 +28,12 @@ class Ferias():
     def formated_fim_html(self):
         return f"{self.fim.year}-{'%.2d' % self.fim.month}-{'%.2d' % self.fim.day}"
     def is_working_day(self, timestamp):
-        return self.timestamp_inicio < timestamp or timestamp > self.timestamp_fim
+        return self.timestamp_inicio > timestamp or timestamp > self.timestamp_fim
         
-    def get_total_funcs(self):
-        return len(self.funcionarios)
-    
-    
+
     def to_json(self):
         return {
             'id' : self.id,
             'inicio' : self.timestamp_inicio,
-            'fim' : self.timestamp_fim,
-            'funcionarios' : self.funcionarios
+            'fim' : self.timestamp_fim
         }
