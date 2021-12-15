@@ -47,15 +47,6 @@
                         </div>
                     </div>
 
-                    <div style="padding: 0 20%; text-align: center;">
-                        <label for="funcionarios" class="mb-1">Funcionarios nestas Férias</label>
-                        <select multiple="multiple" id="funcionarios" name="funcionarios">
-                            {% for funcionario in funcionarios %}
-                            <option value="{{funcionario.id}}">{{funcionario.name}}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-
                     <div class="flex">
                             <input type="submit" value="Criar" class="btn btn-warning">
                         
