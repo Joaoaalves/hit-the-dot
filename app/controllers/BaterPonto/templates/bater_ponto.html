@@ -109,12 +109,16 @@
             </div>
             {% endif %}
             {% else %}
-            <div class="box-shadow center">
+            <div class="box-shadow center iniciar-turno">
+                {% if is_dia_util() %}
                 <form method="POST">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <input type="hidden" name='status' value="clock_in">
                     <input type="submit" class="btn btn-dark mx-auto" value="Iniciar Turno">
                 </form>
+                {% else %}
+                <h4 class="my-auto">Hoje não é um dia útil!</h4>
+                {% endif %}
             </div>
 
             {% endif %}
