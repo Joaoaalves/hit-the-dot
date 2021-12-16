@@ -1,0 +1,25 @@
+<table>
+    <thead>
+        <tr>
+            <td>Data</td>
+            <td>Funcionário</td>
+            <td>Status</td>
+            <td>Ações</td>
+        </tr>
+    </thead>
+    <tbody>
+        {% for falta in faltas %}
+        <tr>
+            <td>{{falta.get_formated_date()}}</td>
+            <td>{{func_dict[falta.func_id]}}</td>
+            <td>{{falta.current_status}}</td>
+            <td>
+                    <button title="Editar" class="btn-warning btn"
+                    onclick="editarFalta({{falta.id}})"><i
+                        class="fas fa-pencil-alt"></i></button>
+                </button>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

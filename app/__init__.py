@@ -67,7 +67,7 @@ def create_app():
     # from app.rotinas import contabiliza_turnos_mes
     
     # Scheduler Diária Turno para fechar turnos abertos
-    rotina_turnos.add_job(check_turnos, 'cron', hour=0, minute=0)
+    rotina_turnos.add_job(check_turnos, 'cron', hour=13, minute=45)
     
     # Scheduler Turno Semanal para contabilizar horas totais da semana
     # SATURDAY=5
@@ -119,6 +119,9 @@ def create_app():
     
     from app.controllers.Ferias.routes import ferias_blueprint
     app.register_blueprint(ferias_blueprint)
+    
+    from app.controllers.Faltas.routes import faltas_blueprint
+    app.register_blueprint(faltas_blueprint)
     
     @app.errorhandler(404)
     @app.errorhandler(500)

@@ -2,7 +2,8 @@ from numpy import half
 from app import db, app
 from datetime import datetime, timedelta
 from workalendar.america import BrazilDistritoFederal
-# from uwsgidecorators import *
+from app.models.falta import Falta
+from random import randint
 
 def finaliza_turno(funcionario, turno):
     
@@ -24,7 +25,15 @@ def finaliza_turno(funcionario, turno):
     
     db.update_info('Turnos', turno.to_json(), query_arr=[['dia', turno.dia], ['user_id', funcionario.id]])
 
-# @cron(0, 0, -1,-1,-1)
+def adiciona_falta(funcionario, now):
+    
+    db.add_data_on_firestore('Faltas', {
+        'date' : now,
+        'id' : generate_falta_id(),
+        'func_id' : funcionario.id,
+        'current_status' : 'falta'
+    })
+    
 def check_turnos():
     now = datetime.now()
     if BrazilDistritoFederal().is_working_day(day=now):
@@ -33,5 +42,19 @@ def check_turnos():
         now = f"{'%.02d' % now.day}/{'%.02d' % now.month}/{now.year}"
         for funcionario in funcionarios:
             turno_hoje = db.get_turno(now, funcionario.id)
-            if turno_hoje and turno_hoje.current_status == 'clocked_in':       
-                finaliza_turno(funcionario, turno_hoje)
+            if turno_hoje:
+                if turno_hoje.current_status == 'clocked_in':       
+                    finaliza_turno(funcionario, turno_hoje)
+            
+            else:
+                adiciona_falta(funcionario, now)
+            
+            
+def generate_falta_id():
+    
+    ids_faltas = db.get_all_rows_from_firestore('Ferias', 'id')
+    
+    while True:
+        new_id = randint(10000, 99999)
+        if new_id not in ids_faltas:
+            return new_id

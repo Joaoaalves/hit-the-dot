@@ -19,6 +19,7 @@ from .relatorio import Relatorio
 from .tipo_tarefa import TipoTarefa
 from .tarefa import Tarefa
 from .pontuacao import Pontuacao
+from .falta import Falta
 
 class Database():
 
@@ -426,3 +427,43 @@ class Database():
             return all_ferias
             
         return None
+    
+    def get_falta(self, falta_id):
+        
+        stream = self.firestore.collection('Faltas').where('id', '==', falta_id).stream()
+        
+        for f in stream:
+            return Falta(
+                f.to_dict()
+            )
+        
+        return None
+    
+    def get_all_faltas(self):
+        list_faltas = list()
+        stream = self.firestore.collection('Faltas').stream()       
+        
+        for f in stream:
+            list_faltas.append(
+                Falta(f.to_dict())
+            )
+            
+        return (list_faltas if len(list_faltas) > 0
+                else None)
+        
+    
+    def get_faltas_funcionario(self, func_id):
+        
+        list_faltas = list()
+        
+        stream = self.firestore.collection('Faltas').where(
+            'func_id', '==', func_id
+        ).stream()
+        
+        for f in stream:
+            list_faltas.append(
+                Falta(f.to_dict())
+            )
+            
+        return (list_faltas if len(list_faltas) > 0
+                else None)
