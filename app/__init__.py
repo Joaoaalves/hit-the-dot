@@ -13,10 +13,9 @@ rotina_turnos = BackgroundScheduler(daemon=True)
 
 # App
 if not 'instance_path' in os.environ:
-    print('Adicione o instance_path nas variáveis de ambiente')
-    sys.exit()
-
-instance_path = os.environ['instance_path']
+    instance_path = os.getcwd() + '/app/protected/'
+else:
+    instance_path = os.environ['instance_path']
 app = Flask(__name__, instance_path=instance_path)
 
 # Firebase Admin Config
