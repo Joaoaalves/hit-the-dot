@@ -89,7 +89,7 @@ function sortTable(table, column){
 }
 
 function ordenarPor(field){
-    table = document.getElementById('func-table');
+    table = document.getElementById('turnos-table');
 
     if(field == 'data')
         sortTable(table, 0);
