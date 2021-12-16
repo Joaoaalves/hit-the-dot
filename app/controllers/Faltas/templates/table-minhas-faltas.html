@@ -1,0 +1,16 @@
+<table>
+    <thead>
+        <tr>
+            <td>Data</td>
+            <td>Status</td>
+        </tr>
+    </thead>
+    <tbody>
+        {% for falta in faltas %}
+        <tr>
+            <td>falta.get_formated_date()</td>
+            <td>falta.get_formated_status()</td>
+        </tr>
+        {% endfot %}
+    </tbody>
+</table>
