@@ -309,8 +309,11 @@ def calcula_assiduidade(funcionario, start_date, end_date):
                             faltas += 1
                             break
             else:
-                trabalhou += 1
-
+                if funcionario.worked_this_date(c_date):
+                    trabalhou += 1
+                else:
+                    faltas += 1
+                    
     return ((trabalhou * 100 / dias_uteis)
             if dias_uteis > 0
             else 100
