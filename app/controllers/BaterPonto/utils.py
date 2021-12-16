@@ -29,10 +29,10 @@ def is_dia_util():
     
     if current_date[:5] in feriados:
         return False
-    
-    for ferias in list_ferias:
-        if ferias.is_working_day(timestamp_now):
-            return False
+    if list_ferias:    
+        for ferias in list_ferias:
+            if ferias.is_working_day(timestamp_now):
+                return False
         
     return True
     
