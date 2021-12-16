@@ -7,34 +7,37 @@ function startTimer(progress, turno) {
 
     var percentage = 0;
 
-    if(progress <= time_in_seconds){
         var loop = setInterval(
             function(){
-                setTimer(parseInt(progress));
-    
+                
                 percentage = parseInt(progress * 100 / time_in_seconds);
+                if(percentage > 100){
+                    percentage = 100;
+                    setTimer(parseInt(time_in_seconds));
+                    setExtraTimer(parseInt(progress - time_in_seconds));
+                }else{
+                    setTimer(parseInt(progress));
+                }
+                
+
                 config = [[percentage, 'rgba(25, 250, 204, 1)', 'rgba(25, 250, 204, 0.2)']]
                 setProgressCircle(config);
-                
+        
                 progress++;
-    
-                if(progress > time_in_seconds) {
-                    clearInterval(loop);
-                    document.getElementById('remaining-time').textContent = 'Finalizado!';
-                }
             }, SECOND
         );
-    }
-    else{
-        document.getElementById('remaining-time').textContent = 'Finalizado!';
-        setProgressCircle([[MAX_PERCENTAGE, '#f8be00', 'rgba(0, 0, 0, 0.1)']]);
-    }
+
 
 }
 
 function setTimer(progress){
     var label = document.getElementById('remaining-time');
-    label.textContent = new Date(progress * 1000).toISOString().substr(11, 8);
+    label.textContent = 'Turno: ' + new Date(progress * 1000).toISOString().substr(11, 8);
+}
+
+function setExtraTimer(progress){
+    var label = document.getElementById('extra-time');
+    label.textContent = 'Tempo Extra: ' + new Date(progress * 1000).toISOString().substr(11, 8);
 }
 
 function getDate(time){
