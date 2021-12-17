@@ -15,8 +15,14 @@ class Falta():
     def get_formated_date(self):
         return f"{'%.2d' % self.date.day}/{'%.2d' % self.date.month}/{self.date.year}"
 
+    def is_abonada(self):
+        return self.current_status == 'abonada'
+    
     def abonar(self):
         self.current_status = 'abonada'
+        
+    def get_html_date(self):
+        return f"{self.date.year}-{'%.2d' % self.date.month}-{'%.2d' % self.date.day}"
         
     def to_json(self):
         

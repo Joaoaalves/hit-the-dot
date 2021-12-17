@@ -13,8 +13,10 @@
     <link rel="stylesheet" href="{{url_for('painel.static', filename='css/painel.css')}}">
     <link rel="stylesheet" href="{{url_for('turnos.static', filename='css/turnos.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename='css/default-table.css')}}">
+    <link rel="stylesheet" href="{{url_for('faltas.static', filename='css/faltas.css')}}">
+    
     <!-- custom JS -->
-
+    <script src="{{url_for('faltas.static', filename='js/faltas.js')}}"></script>
 
 </head>
 
@@ -33,6 +35,22 @@
                         {% if faltas %}
                         {% include 'table-faltas.html' %}
                         {% endif %}
+                    </div>
+                </div>
+                <div class="container-utils">
+                    <div class="container-filtros box-shadow">
+                        <h4>Filtro</h4>
+                        <form method='GET'>
+                            <label for="funcionario">Funcionario</label>
+                            <select name="funcionario" id="funcionario" class="form-control">
+                                {% for func_id in func_dict.keys() %}
+                                <option value="{{func_id}}">{{func_dict[func_id]}}</option>
+                                {% endfor %}
+                            </select>
+
+                            <input type="submit" value="Filtrar" class="btn btn-warning">
+                            <a href="/faltas" class="btn btn-dark">Limpar</a>
+                        </form>
                     </div>
                 </div>
             </div>
