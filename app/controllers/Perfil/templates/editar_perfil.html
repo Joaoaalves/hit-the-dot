@@ -26,8 +26,12 @@
     <div class='container'>
 
         <div class="col">
+	    {% if is_admin(user)%}
             {% include "sidebar-admin.html" %}
-        </div>
+            {% else %}
+	    {% include "sidebar-func.html" %}
+	    {% endif %}
+	</div>
         <div class="col-6 content-container">
             <div class='painel'>
                 <div class="container-user box-shadow">
