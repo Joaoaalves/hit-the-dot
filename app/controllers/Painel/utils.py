@@ -279,42 +279,24 @@ def get_percentage_work(horas_trabalhadas, horas_totais):
 def calcula_assiduidade(funcionario, start_date, end_date):
     if not 'turnos' in vars(funcionario):
         return 0
-      
-    calendar = BrazilDistritoFederal()
-
+    
     current_start_date = get_start_date(start_date, funcionario.get_datetime_inicio_trabalho())
     dias_uteis = dias_uteis_timedelta(current_start_date, end_date)
     
-    feriados = db.get_feriados()
-    list_ferias = db.get_all_ferias()
+    faltas_list = db.get_faltas_funcionario(funcionario.id)
+    if not faltas_list:
+        return 100, 0
     
-    trabalhou = 0
     faltas = 0
-    for i in range( (end_date - current_start_date).days + 1 ):
-    
+    for i in range((end_date - current_start_date).days + 1):
+        
         c_date = current_start_date + timedelta(days=i)
-
+        
         date_string = f"{'%.2d' % c_date.day}/{'%.2d' % c_date.month}/{c_date.year}"
-        if calendar.is_working_day(c_date) and date_string not in feriados:
-            
-            if list_ferias:
-                for f in list_ferias:
-                    if f.is_working_day(c_date.timestamp()):
-                        
-                        if funcionario.worked_this_date(c_date):
-                            trabalhou += 1
-                            break
-                        
-                        else:
-                            faltas += 1
-                            break
-            else:
-                if funcionario.worked_this_date(c_date):
-                    trabalhou += 1
-                else:
-                    faltas += 1
-                    
-    return ((trabalhou * 100 / dias_uteis)
-            if dias_uteis > 0
-            else 100
-            ), faltas
+        
+        for falta in faltas_list:
+            if date_string == falta.date:
+                faltas += 1
+                break
+        
+    return (100 - (faltas * 100 / dias_uteis)), faltas
