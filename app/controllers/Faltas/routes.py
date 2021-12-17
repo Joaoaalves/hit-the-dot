@@ -10,13 +10,25 @@ faltas_blueprint = Blueprint('faltas', __name__,
 @admin_required
 def listar_faltas():
     user = get_user_object(session['user'])
-    faltas = db.get_all_faltas()
+    
+    if 'funcionario' in request.args:
+        try:
+            faltas = db.get_faltas_funcionario(
+                int(request.args.get('funcionario'))
+            )
+            
+        except:
+            faltas = None
+    else:        
+        faltas = db.get_all_faltas()
+        
     funcionarios = db.get_all_funcionarios()
     func_dict = {func.id : func.name for func in funcionarios}
     
     return render_template('faltas.html', user=user,
                                         faltas=faltas,
-                                        func_dict=func_dict)
+                                        func_dict=func_dict,
+                                        turnos_active='active')
     
 
 @faltas_blueprint.route('/minhas-faltas')
@@ -27,25 +39,32 @@ def minhas_faltas():
     faltas = db.get_faltas_funcionario(user.id)
     
     return render_template('minhas-faltas.html', user=user,
-                                                faltas=faltas)
+                                                faltas=faltas,
+                                                turnos_active='active')
     
     
 @faltas_blueprint.route('/abonar-falta', methods=['POST'])
 @admin_required
 def abonar_falta():
     
-    falta_id = request.form['falta_id']
-    
-    falta = db.get_falta(falta_id)
-    
-    if falta:
-        falta.abonar()
-        db.update_info('Faltas', 'id', falta_id, falta.to_json())
-        return '', 200
-    
-    else:
+    try:
+        falta_id = int(request.form['falta_id'])
+        falta = db.get_falta(falta_id)
         
-        return '', 404
+        if falta:
+        
+            falta.abonar()
+            db.update_info('Faltas', falta.to_json(), key='id', value=falta.id)
+        
+            return '', 200
+        else:
+            
+            return '', 402
+        
+    except Exception as e:
+        print(e)
+        return '',500
+    
     
 @faltas_blueprint.route('/falta/<int:falta_id>')
 @admin_required
@@ -53,6 +72,8 @@ def ver_falta(falta_id):
     
     falta = db.get_falta(falta_id)
     user = get_user_object(session['user'])
-    
+    funcionario = db.get_funcionario(falta.func_id)
     return render_template('falta.html', user=user,
-                                        falta=falta)
+                                        falta=falta,
+                                        funcionario=funcionario,
+                                        turnos_active='active')

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <link rel="shortcut icon" href="{{url_for('static', filename='favicon.ico')}}" type="image/x-icon">
+
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hit the Dot</title>
+
+    {% include 'common-imports.html' %}
+    <link rel="stylesheet" href="{{url_for('painel.static', filename='css/painel.css')}}">
+    <link rel="stylesheet" href="{{url_for('turnos.static', filename='css/turnos.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/default-table.css')}}">
+    <link rel="stylesheet" href="{{url_for('faltas.static', filename='css/falta.css')}}">
+
+    <!-- custom JS -->
+    <script src="{{url_for('faltas.static', filename='js/falta.js')}}"></script>
+
+</head>
+
+<body>
+
+    {% include 'nav-bar.html' %}
+
+    <div class='container'>
+        <div class="col">
+            {% include "sidebar-admin.html" %}
+        </div>
+        <div class="col-6 content-container">
+
+            <div class="main-container box-shadow">
+                <form>
+                    <input type="hidden" name="csrf_token" value="{{csrf_token()}}">
+
+                    <label for="funcionario">Funcionario</label>
+                    <input class="form-control" type="text" value="{{funcionario.name}}" name="funcionario" disabled>
+
+                    <label for="date">Data da Falta</label>
+                    <input class="form-control" type="date" value="{{falta.get_html_date()}}" name="date">
+
+                    {% if falta.is_abonada() %}
+                    <label for="status">Estado atual da falta:</label>
+                    <input class="form-control" type="text" value="Abonada" disabled name="status">
+                    <a class="btn btn-dark" style="margin-top: 5%; width: 200px;" href="/faltas">Voltar</a>
+                    {% else %}
+                    <div style="display: flex;">
+                        <button class="btn btn-warning" type="button"
+                            onclick="abonarFalta({{falta.id}}, '{{csrf_token()}}')">Abonar Falta</button>
+                        <a class="btn btn-dark" href="/faltas">Voltar</a>   
+                    </div>
+                    {% endif %}
+                    
+                </form>
+            </div>
+
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,41 @@
+.container-utils{
+    margin-left: auto;
+    margin-right: 3%;
+}
+.container-filtros{
+    padding: 10%;
+    height: auto;
+    width: 250px;
+
+    margin-top: 10%;
+    text-align: center;
+}
+
+.container-filtros h4{
+    margin-bottom: 10%;
+}
+
+.container-filtros form{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0!important;
+}
+
+.container-filtros form select{
+    margin-bottom: 15%;
+}
+
+select:hover{
+    font-size: 1em!important;
+}
+label{
+    align-self: baseline;
+}
+
+.btn{
+    width: 150px;
+    color: white;
+    margin: 5% 0;
+}
