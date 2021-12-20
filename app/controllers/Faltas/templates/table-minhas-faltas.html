@@ -8,9 +8,9 @@
     <tbody>
         {% for falta in faltas %}
         <tr>
-            <td>falta.get_formated_date()</td>
-            <td>falta.get_formated_status()</td>
+            <td>{{falta.get_formated_date()}}</td>
+            <td>{{falta.current_status}}</td>
         </tr>
-        {% endfot %}
+        {% endfor %}
     </tbody>
 </table>

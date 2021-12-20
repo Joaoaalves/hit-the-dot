@@ -30,31 +30,36 @@
         </div>
         <div class="col-6 content-container">
 
-            <div class="main-container box-shadow">
+            <div class="container-falta box-shadow">
+                <h3>Falta</h3>
                 <form>
                     <input type="hidden" name="csrf_token" value="{{csrf_token()}}">
-
-                    <label for="funcionario">Funcionario</label>
-                    <input class="form-control" type="text" value="{{funcionario.name}}" name="funcionario" disabled>
-
+    
                     <label for="date">Data da Falta</label>
                     <input class="form-control" type="date" value="{{falta.get_html_date()}}" name="date">
-
+    
                     {% if falta.is_abonada() %}
                     <label for="status">Estado atual da falta:</label>
                     <input class="form-control" type="text" value="Abonada" disabled name="status">
                     <a class="btn btn-dark" style="margin-top: 5%; width: 200px;" href="/faltas">Voltar</a>
                     {% else %}
-                    <div style="display: flex;">
+                    <div class="container-buttons">
                         <button class="btn btn-warning" type="button"
                             onclick="abonarFalta({{falta.id}}, '{{csrf_token()}}')">Abonar Falta</button>
-                        <a class="btn btn-dark" href="/faltas">Voltar</a>   
+                        <a class="btn btn-dark" href="/faltas">Voltar</a>
                     </div>
                     {% endif %}
-                    
+    
                 </form>
             </div>
 
+            <div class="container-funcionario box-shadow">
+                <img class="img-funcionario" src="{{url_for('protected.protected_file', filename=funcionario.id|string + '/profile.jpg')}}">
+                
+                <h4>{{funcionario.name}}</h4>
+
+                <a href="/funcionario/{{funcionario.id}}" class="btn btn-warning">Abrir Perfil</a>
+            </div>
         </div>
     </div>
 </body>

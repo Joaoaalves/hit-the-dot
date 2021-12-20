@@ -37,12 +37,13 @@
                         {% endif %}
                     </div>
                 </div>
-                <div class="container-utils">
+                <section class="container-utils">
                     <div class="container-filtros box-shadow">
                         <h4>Filtro</h4>
                         <form method='GET'>
                             <label for="funcionario">Funcionario</label>
                             <select name="funcionario" id="funcionario" class="form-control">
+                                <option disabled selected>Selecione um Funcionário</option>
                                 {% for func_id in func_dict.keys() %}
                                 <option value="{{func_id}}">{{func_dict[func_id]}}</option>
                                 {% endfor %}
@@ -52,7 +53,11 @@
                             <a href="/faltas" class="btn btn-dark">Limpar</a>
                         </form>
                     </div>
-                </div>
+
+                    <div class="container-buttons box-shadow">
+                        <a href="/turnos" class="btn btn-warning">Turnos</a>
+                    </div>
+                </section>
             </div>
         </div>
     </div>
