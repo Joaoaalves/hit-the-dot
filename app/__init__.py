@@ -67,13 +67,7 @@ def create_app():
     # from app.rotinas import contabiliza_turnos_mes
     
     # Scheduler Diária Turno para fechar turnos abertos
-    rotina_turnos.add_job(check_turnos, 'cron', hour=13, minute=45)
-    
-    # Scheduler Turno Semanal para contabilizar horas totais da semana
-    # SATURDAY=5
-    # rotina_turnos.add_job(contabiliza_turnos_semana, 'cron', day_of_week=SATURDAY)
-    
-    # rotina_turnos.add_job(contabiliza_turnos_mes, 'cron', day='last')
+    rotina_turnos.add_job(check_turnos, 'cron', hour=23, minute=59)
     
     rotina_turnos.start()
 
