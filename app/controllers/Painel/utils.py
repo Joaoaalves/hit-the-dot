@@ -277,9 +277,7 @@ def get_percentage_work(horas_trabalhadas, horas_totais):
                   else 100)
     
 def calcula_assiduidade(funcionario, start_date, end_date):
-    if not 'turnos' in vars(funcionario):
-        return 0
-    
+
     current_start_date = get_start_date(start_date, funcionario.get_datetime_inicio_trabalho())
     dias_uteis = dias_uteis_timedelta(current_start_date, end_date)
     
@@ -292,10 +290,8 @@ def calcula_assiduidade(funcionario, start_date, end_date):
         
         c_date = current_start_date + timedelta(days=i)
         
-        date_string = f"{'%.2d' % c_date.day}/{'%.2d' % c_date.month}/{c_date.year}"
-        
         for falta in faltas_list:
-            if date_string == falta.date:
+            if c_date == falta.date:
                 faltas += 1
                 break
         
