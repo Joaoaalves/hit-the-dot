@@ -55,7 +55,8 @@
     width: 100%;
 }
 
-.container-buttons a.btn{
+.container-buttons a.btn,
+.container-filtros .btn{
     width: 80%;
     color: white;
     margin: 0!important;
