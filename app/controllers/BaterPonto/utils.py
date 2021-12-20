@@ -32,7 +32,7 @@ def is_dia_util():
     
     if list_ferias:
         for ferias in list_ferias:
-            if ferias.is_working_day(timestamp_now):
+            if not ferias.is_working_day(timestamp_now):
                 return False
         
     return True
