@@ -1,6 +1,6 @@
 <table>
     <thead>
-        <tr>
+        <tr class="box-shadow">
             <td>Data</td>
             <td>Funcionário</td>
             <td>Status</td>
@@ -9,7 +9,7 @@
     </thead>
     <tbody>
         {% for falta in faltas %}
-        <tr>
+        <tr class="box-shadow">
             <td>{{falta.get_formated_date()}}</td>
             <td>{{func_dict[falta.func_id]}}</td>
             <td>{{falta.current_status}}</td>
