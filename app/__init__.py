@@ -127,6 +127,10 @@ def create_app():
 
     @app.errorhandler(401)
     def permission_error(e):
+        if 'user' in session:
+            user = session['user']
+            return render_template('404.html', user=user, error=e), 401
+
         return redirect(url_for('login.log_in'))
     
     @app.errorhandler(400)
