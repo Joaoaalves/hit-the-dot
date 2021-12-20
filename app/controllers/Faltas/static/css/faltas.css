@@ -67,9 +67,3 @@ select{
 label{
     align-self: baseline;
 }
-
-.btn{
-    width: 150px;
-    color: white;
-    margin: 5% 0;
-}
