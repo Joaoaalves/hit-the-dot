@@ -451,6 +451,20 @@ class Database():
         return (list_faltas if len(list_faltas) > 0
                 else None)
         
+    def get_falta_with_date(self, func_id, date):
+        
+        stream = self.firestore.collection('Faltas').where(
+            'func_id', '==', func_id
+        ).where(
+            'date', '==', date
+        ).stream()
+
+        for f in stream:
+            return Falta(
+                f.to_dict()
+            )
+            
+        return None
     
     def get_faltas_funcionario(self, func_id):
         

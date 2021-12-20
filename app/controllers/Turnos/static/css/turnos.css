@@ -6,6 +6,9 @@
 }
 
 .utils-container{
+    display: flex;
+    flex-direction: column;
+
     height: 95vh;
     max-height: calc(100vh - 64px);
 
@@ -71,4 +74,23 @@ form{
 #data:hover, #funcionario:hover{
     cursor: pointer;
     font-size: 1.1em;
+}
+
+.container-buttons{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    padding: 5%;
+
+    margin-top: auto;
+    margin-bottom: 10%;
+    
+    width: 100%;
+}
+
+.container-buttons a.btn    {
+    width: 80%;
+    color: white;
 }
