@@ -63,6 +63,7 @@ def create_app():
     app.config.from_object("config")
     
     from app.rotinas import check_turnos
+    #from app.rotinas import backup_db
     
     # from app.rotinas import contabiliza_turnos_semana
     # from app.rotinas import contabiliza_turnos_mes
