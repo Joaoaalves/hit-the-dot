@@ -141,3 +141,7 @@ debug.log
 # Media files
 app/protected/*
 !app/protected/.gitkeep
+
+# Backup Files
+backups/*
+!backups/.gitkeep
