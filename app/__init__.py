@@ -32,15 +32,9 @@ csrf = CSRFProtect(app)
 users = list()
 invalid_sessions = list()
 
-# Logs
-#logging.basicConfig(filename='debug.log', level=logging.INFO)
-#logging.disable(logging.DEBUG)
-#  logging.disable(logging.INFO)
-
-
 # IP Ban
-#ip_ban = IpBan(ban_count=5)
-#ip_ban.init_app(app)
+ip_ban = IpBan(ban_count=5)
+ip_ban.init_app(app)
 
 
 try:
