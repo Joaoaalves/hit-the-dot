@@ -13,7 +13,7 @@ def render_painel_func(funcionario, start_date, end_date):
     dias_uteis = dias_uteis_timedelta(start_date, end_date)
     
     
-    media_horas =  timedelta(seconds=(segundos_trabalhados / dias_uteis ) if dias_uteis > 0 else timedelta(seconds=0))
+    media_horas =  timedelta(seconds=(segundos_trabalhados / dias_uteis )) if dias_uteis > 0 else timedelta(seconds=0)
     
     percentage = get_percentage_work(horas_trabalhadas, horas_totais_mes)
     
