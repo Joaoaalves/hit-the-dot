@@ -1,8 +1,8 @@
-from numpy import half
 from app import db, app
 from datetime import datetime, timedelta
 from workalendar.america import BrazilDistritoFederal
-# from uwsgidecorators import *
+import csv
+import os
 
 def finaliza_turno(funcionario, turno):
     
@@ -24,7 +24,6 @@ def finaliza_turno(funcionario, turno):
     
     db.update_info('Turnos', turno.to_json(), query_arr=[['dia', turno.dia], ['user_id', funcionario.id]])
 
-# @cron(0, 0, -1,-1,-1)
 def check_turnos():
     now = datetime.now()
     if BrazilDistritoFederal().is_working_day(day=now):
@@ -35,3 +34,19 @@ def check_turnos():
             turno_hoje = db.get_turno(now, funcionario.id)
             if turno_hoje and turno_hoje.current_status == 'clocked_in':       
                 finaliza_turno(funcionario, turno_hoje)
+                
+                
+def backup_db():
+    collections = ['Cargos', 'Faltas', 'Feriados', 'Ferias', 'Turnos', 'Users']
+    
+    now = datetime.now()
+    filename = f"{'%.2d' % now.day}-{'%.2d' % now.month}-{now.year}.csv"
+    with open(filename, 'w', newline='\n') as csvfile:
+        writer = csv.writer(csvfile, delimiter=',', quotechar='"')
+        
+        for collection in collections:
+            rows = db.get_all_rows_from_firestore(collection)
+            for row in rows:
+                writer.writerow([collection, row])
+                
+    os.chmod(filename, 000)
