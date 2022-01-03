@@ -7,6 +7,7 @@ import os, sys
 from apscheduler.schedulers.background import BackgroundScheduler
 
 from app.models.database import Database
+from app.rotinas import backup_db
 
 # Rotina do verificador de turnos
 rotina_turnos = BackgroundScheduler(daemon=True)
@@ -68,12 +69,7 @@ def create_app():
     
     # Scheduler Diária Turno para fechar turnos abertos
     rotina_turnos.add_job(check_turnos, 'cron', hour=0, minute=0)
-    
-    # Scheduler Turno Semanal para contabilizar horas totais da semana
-    # SATURDAY=5
-    # rotina_turnos.add_job(contabiliza_turnos_semana, 'cron', day_of_week=SATURDAY)
-    
-    # rotina_turnos.add_job(contabiliza_turnos_mes, 'cron', day='last')
+    rotina_turnos.add_job(backup_db, 'cron', hour=0, minute=5)
     
     rotina_turnos.start()
 
