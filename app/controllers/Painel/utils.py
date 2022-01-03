@@ -302,5 +302,7 @@ def calcula_assiduidade(funcionario, start_date, end_date):
             if c_date == falta.date and not falta.is_abonada():
                 faltas += 1
                 break
-        
+    if faltas == 0:
+        return 100, 0
+
     return (100 - (faltas * 100 / dias_uteis)), faltas
