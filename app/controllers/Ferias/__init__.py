@@ -2,3 +2,5 @@ from flask import render_template, redirect, url_for, Blueprint, session, reques
 from app.controllers.decorators import admin_required, funcionario_required, get_user_object
 
 from app import db
+
+from app.models.ferias import Ferias
