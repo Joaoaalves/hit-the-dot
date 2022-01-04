@@ -10,7 +10,7 @@ ferias_blueprint = Blueprint('ferias', __name__,
                              url_prefix='/ferias')
 
 @ferias_blueprint.route('/')
-@funcionario_required
+@admin_required
 def listar_ferias():
     user = get_user_object(session['user'])
     all_ferias = db.get_all_ferias()

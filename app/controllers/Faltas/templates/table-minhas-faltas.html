@@ -1,0 +1,16 @@
+<table>
+    <thead>
+        <tr class="box-shadow">
+            <td>Data</td>
+            <td>Status</td>
+        </tr>
+    </thead>
+    <tbody>
+        {% for falta in faltas %}
+        <tr class="box-shadow">
+            <td>{{falta.get_formated_date()}}</td>
+            <td>{{falta.current_status}}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
