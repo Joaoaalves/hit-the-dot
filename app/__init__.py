@@ -1,9 +1,8 @@
 from flask import Flask, render_template, session, redirect, url_for
-import logging
 from flask_ipban import IpBan
 from flask_mail import Mail
 from flask_wtf import CSRFProtect
-import os, sys
+import os
 from apscheduler.schedulers.background import BackgroundScheduler
 
 from app.models.database import Database
@@ -58,9 +57,6 @@ def create_app():
     
     from app.rotinas import check_turnos
     #from app.rotinas import backup_db
-    
-    # from app.rotinas import contabiliza_turnos_semana
-    # from app.rotinas import contabiliza_turnos_mes
     
     # Scheduler Diária Turno para fechar turnos abertos
     rotina_turnos.add_job(check_turnos, 'cron', hour=0, minute=0)
@@ -129,4 +125,5 @@ def create_app():
             user = session['user']
             return render_template('404.html', user=user, error=e), 404
         return redirect(url_for('login.log_in'))
+    
     return app

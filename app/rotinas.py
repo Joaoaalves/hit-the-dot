@@ -57,3 +57,17 @@ def write_backup(filename):
                 writer.writerow([collection, row])
                 
     os.chmod(filename, 000)
+    
+    
+def clean_backups():
+    
+    now = datetime.now()
+    
+    last_week_first_day = now - timedelta(days=7)
+    
+    for i in range(7):
+        current_date = last_week_first_day + timedelta(days=i)
+        
+        filename = f"backups/{current_date}"
+    
+    
