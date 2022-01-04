@@ -95,7 +95,7 @@ def write_backup_db(date_string):
     cursor = cnx.cursor()
     
     create_database(cursor, date_string)
-    create_tables(cursor)
+    create_tables(cnx, cursor)
 
     collections = ['Cargos', 'Faltas', 'Feriados', 'Ferias', 'Turnos', 'Users']
 
@@ -115,10 +115,10 @@ def create_database(cursor, date_string):
 
     cursor.execute(f'USE {mysql_table_name}')
 
-def create_tables(cursor):
+def create_tables(cnx, cursor):
     with open('create_backup_db.sql', 'r') as f:    
         cursor.execute(f.read(), multi=True)
-
+    cnx.commit()
 def generate_falta_id():
     from app import db
     ids_faltas = db.get_all_rows_from_firestore('Ferias', 'id')
