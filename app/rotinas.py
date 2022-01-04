@@ -101,16 +101,17 @@ def write_backup_db(date_string):
 
     for collection in collections:
         rows = db.get_all_rows_from_firestore(collection)
+
         for row in rows:
             placeholders = ', '.join(['%s'] * len(row))
             columns = ', '.join(row.keys())
             sql = "INSERT INTO %s ( %s ) VALUES ( %s )" % (collection, columns, placeholders)
             cursor.execute(sql, list(row.values()))
-             
+            
 def create_database(cursor, date_string):
     mysql_table_name = date_string.replace('-', '_')
     
-    cursor.execute(f'CREATE DATABASE {mysql_table_name}')
+    cursor.execute(f'CREATE DATABASE IF NOT EXISTS {mysql_table_name}')
 
     cursor.execute(f'USE {mysql_table_name}')
 
