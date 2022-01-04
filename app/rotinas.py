@@ -3,6 +3,8 @@ from workalendar.america import BrazilDistritoFederal
 import csv
 import os
 from random import randint
+import mysql.connector
+from configparser import ConfigParser
 
 def finaliza_turno(funcionario, turno):
     
@@ -56,11 +58,13 @@ def check_turnos():
 def backup_db():
     
     now = datetime.now()
-    filename = f"backups/{'%.2d' % now.day}-{'%.2d' % now.month}-{now.year}.csv"
+    date_string = f"{'%.2d' % now.day}-{'%.2d' % now.month}-{now.year}"
+    filename = f"backups/{date_string}.csv"
 
-    write_backup(filename)
-
-def write_backup(filename):
+    write_backup_file(filename)
+    #write_backup_db(date_string)
+    
+def write_backup_file(filename):
     collections = ['Cargos', 'Faltas', 'Feriados', 'Ferias', 'Turnos', 'Users']
     from app import db
     
@@ -74,6 +78,46 @@ def write_backup(filename):
                 
     os.chmod(filename, 000)
     
+def write_backup_db(date_string):
+    from app import db
+    config = ConfigParser()
+    config.read('config/mysql.ini')
+    
+    user = config['MYSQL']['user']
+    password = config['MYSQL']['password']
+    
+    cnx = mysql.connector.connect(
+        host="localhost",
+        user=user, 
+        password=password
+    )
+
+    cursor = cnx.cursor()
+    
+    create_database(cursor, date_string)
+    create_tables(cursor)
+
+    collections = ['Cargos', 'Faltas', 'Feriados', 'Ferias', 'Turnos', 'Users']
+
+    for collection in collections:
+        rows = db.get_all_rows_from_firestore(collection)
+        for row in rows:
+            placeholders = ', '.join(['%s'] * len(row))
+            columns = ', '.join(row.keys())
+            sql = "INSERT INTO %s ( %s ) VALUES ( %s )" % (collection, columns, placeholders)
+            cursor.execute(sql, list(row.values()))
+             
+def create_database(cursor, date_string):
+    mysql_table_name = date_string.replace('-', '_')
+    
+    cursor.execute(f'CREATE DATABASE {mysql_table_name}')
+
+    cursor.execute(f'USE {mysql_table_name}')
+
+def create_tables(cursor):
+    with open('create_backup_db.sql', 'r') as f:    
+        cursor.execute(f.read(), multi=True)
+
 def generate_falta_id():
     from app import db
     ids_faltas = db.get_all_rows_from_firestore('Ferias', 'id')
