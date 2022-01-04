@@ -56,12 +56,12 @@ def create_app():
     app.config.from_object("config")
     
     from app.rotinas import check_turnos
-    #from app.rotinas import backup_db
+    from app.rotinas import backup_db
     
     # Scheduler Diária Turno para fechar turnos abertos
     rotina_turnos.add_job(check_turnos, 'cron', hour=0, minute=0)
     rotina_turnos.add_job(backup_db, 'cron', hour=0, minute=5)
-    
+
     rotina_turnos.start()
 
     # Mail configs
@@ -107,6 +107,9 @@ def create_app():
     from app.controllers.Ferias.routes import ferias_blueprint
     app.register_blueprint(ferias_blueprint)
     
+    from app.controllers.Faltas.routes import faltas_blueprint
+    app.register_blueprint(faltas_blueprint)
+    
     @app.errorhandler(404)
     @app.errorhandler(500)
     def page_not_found(e):
@@ -117,6 +120,10 @@ def create_app():
 
     @app.errorhandler(401)
     def permission_error(e):
+        if 'user' in session:
+            user = session['user']
+            return render_template('404.html', user=user, error=e), 401
+
         return redirect(url_for('login.log_in'))
     
     @app.errorhandler(400)

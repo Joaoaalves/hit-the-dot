@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from workalendar.america import BrazilDistritoFederal
 import csv
 import os
+from random import randint
 
 def finaliza_turno(funcionario, turno):
     
@@ -24,19 +25,34 @@ def finaliza_turno(funcionario, turno):
     
     db.update_info('Turnos', turno.to_json(), query_arr=[['dia', turno.dia], ['user_id', funcionario.id]])
 
+def adiciona_falta(funcionario, now):
+    from app import db
+    db.add_data_on_firestore('Faltas', {
+        'date' : now,
+        'id' : generate_falta_id(),
+        'func_id' : funcionario.id,
+        'current_status' : 'falta'
+    })
+
 def check_turnos():
     now = datetime.now()
+    list_ferias = db.get_all_ferias()
+
     if BrazilDistritoFederal().is_working_day(day=now):
-        from app import db, app
-        funcionarios = db.get_all_funcionarios()
-        
-        app.logger.info(f'Inicializando finalização de turnos não finalizados: {str(now)}')
-        now = f"{'%.02d' % now.day}/{'%.02d' % now.month}/{now.year}"
-        for funcionario in funcionarios:
-            turno_hoje = db.get_turno(now, funcionario.id)
-            if turno_hoje and turno_hoje.current_status == 'clocked_in':       
-                finaliza_turno(funcionario, turno_hoje)
-                
+        from app import db
+        for ferias in list_ferias:
+            if ferias.is_working_day(now.timestamp()):
+                funcionarios = db.get_all_funcionarios()
+                now = f"{'%.02d' % now.day}/{'%.02d' % now.month}/{now.year}"
+                for funcionario in funcionarios:
+                    turno_hoje = db.get_turno(now, funcionario.id)
+                    if turno_hoje:
+                        if turno_hoje.current_status == 'clocked_in':       
+                            finaliza_turno(funcionario, turno_hoje)
+                    else:
+                        adiciona_falta(funcionario, now)
+                break
+     
 def backup_db():
     
     now = datetime.now()
@@ -58,16 +74,11 @@ def write_backup(filename):
                 
     os.chmod(filename, 000)
     
+def generate_falta_id():
+    from app import db
+    ids_faltas = db.get_all_rows_from_firestore('Ferias', 'id')
     
-def clean_backups():
-    
-    now = datetime.now()
-    
-    last_week_first_day = now - timedelta(days=7)
-    
-    for i in range(7):
-        current_date = last_week_first_day + timedelta(days=i)
-        
-        filename = f"backups/{current_date}"
-    
-    
+    while True:
+        new_id = randint(10000, 99999)
+        if new_id not in ids_faltas:
+            return new_id

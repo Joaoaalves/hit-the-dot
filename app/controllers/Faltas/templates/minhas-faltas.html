@@ -13,11 +13,10 @@
     <link rel="stylesheet" href="{{url_for('painel.static', filename='css/painel.css')}}">
     <link rel="stylesheet" href="{{url_for('turnos.static', filename='css/turnos.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename='css/default-table.css')}}">
+    <link rel="stylesheet" href="{{url_for('faltas.static', filename='css/faltas.css')}}">
     
     <!-- custom JS -->
-    <script src="{{url_for('turnos.static', filename='js/turnos.js')}}"></script>
-
-
+    <script src="{{url_for('faltas.static', filename='js/faltas.js')}}"></script>
 
 </head>
 
@@ -32,40 +31,30 @@
         <div class="col-6 content-container">
             <div class="flex">
                 <div class="container-table">
-                    <div class="turnos">
-                        {% if turnos %}
-                        {% include 'table-meus-turnos.html' %}
+                    <div class="faltas">
+                        {% if faltas %}
+                        {% include 'table-minhas-faltas.html' %}
                         {% endif %}
                     </div>
-
                 </div>
-
-                <section class="utils-container">
-                    <div class="container-filtro box-shadow clearfix">
-                        <h4 class="mx-auto">Filtro</h4>
-                        <form method="get">
+                <section class="container-utils">
+                    <div class="container-filtros box-shadow">
+                        <h4>Filtro</h4>
+                        <form method='GET'>
                             <label for="date" class="form-label">Data</label>
-                            <input type="date" name='date' id="date-picker" min="2020-01-01" max="max_date"  class="form-control">
-                            <br>
-                            <input type="submit" value="Buscar" class="btn-dark btn">
-                            <br>
-                            <a href="/meus-turnos" class="btn btn-warning mt-3">Remover Filtro</a>
+                            <input type="date" class="form-control" value='{{date}}' name="date" placeholder="dd/mm/yyyy" required>
+                            
+                            <input type="submit" value="Filtrar" class="btn btn-warning">
+                            <a href="/minhas-faltas" class="btn btn-dark">Limpar</a>
                         </form>
                     </div>
-
                     <div class="container-buttons box-shadow">
-                        <a href='/minhas-faltas' class="btn btn-warning">Minhas Faltas</a>
+                        <a href="/meus-turnos" class="btn btn-warning">Turnos</a>
                     </div>
                 </section>
             </div>
         </div>
-
     </div>
-
 </body>
-<script>
-    max_date = new Date().toISOString().split("T")[0];
-    document.getElementById('date-picker').setAttribute('max', max_date);
-    ordenarPor('data');
-</script>
+
 </html>

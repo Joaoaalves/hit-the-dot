@@ -23,13 +23,13 @@ def painel():
         except Exception as e:
             now = datetime.now()
             start_date = datetime(year=now.year, month=now.month, day=1)
-            end_date = datetime(year=now.year, month=now.month, day=now.day)
+            end_date = datetime(year=now.year, month=now.month, day=now.day - 1)
                     
     else:
         
         now = datetime.now()
         start_date = datetime(year=now.year, month=now.month, day=1)
-        end_date = datetime(year=now.year, month=now.month, day=now.day)
+        end_date = datetime(year=now.year, month=now.month, day=now.day - 1)
         
     if is_admin(user):
         if not 'funcionario' in request.args or request.args.get('funcionario') == '':

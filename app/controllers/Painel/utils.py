@@ -6,9 +6,14 @@ def render_painel_func(funcionario, start_date, end_date):
     start_date = get_start_date(start_date, funcionario.get_datetime_inicio_trabalho())
     horas_totais_mes = horas_totais(start_date, end_date, funcionario=funcionario)
         
-    horas_trabalhadas = get_total_time(funcionario=funcionario)
+    segundos_trabalhados = get_total_time(funcionario=funcionario)
+    
+    horas_trabalhadas = segundos_trabalhados // 3600
     
     dias_uteis = dias_uteis_timedelta(start_date, end_date)
+    
+    
+    media_horas =  timedelta(seconds=(segundos_trabalhados / dias_uteis )) if dias_uteis > 0 else timedelta(seconds=0)
     
     percentage = get_percentage_work(horas_trabalhadas, horas_totais_mes)
     
@@ -25,16 +30,13 @@ def render_painel_func(funcionario, start_date, end_date):
         percentage_extras = 0
         
     month_work = get_total_work(funcionario=funcionario)
-
+    
     assiduidade, faltas =  calcula_assiduidade(funcionario, start_date, end_date) 
     assiduidade = '%.1f' % assiduidade
     
     start_date_html = f"{'%.2d' % start_date.day}/{'%.2d' % start_date.month}/{start_date.year}"
     end_date_html = f"{'%.2d' % end_date.day}/{'%.2d' % end_date.month}/{end_date.year}"
 
-    media_horas =  (timedelta(seconds=(( (horas_trabalhadas + horas_extras) * 3600
-                             ) / dias_uteis )) if dias_uteis > 0 else timedelta(seconds=0))
-    
     media_horas = '0' + str(media_horas)[:4]
     
     dias_trabalhados = dias_uteis - faltas
@@ -65,7 +67,12 @@ def render_filtered_painel_admin(user, start_date, end_date, func_id):
     turnos = db.get_turnos_timedelta(funcionario.id, start_date, end_date)
     funcionario.set_turnos(turnos)
     
-    horas_trabalhadas = get_total_time(funcionario=funcionario)
+    segundos_trabalhados = get_total_time(funcionario=funcionario)
+
+    horas_trabalhadas = segundos_trabalhados // 3600
+    
+    media_horas =  (timedelta(seconds=( segundos_trabalhados/ dias_uteis )) 
+                    if dias_uteis > 0 else timedelta(seconds=0))
     
     percentage = get_percentage_work(horas_trabalhadas, horas_totais)
     
@@ -89,8 +96,7 @@ def render_filtered_painel_admin(user, start_date, end_date, func_id):
     start_date_html = f"{'%.2d' % start_date.day}/{'%.2d' % start_date.month}/{start_date.year}"
     end_date_html = f"{'%.2d' % end_date.day}/{'%.2d' % end_date.month}/{end_date.year}"
 
-    media_horas =  (timedelta(seconds=(( (horas_trabalhadas + horas_extras) * 3600
-                             ) / dias_uteis )) if dias_uteis > 0 else timedelta(seconds=0))
+    
     
     media_horas = '0' + str(media_horas)[:4]
     
@@ -118,8 +124,10 @@ def render_painel_admin(user, start_date, end_date):
     if funcionarios:
         horas_totais_mes = horas_totais(start_date, end_date, funcionarios=funcionarios)
         
-        horas_trabalhadas = get_total_time(funcionarios=funcionarios)
+        segundos_trabalhados = get_total_time(funcionarios=funcionarios)
 
+        horas_trabalhadas = segundos_trabalhados // 3600
+        
         percentage = get_percentage_work(horas_trabalhadas, horas_totais_mes)
         
         if horas_trabalhadas > horas_totais_mes:
@@ -230,7 +238,7 @@ def get_total_time(funcionarios=None, funcionario=None):
                                             seconds=tempo_turno.second
                                     ).seconds
                 
-    return total_time_in_seconds // 3600
+    return total_time_in_seconds
 
 
 def get_total_work(funcionarios=None, funcionario=None):
@@ -277,44 +285,24 @@ def get_percentage_work(horas_trabalhadas, horas_totais):
                   else 100)
     
 def calcula_assiduidade(funcionario, start_date, end_date):
-    if not 'turnos' in vars(funcionario):
-        return 0
-      
-    calendar = BrazilDistritoFederal()
 
     current_start_date = get_start_date(start_date, funcionario.get_datetime_inicio_trabalho())
     dias_uteis = dias_uteis_timedelta(current_start_date, end_date)
     
-    feriados = db.get_feriados()
-    list_ferias = db.get_all_ferias()
+    faltas_list = db.get_faltas_funcionario(funcionario.id)
+    if not faltas_list:
+        return 100, 0
     
-    trabalhou = 0
     faltas = 0
-    for i in range( (end_date - current_start_date).days + 1 ):
-    
+    for i in range((end_date - current_start_date).days + 1):
+        
         c_date = current_start_date + timedelta(days=i)
+        
+        for falta in faltas_list:
+            if c_date == falta.date and not falta.is_abonada():
+                faltas += 1
+                break
+    if faltas == 0:
+        return 100, 0
 
-        date_string = f"{'%.2d' % c_date.day}/{'%.2d' % c_date.month}/{c_date.year}"
-        if calendar.is_working_day(c_date) and date_string not in feriados:
-            
-            if list_ferias:
-                for f in list_ferias:
-                    if f.is_working_day(c_date.timestamp()):
-                        
-                        if funcionario.worked_this_date(c_date):
-                            trabalhou += 1
-                            break
-                        
-                        else:
-                            faltas += 1
-                            break
-            else:
-                if funcionario.worked_this_date(c_date):
-                    trabalhou += 1
-                else:
-                    faltas += 1
-                    
-    return ((trabalhou * 100 / dias_uteis)
-            if dias_uteis > 0
-            else 100
-            ), faltas
+    return (100 - (faltas * 100 / dias_uteis)), faltas
