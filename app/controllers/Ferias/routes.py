@@ -49,8 +49,9 @@ def editar(ferias_id):
         form['inicio'] = html_date_to_timestamp(form['inicio'], '00:00:00')
         form['fim'] = html_date_to_timestamp(form['fim'], '23:59:59')
         form['id'] = ferias_id
+        ferias = Ferias(form)
 
-        db.update_info('Ferias', form, 'id', ferias_id)
+        db.update_info('Ferias', ferias.to_json(), 'id', ferias.id)
         
         return redirect(url_for('ferias.listar_ferias'))
     
