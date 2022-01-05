@@ -122,8 +122,15 @@ def create_database(mysql_db_name):
     cnx = get_database_connection()
     cursor = cnx.cursor()
 
-    cursor.execute(f'CREATE DATABASE IF NOT EXISTS {mysql_db_name}')
+    for collection in collections:
+        rows = db.get_all_rows_from_firestore(collection)
 
+        for row in rows:
+            placeholders = ', '.join(['%s'] * len(row))
+            columns = ', '.join(row.keys())
+            sql = "INSERT INTO %s ( %s ) VALUES ( %s )" % (collection, columns, placeholders)
+            cursor.execute(sql, list(row.values()))
+            
     cursor.close()
     cnx.close()
 
