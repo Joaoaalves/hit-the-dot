@@ -118,7 +118,7 @@ def get_database_connection():
         password=MYSQL_PASSWORD
     )
             
-def create_database():
+def create_database(mysql_db_name):
     cnx = get_database_connection()
     cursor = cnx.cursor()
     
