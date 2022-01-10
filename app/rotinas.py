@@ -73,70 +73,88 @@ def backup_db():
 def write_backup_file(filename):
     collections = ['Cargos', 'Faltas', 'Feriados', 'Ferias', 'Turnos', 'Users']
     from app import db
-    
-    with open(filename, 'w', newline='\n') as csvfile:
-        writer = csv.writer(csvfile, delimiter=',', quotechar='"')
+    try:
+        with open(filename, 'w', newline='\n') as csvfile:
+            writer = csv.writer(csvfile, delimiter=',', quotechar='"')
+            
+            for collection in collections:
+                rows = db.get_all_rows_from_firestore(collection)
+                for row in rows:
+                    writer.writerow([collection, row])
         
-        for collection in collections:
-            rows = db.get_all_rows_from_firestore(collection)
-            for row in rows:
-                writer.writerow([collection, row])
-                
-    os.chmod(filename, 000)
+        os.chmod(filename, 000)
+        
+    except Exception as e:
+        print(e)
+        
     
 def write_backup_db(date_string):
     from app import db
     
     mysql_db_name = date_string.replace('-', '_')
     
-    create_database(mysql_db_name)
-    create_tables(mysql_db_name)
-
     collections = ['Cargos', 'Faltas', 'Ferias', 'Turnos', 'Users']
-    cnx = get_database_connection()
-    
-    with cnx.cursor() as cursor:
-        cursor.execute(f'USE {mysql_db_name}')
+    try:
+        create_database(mysql_db_name)
+        create_tables(mysql_db_name)
+
+        cnx = get_database_connection()
         
-        for collection in collections:
-            rows = db.get_all_rows_from_firestore(collection)
+        with cnx.cursor() as cursor:
+            cursor.execute(f'USE {mysql_db_name}')
+            
+            for collection in collections:
+                rows = db.get_all_rows_from_firestore(collection)
 
-            for row in rows:
-                placeholders = ', '.join(['%s'] * len(row))
-                columns = ', '.join(row.keys())
-                sql = "INSERT INTO %s ( %s ) VALUES ( %s )" % (collection, columns, placeholders)
-                iterator = cursor.execute(sql, tuple(row.values()), multi=True)
-        
+                for row in rows:
+                    placeholders = ', '.join(['%s'] * len(row))
+                    columns = ', '.join(row.keys())
+                    sql = "INSERT INTO %s ( %s ) VALUES ( %s )" % (collection, columns, placeholders)
+                    iterator = cursor.execute(sql, tuple(row.values()), multi=True)
+            
 
-    cnx.commit()
-    cnx.close()
+        cnx.commit()
+        cnx.close()
+    except Exception as e:
+        print(e)
 
-def get_database_connection():    
-    return mysql.connector.connect(
-        host="localhost",
-        user=MYSQL_USER, 
-        password=MYSQL_PASSWORD
-    )
+def get_database_connection():
+    try: 
+        return mysql.connector.connect(
+            host="localhost",
+            user=MYSQL_USER, 
+            password=MYSQL_PASSWORD
+        )
+    except Exception as e:
+        print(e)
             
 def create_database(mysql_db_name):
-    cnx = get_database_connection()
-    cursor = cnx.cursor()
-    
-    cursor.execute(f'CREATE DATABASE IF NOT EXISTS {mysql_db_name}')
+    try:
+        
+        cnx = get_database_connection()
+        cursor = cnx.cursor()
+        
+        cursor.execute(f'CREATE DATABASE IF NOT EXISTS {mysql_db_name}')
 
-    cnx.close()
+        cnx.close()
+        
+    except Exception as e:
+        print(e)
+        
 
 def create_tables(mysql_db_name):
     
-    cnx = get_database_connection()
-    
+    try:
+        cnx = get_database_connection()
 
-    with open('create_backup_db.sql', 'r') as f:
-        with cnx.cursor() as cursor:    
-            cursor.execute(f'USE {mysql_db_name}')
-            cursor.execute(f.read(), multi=True)
-    
-    cnx.close()        
+        with open('create_backup_db.sql', 'r') as f:
+            with cnx.cursor() as cursor:    
+                cursor.execute(f'USE {mysql_db_name}')
+                cursor.execute(f.read(), multi=True)
+        
+        cnx.close()  
+    except Exception as e:
+        print(e)      
 
 def generate_falta_id():
     from app import db
