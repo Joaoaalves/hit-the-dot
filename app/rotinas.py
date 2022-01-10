@@ -66,9 +66,18 @@ def backup_db():
     now = datetime.now()
     date_string = f"{'%.2d' % now.day}-{'%.2d' % now.month}-{now.year}"
     filename = f"backups/{date_string}.csv"
-
+    
     write_backup_file(filename)
     write_backup_db(date_string)
+    
+    # Remove old backups
+    old_backup_date = now - timedelta(days=15)
+    old_date_string = f"{'%.2d' % old_backup_date.day}-{'%.2d' % old_backup_date.month}-{old_backup_date.year}"
+    old_backup_filename = f"backups/{old_date_string}.csv"
+
+    remove_old_backup_db(old_date_string)
+    remove_old_backup_file(old_backup_filename)
+    
     
 def write_backup_file(filename):
     collections = ['Cargos', 'Faltas', 'Feriados', 'Ferias', 'Turnos', 'Users']
@@ -82,7 +91,7 @@ def write_backup_file(filename):
                 for row in rows:
                     writer.writerow([collection, row])
         
-        os.chmod(filename, 000)
+        os.chmod(filename, 600)
         
     except Exception as e:
         print(e)
@@ -139,8 +148,7 @@ def create_database(mysql_db_name):
         cnx.close()
         
     except Exception as e:
-        print(e)
-        
+        print(e)    
 
 def create_tables(mysql_db_name):
     
@@ -156,6 +164,27 @@ def create_tables(mysql_db_name):
     except Exception as e:
         print(e)      
 
+def remove_old_backup_db(date_string):
+    try:
+        conn = get_database_connection()
+        with conn.cursor() as cursor:
+            query = f'DROP DATABASE {date_string}';
+            cursor.execute(query)
+            
+        conn.commit()
+        conn.close()
+        
+    except Exception as e:
+        print(e)
+
+def remove_old_backup_file(filename):
+    try:
+        if os.path.exists(filename):
+            os.remove(filename)
+        
+    except Exception as e:
+        print(e)
+    
 def generate_falta_id():
     from app import db
     ids_faltas = db.get_all_rows_from_firestore('Ferias', 'id')
@@ -164,4 +193,3 @@ def generate_falta_id():
         new_id = randint(10000, 99999)
         if new_id not in ids_faltas:
             return new_id
-
