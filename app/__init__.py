@@ -7,6 +7,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 from app.models.database import Database
 from app.rotinas import backup_db
+import redis
 
 # Rotina do verificador de turnos
 rotina_turnos = BackgroundScheduler(daemon=True)
@@ -34,6 +35,8 @@ invalid_sessions = list()
 # IP Ban
 ip_ban = IpBan(ban_count=5)
 ip_ban.init_app(app)
+
+redis = redis.Redis(host='localhost', port=6379, db=0)
 
 
 try:
@@ -110,6 +113,9 @@ def create_app():
     from app.controllers.Faltas.routes import faltas_blueprint
     app.register_blueprint(faltas_blueprint)
     
+    from app.controllers.ServerSent.routes import server_sent
+    app.register_blueprint(server_sent)
+
     @app.errorhandler(404)
     @app.errorhandler(500)
     def page_not_found(e):

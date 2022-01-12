@@ -67,6 +67,27 @@
 </body>
 <footer>
     <script src="{{url_for('admin.static', filename='js/listar_funcionarios.js')}}"></script>
+
+    <script>
+        var source = new EventSource('/listar-funcionarios/status');
+        source.addEventListener('sessions', function(event){
+            var data = JSON.parse(event.data);
+
+            for([key, value] of Object.entries(data)){
+                console.log(key);
+                console.log(value);
+                var status_label = document.getElementById('status-'+key);
+                if(value == 'true'){
+                    status_label.style.color = 'green';
+                    status_label.innerHTML = 'Online';
+                }
+                else{
+                    status_label.style.color = 'red';
+                    status_label.innerHTML = 'Offline';
+                }
+            }
+        });
+    </script>
 </footer>
 
 </html>

@@ -4,6 +4,7 @@
             <th></th>
             <th id="func-label">Funcionário</th>
             <th>Turno</th>
+            <th>Status</th>
             <th>Ações</th>
         </tr>
     </thead>
@@ -25,6 +26,7 @@
                 </div>
             </th>
             <th>{{funcionario.turno}} horas</th>
+            <th id="status-{{funcionario.id}}"></th>
             <th>
                 <button class="btn btn-success" onclick="window.location.href='/funcionario/{{funcionario.id}}';">
                     <i class="fas fa-eye"></i>
