@@ -37,11 +37,11 @@ def baterponto():
     else:
         form = request.form
         status = form['status']
-
-        (redis.set(f"session:{user.id}", 'true') 
+        redis_con = redis.Redis(host='localhost', port=6379, db=0)
+        (redis_con.set(f"session:{user.id}", 'true') 
             if status == 'clock_in' or status == 'break_out'
             else 
-        redis.set(f"session:{user.id}", 'false'))
+        redis_con.set(f"session:{user.id}", 'false'))
 
         if db.add_new_shift_status_on_firestore(status, user.id):   
             return redirect(url_for('bater_ponto.baterponto'))
