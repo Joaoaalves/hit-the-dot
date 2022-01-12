@@ -146,12 +146,10 @@
         trabalho_total = (parseInt(hours) * 3600) + (parseInt(minutes) * 60) + (parseInt(seconds));
         turno_total = {{ user.turno }} * 3600;
         percentage = (trabalho_total * 100 / turno_total).toFixed(1);
-
-        // var [h_extras, min_extras, sec_extras] = hora_extra.split(':');
-        // extra_total = (parseInt(h_extras) * 3600) + (parseInt(min_extras) * 60) + (parseInt(sec_extras));
-        // extra_maxima = 3600 * 4;
-        // percentage_extras = (extra_total * 100 / extra_maxima).toFixed(1);
-
+        if(percentage > 100){
+            percentage = 100;
+        }
+        
         config = [[percentage, '#E328AF', 'rgba(227,40,175,0.1)']];
 
         {% if turno.almocou %}
