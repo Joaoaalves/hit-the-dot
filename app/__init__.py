@@ -36,7 +36,8 @@ invalid_sessions = list()
 ip_ban = IpBan(ban_count=5)
 ip_ban.init_app(app)
 
-redis = redis.Redis(host='localhost', port=6379, db=0)
+pool = redis.ConnectionPool(host='localhost', port=6379, db=0)
+redis = redis.Redis(connection_pool=pool)
 
 
 try:
