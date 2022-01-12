@@ -6,6 +6,8 @@ funcs_ids = [f.id for f in db.get_all_funcionarios()]
 
 @server_sent.route('/listar-funcionarios/status')
 def get_sessions():
+    import redis
+    redis = redis.Redis(host='localhost', port=6379, db=0)
     @stream_with_context
     def generate():
         sessions = dict()
