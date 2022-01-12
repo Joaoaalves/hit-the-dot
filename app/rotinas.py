@@ -44,6 +44,7 @@ def adiciona_falta(funcionario, now):
 
 def check_turnos():
     now = datetime.now()
+    now = now - timedelta(days=1)
     list_ferias = db.get_all_ferias()
 
     if BrazilDistritoFederal().is_working_day(day=now):
