@@ -6,15 +6,14 @@ funcs_ids = [f.id for f in db.get_all_funcionarios()]
 
 @server_sent.route('/listar-funcionarios/status')
 def get_sessions():
-    import redis
-    redis = redis.Redis(host='localhost', port=6379, db=0)
+    redis_con = redis.Redis(host='localhost', port=6379, db=0)
     @stream_with_context
     def generate():
         sessions = dict()
         global func_ids
 
         for uid in funcs_ids:
-            session = redis.get(f"session:{uid}")
+            session = redis_con.get(f"session:{uid}")
             if type(session) == bytes:
                 sessions[uid] = session.decode('utf-8')
             else:
