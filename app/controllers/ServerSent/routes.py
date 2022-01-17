@@ -14,7 +14,11 @@ def get_sessions():
             session_ids = [session_id.decode('utf-8') for session_id in redis_con.keys('session:*')]
             for session_id in session_ids:
                 
+<<<<<<< HEAD
                 uid = int(session_id.replace('session:', ''))
+=======
+                uid = session_id.replace('session:', '')
+>>>>>>> d56c787985a3d6c5f15ec6cd8faafec76fe16aca
 
                 sessions[uid] = redis_con.get(session_id).decode('utf-8')
 
