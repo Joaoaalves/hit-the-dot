@@ -38,7 +38,8 @@ def baterponto():
         form = request.form
         status = form['status']
         redis_con = redis.Redis(host='localhost', port=6379, db=0)
-        (redis_con.set(f"session:{user.id}", 'true') 
+        
+        (redis_con.set(f"session:{user.id}", 'true')
             if status == 'clock_in' or status == 'break_out'
             else 
         redis_con.set(f"session:{user.id}", 'false'))
