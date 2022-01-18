@@ -84,7 +84,7 @@
                             <ul>
                                 <li><b>Hora de Entrada:</b> {{turno.hora_entrada}}</li>
                                 <li><b>Hora de Saída:</b> {{turno.hora_saida}}</li>
-                                <li><b>Tempo total:</b> {{turno.get_total_time()}}</li>
+                                <li><b>Tempo total:</b> {{turno.get_total_time_str()}}</li>
                             </ul>
                         </div>
                     </div>
@@ -140,7 +140,7 @@
     {% else %}
     <script>
         // Seta o Progress Ring
-        var trabalho = '{{ turno.get_total_time()}}';
+        var trabalho = '{{ turno.get_total_time_str()}}';
 
         var [hours, minutes, seconds] = trabalho.split(':');
         trabalho_total = (parseInt(hours) * 3600) + (parseInt(minutes) * 60) + (parseInt(seconds));
