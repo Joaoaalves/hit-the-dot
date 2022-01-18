@@ -72,7 +72,7 @@ def update_turno(form, date, user_id):
     db.firestore.collection('Turnos').document(document_id=doc_id).update(updated_turno.to_json())
     
 def get_work(turno, funcionario):
-    horas_trabalhadas = turno.get_total_time()
+    horas_trabalhadas = turno.get_total_time_str()
     
     trabalho = datetime_seconds(turno.converter_str_datetime(horas_trabalhadas))
 

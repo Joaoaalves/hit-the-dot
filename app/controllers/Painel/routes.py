@@ -9,27 +9,9 @@ painel_blueprint = Blueprint('painel', __name__,
 @painel_blueprint.route('/painel')
 @funcionario_required
 def painel():
+
     user = get_user_object(session['user'])
-    if 'range' in request.args and request.args.get('range') != '':
-        try:
-            
-            s_date, e_date = request.args.get('range').split(' - ')
-            start_date = datetime.strptime(s_date, '%d/%m/%Y')
-            end_date = datetime.strptime(e_date, '%d/%m/%Y')
-            
-            if start_date > end_date:
-                raise Exception('Date Range inválido')
-            
-        except Exception as e:
-            now = datetime.now()
-            start_date = datetime(year=now.year, month=now.month, day=1)
-            end_date = datetime(year=now.year, month=now.month, day=now.day - 1)
-                    
-    else:
-        
-        now = datetime.now()
-        start_date = datetime(year=now.year, month=now.month, day=1)
-        end_date = datetime(year=now.year, month=now.month, day=now.day - 1)
+    start_date, end_date = get_start_end_date(request.args)
         
     if is_admin(user):
         if not 'funcionario' in request.args or request.args.get('funcionario') == '':
@@ -38,8 +20,9 @@ def painel():
         else:
             try:
                 func_id = int(request.args.get('funcionario'))
-                return render_filtered_painel_admin(user, start_date, end_date, func_id)
+                return render_filtered_painel_admin(start_date, end_date, func_id)
             
+            # Func not found
             except Exception as e:
                 return flask.abort(404, e)
     else:

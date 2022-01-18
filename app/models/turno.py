@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from flask.helpers import total_seconds
 class Turno:
     _horas_totais = timedelta(seconds=0)
-    
+    _segundos_totais = 0
     def __init__(self, data):
         
         self.dia = data['dia']
@@ -25,8 +25,9 @@ class Turno:
     
     
     def set_tempo_total(self):
-        str_horas_totais = self.get_total_time()
+        str_horas_totais = self.get_total_time_str()
         self._horas_totais = self.converter_str_datetime(str_horas_totais)
+        self._segundos_totais = self._horas_totais.second + self._horas_totais.minute * 60 + self._horas_totais.hour * 3600
         
     def get_tempo_almoco(self):
         if self.almocou:
@@ -38,7 +39,7 @@ class Turno:
             
         return timedelta(seconds=0)
         
-    def get_total_time(self):
+    def get_total_time_str(self):
         initial_time = self.converter_str_datetime(self.hora_entrada)
         final_time = self.converter_str_datetime(self.hora_saida)
 

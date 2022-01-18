@@ -9,7 +9,7 @@
     {% for turno in turnos %}
     <tr class="box-shadow content">
         <th>{{turno.dia}}</th>
-        <th>{{turno.get_total_time()}}</th>
+        <th>{{turno.get_total_time_str()}}</th>
         <th>{{turno.hora_entrada}}</th>
         <th>{{turno.hora_saida}}</th>
         <th>
