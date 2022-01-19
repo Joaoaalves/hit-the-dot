@@ -149,7 +149,7 @@ def get_trabalho_total_funcionario(start_date, end_date, funcionario):
             date_string = dia.strftime('%d/%m/%Y')
             
             turno = db.get_turno(date_string, funcionario.id)
-            print(date_string, turno)
+
             if turno and turno.current_status == 'clocked_out':
                 turno.set_tempo_total()
                 segundos_trabalhados += turno._segundos_totais
