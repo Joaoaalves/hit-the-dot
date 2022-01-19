@@ -44,6 +44,16 @@ function clearTable(table, table_fields){
     }
 }
 
+function parseDate(input, format) {
+    format = format || 'yyyy-mm-dd'; // default format
+    var parts = input.match(/(\d+)/g), 
+        i = 0, fmt = {};
+    // extract date-part indexes from the format
+    format.replace(/(yyyy|dd|mm)/g, function(part) { fmt[part] = i++; });
+  
+    return new Date(parts[fmt['yyyy']], parts[fmt['mm']]-1, parts[fmt['dd']]);
+}
+
 function sortTable(table, column){
     switching = true;
     /* Make a loop that will continue until
@@ -65,7 +75,10 @@ function sortTable(table, column){
         y = rows[i + 1].getElementsByTagName("th")[column];
         // Check if the two rows should switch place:
         if (column == 0 ){
-            if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+            date_x = parseDate(x.textContent, 'dd/mm/yyyy');
+            date_y = parseDate(y.textContent, 'dd/mm/yyyy');
+
+            if (date_x < date_y) {
             // If so, mark as a switch and break the loop:
             shouldSwitch = true;
             break;
