@@ -34,11 +34,13 @@
             <input class="form-control mt-5" type='email' placeholder="Email" name='email' required>
 
             <div class="password-container">
-                <input class="form-control mt-3 mb-5" id="password" type="password" placeholder="Senha" name='password' required>
+                <input class="form-control mt-3 mb-3" id="password" type="password" placeholder="Senha" name='password' autocomplete='true' required>
                 <button class="btn-show" id="show-pass" type="button"><i class="fas fa-eye"></i></button>
             </div>
 
-            <input type="submit" value="Login" class="btn btn-dark mx-auto">
+            {{recaptcha}}
+            
+            <input type="submit" value="Login" class="btn btn-dark mx-auto mt-3">
 
         </form>
 
