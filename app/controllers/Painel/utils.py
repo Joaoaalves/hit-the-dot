@@ -59,7 +59,7 @@ def render_painel_admin(user, start_date, end_date):
 
     if segundos_totais < segundos_trabalhados:
         percentage_extras = get_percentage(segundos_trabalhados - segundos_totais, segundos_trabalhados)
-        horas_extras = segundos_trabalhados - segundos_totais
+        horas_extras = (segundos_trabalhados - segundos_totais) // 3600
     else:
         percentage_extras = 0
         horas_extras = 0
@@ -165,7 +165,7 @@ def render_painel_func(funcionario, start_date, end_date):
 
     if segundos_totais < segundos_trabalhados:
         percentage_extras = get_percentage(segundos_trabalhados - segundos_totais, segundos_trabalhados)
-        horas_extras = segundos_trabalhados - segundos_totais
+        horas_extras = (segundos_trabalhados - segundos_totais) // 3600
         segundos_trabalhados = segundos_totais
         
     else:
