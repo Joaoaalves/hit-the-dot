@@ -2,7 +2,7 @@ from flask import Flask, render_template, session, redirect, url_for
 from flask_ipban import IpBan
 from flask_mail import Mail
 from flask_wtf import CSRFProtect
-from flask_recaptcha import Recaptcha
+from flask_recaptcha import ReCaptcha
 import os
 from apscheduler.schedulers.background import BackgroundScheduler
 
@@ -41,7 +41,7 @@ ip_ban.init_app(app)
 app.config.from_object("config")
     
 # Google Recaptcha
-recaptcha = Recaptcha(app=app)
+recaptcha = ReCaptcha(app=app)
 
 try:
 
