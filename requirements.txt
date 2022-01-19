@@ -121,3 +121,4 @@ workalendar==16.1.0
 WTForms==2.3.3
 mysql-connector-python
 redis
+Flask-reCaptcha
