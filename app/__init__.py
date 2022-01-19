@@ -2,6 +2,7 @@ from flask import Flask, render_template, session, redirect, url_for
 from flask_ipban import IpBan
 from flask_mail import Mail
 from flask_wtf import CSRFProtect
+from flask_recaptcha import Recaptcha
 import os
 from apscheduler.schedulers.background import BackgroundScheduler
 
@@ -36,6 +37,12 @@ invalid_sessions = list()
 ip_ban = IpBan(ban_count=5)
 ip_ban.init_app(app)
 
+# App configs
+app.config.from_object("config")
+    
+# Google Recaptcha
+recaptcha = Recaptcha(app=app)
+
 try:
 
     # Setup DB
@@ -52,8 +59,6 @@ except Exception as e:
     exit()
 
 def create_app():
-    # App configs
-    app.config.from_object("config")
     
     from app.rotinas import check_turnos
     from app.rotinas import backup_db

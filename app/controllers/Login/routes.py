@@ -15,29 +15,32 @@ def log_in():
         return render_template("login.html")
 
     else:
+        if recaptcha.verify():
+            try:
+        
+                form = request.form
+                email = form['email']
+                senha = form['password']
+                
+                # This throws exception on login fail
+                db.login(email, senha)
+                
+                # This gets the user info from db on login success
+                user = db.get_user('email', email)
 
-        try:
-    
-            form = request.form
-            email = form['email']
-            senha = form['password']
-            
-            # This throws exception on login fail
-            db.login(email, senha)
-            
-            # This gets the user info from db on login success
-            user = db.get_user('email', email)
-
-            flask.session['user'] = user.__dict__
-            flask.session['user']['role'] = user.__class__.__name__
-            users.append(user)
-            
-        except Exception as e:
-            app.logger.warning(e)
-            return  render_template(
-                'login.html',
-                erro='Email ou senha incorreto(s)!'
-            ), 401
+                flask.session['user'] = user.__dict__
+                flask.session['user']['role'] = user.__class__.__name__
+                users.append(user)
+                
+            except Exception as e:
+                app.logger.warning(e)
+                return  render_template(
+                    'login.html',
+                    erro='Email ou senha incorreto(s)!'
+                ), 401
+        else:
+            return render_template('login.html',
+                                   erro='Recaptcha inválido!'), 401
             
 
         return redirect(url_for('painel.painel'))

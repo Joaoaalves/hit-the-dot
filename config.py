@@ -7,6 +7,9 @@ MAX_CONTENT_LENGTH = 1024 * 1024 * 8 # Tamanho maximo de 8MB
 PROFILE_UPLOAD_FOLDER = 'app/protected/'
 
 
+# Fill with recaptcha keys
+RECAPTCHA_SITE_KEY = ''
+RECAPTCHA_SECRET_KEY = ''
 
 # Anti XSS Configs
 #SESSION_COOKIE_HTTPONLY=True

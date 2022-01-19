@@ -10,7 +10,7 @@ def render_filtered_painel_admin(start_date, end_date, func_id):
 
     horas_extras, percentage_extras, segundos_trabalhados = get_horas_extras(segundos_trabalhados, segundos_totais)
 
-    percentage = get_percentage(segundos_trabalhados, segundos_totais)
+    percentage = get_percentage_work(segundos_trabalhados, segundos_totais)
     horas_trabalhadas = segundos_trabalhados // 3600
     
     start_date_html = start_date.strftime('%d-%m-%Y')
@@ -37,10 +37,10 @@ def render_filtered_painel_admin(start_date, end_date, func_id):
 
 
 def render_painel_admin(user, start_date, end_date):
-    
+
     segundos_trabalhados, segundos_totais, dias_totais = get_trabalho_total(start_date, end_date)
 
-    percentage = get_percentage(segundos_trabalhados, segundos_totais)
+    percentage = get_percentage_work(segundos_trabalhados, segundos_totais)
 
     horas_extras, percentage_extras, segundos_trabalhados = get_horas_extras(segundos_trabalhados, segundos_totais)
 
@@ -69,7 +69,7 @@ def render_painel_func(funcionario, start_date, end_date):
     horas_extras, percentage_extras, segundos_trabalhados = get_horas_extras(segundos_trabalhados, segundos_totais)
         
     horas_devendo = get_horas_devendo(segundos_trabalhados, segundos_totais)
-    percentage = get_percentage(segundos_trabalhados, segundos_totais)
+    percentage = get_percentage_work(segundos_trabalhados, segundos_totais)
     horas_trabalhadas = segundos_trabalhados // 3600
 
     start_date_html = start_date.strftime('%d-%m-%Y')
@@ -90,8 +90,10 @@ def render_painel_func(funcionario, start_date, end_date):
                                             dias_trabalhados=dias_trabalhados,
                                             horas_devendo=horas_devendo)
 
-def get_percentage(segundos_trabalhados, segundos_totais):
+
+def get_percentage_work(segundos_trabalhados, segundos_totais):
     return '%.1f' %( (segundos_trabalhados / segundos_totais) * 100) if segundos_totais > 0 else '100'
+
 
 def get_media_horas(segundos_trabalhados, dias_uteis):
     media_segundos = (( segundos_trabalhados/ dias_uteis )
@@ -101,9 +103,10 @@ def get_media_horas(segundos_trabalhados, dias_uteis):
     minutes = (media_segundos % 3600) // 60
     return f"{'%.2d' % hours}:{'%.2d' % minutes}"
 
+
 def get_horas_extras(segundos_trabalhados, segundos_totais):
     if segundos_totais < segundos_trabalhados:
-        percentage_extras = get_percentage(segundos_trabalhados - segundos_totais, segundos_trabalhados)
+        percentage_extras = get_percentage_work(segundos_trabalhados - segundos_totais, segundos_trabalhados)
         horas_extras = (segundos_trabalhados - segundos_totais) // 3600
         segundos_trabalhados = segundos_totais
     else:
@@ -111,6 +114,7 @@ def get_horas_extras(segundos_trabalhados, segundos_totais):
         horas_extras = 0
         
     return horas_extras, percentage_extras, segundos_trabalhados
+
 
 def get_trabalho_total(start_date, end_date):
     segundos_trabalhados = 0
@@ -131,6 +135,7 @@ def get_trabalho_total(start_date, end_date):
     
     return segundos_trabalhados, tempo_total, dias_totais
 
+
 def get_trabalho_total_funcionario(start_date, end_date, funcionario):
     
     segundos_trabalhados = 0
@@ -144,7 +149,7 @@ def get_trabalho_total_funcionario(start_date, end_date, funcionario):
             date_string = dia.strftime('%d/%m/%Y')
             
             turno = db.get_turno(date_string, funcionario.id)
-
+            print(date_string, turno)
             if turno and turno.current_status == 'clocked_out':
                 turno.set_tempo_total()
                 segundos_trabalhados += turno._segundos_totais
@@ -164,11 +169,13 @@ def get_trabalho_total_funcionario(start_date, end_date, funcionario):
     
     return segundos_trabalhados, faltas, assiduidade, tempo_total, dias_totais
 
+
 def get_horas_devendo(segundos_trabalhados, segundos_totais):
     horas_totais = (segundos_totais - segundos_trabalhados) // 3600
     minutos_totais = ((segundos_totais - segundos_trabalhados) % 3600) // 60
 
     return f"{'%.2d' % horas_totais}:{'%.2d' % minutos_totais}"
+
 
 def get_start_end_date(args):
     try:
