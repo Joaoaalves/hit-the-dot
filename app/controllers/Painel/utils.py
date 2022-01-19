@@ -8,14 +8,7 @@ def render_filtered_painel_admin(start_date, end_date, func_id):
 
     media_horas =  get_media_horas(segundos_trabalhados, dias_uteis)
 
-    if segundos_totais < segundos_trabalhados:
-        percentage_extras = get_percentage(segundos_trabalhados - segundos_totais, segundos_trabalhados)
-        horas_extras = (segundos_trabalhados - segundos_totais) // 3600
-        segundos_trabalhados = segundos_totais
-
-    else:
-        percentage_extras = 0
-        horas_extras = 0
+    horas_extras, percentage_extras, segundos_trabalhados = get_horas_extras(segundos_trabalhados, segundos_totais)
 
     percentage = get_percentage(segundos_trabalhados, segundos_totais)
     horas_trabalhadas = segundos_trabalhados // 3600
@@ -42,27 +35,14 @@ def render_filtered_painel_admin(start_date, end_date, func_id):
                                             dias_trabalhados=dias_trabalhados,
                                             horas_devendo=horas_devendo)
 
-def get_media_horas(segundos_trabalhados, dias_uteis):
-    media_segundos = (( segundos_trabalhados/ dias_uteis )
-                    if dias_uteis > 0 else 0)
-
-    hours = media_segundos // 3600
-    minutes = (media_segundos % 3600) // 60
-    return f"{'%.2d' % hours}:{'%.2d' % minutes}"
 
 def render_painel_admin(user, start_date, end_date):
-
-    start_date, end_date = get_start_end_date(request.args)
+    
     segundos_trabalhados, segundos_totais, dias_totais = get_trabalho_total(start_date, end_date)
 
     percentage = get_percentage(segundos_trabalhados, segundos_totais)
 
-    if segundos_totais < segundos_trabalhados:
-        percentage_extras = get_percentage(segundos_trabalhados - segundos_totais, segundos_trabalhados)
-        horas_extras = (segundos_trabalhados - segundos_totais) // 3600
-    else:
-        percentage_extras = 0
-        horas_extras = 0
+    horas_extras, percentage_extras, segundos_trabalhados = get_horas_extras(segundos_trabalhados, segundos_totais)
 
     horas_trabalhadas = segundos_trabalhados // 3600
     horas_totais_mes = segundos_totais // 3600
@@ -80,8 +60,57 @@ def render_painel_admin(user, start_date, end_date):
                                             start_date=start_date_html,
                                             end_date=end_date_html)
 
+def render_painel_func(funcionario, start_date, end_date):
+    segundos_trabalhados, faltas, assiduidade, segundos_totais, dias_totais = get_trabalho_total_funcionario(start_date, end_date, funcionario)
+
+    media_horas = get_media_horas(segundos_trabalhados, dias_totais)
+    dias_trabalhados = dias_totais - faltas
+
+    horas_extras, percentage_extras, segundos_trabalhados = get_horas_extras(segundos_trabalhados, segundos_totais)
+        
+    horas_devendo = get_horas_devendo(segundos_trabalhados, segundos_totais)
+    percentage = get_percentage(segundos_trabalhados, segundos_totais)
+    horas_trabalhadas = segundos_trabalhados // 3600
+
+    start_date_html = start_date.strftime('%d-%m-%Y')
+    end_date_html = end_date.strftime('%d-%m-%Y')
+
+    
+    return render_template('painel-func.html', user=funcionario, painel_active='active',
+                                            percentage=percentage,
+                                            percentage_extras=percentage_extras,
+                                            horas_mes=horas_trabalhadas,
+                                            horas_extras=horas_extras,
+                                            horas_totais=horas_trabalhadas + horas_extras,
+                                            assiduidade=assiduidade,
+                                            faltas=faltas,
+                                            start_date=start_date_html,
+                                            end_date=end_date_html,
+                                            media_horas=media_horas,
+                                            dias_trabalhados=dias_trabalhados,
+                                            horas_devendo=horas_devendo)
+
 def get_percentage(segundos_trabalhados, segundos_totais):
     return '%.1f' %( (segundos_trabalhados / segundos_totais) * 100) if segundos_totais > 0 else '100'
+
+def get_media_horas(segundos_trabalhados, dias_uteis):
+    media_segundos = (( segundos_trabalhados/ dias_uteis )
+                    if dias_uteis > 0 else 0)
+
+    hours = media_segundos // 3600
+    minutes = (media_segundos % 3600) // 60
+    return f"{'%.2d' % hours}:{'%.2d' % minutes}"
+
+def get_horas_extras(segundos_trabalhados, segundos_totais):
+    if segundos_totais < segundos_trabalhados:
+        percentage_extras = get_percentage(segundos_trabalhados - segundos_totais, segundos_trabalhados)
+        horas_extras = (segundos_trabalhados - segundos_totais) // 3600
+        segundos_trabalhados = segundos_totais
+    else:
+        percentage_extras = 0
+        horas_extras = 0
+        
+    return horas_extras, percentage_extras, segundos_trabalhados
 
 def get_trabalho_total(start_date, end_date):
     segundos_trabalhados = 0
@@ -122,7 +151,7 @@ def get_trabalho_total_funcionario(start_date, end_date, funcionario):
 
             else:
                 falta = db.get_falta_with_date(funcionario.id, date_string)
-                if falta:
+                if falta and not falta.is_abonada():
                     faltas += 1
         
             if turno or falta:
@@ -156,40 +185,3 @@ def get_start_end_date(args):
         end_date_datetime = datetime(year=now.year, month=now.month, day=now.day - 1)
 
     return start_date_datetime, end_date_datetime
-
-def render_painel_func(funcionario, start_date, end_date):
-    segundos_trabalhados, faltas, assiduidade, segundos_totais, dias_totais = get_trabalho_total_funcionario(start_date, end_date, funcionario)
-
-    media_horas = get_media_horas(segundos_trabalhados, dias_totais)
-    dias_trabalhados = dias_totais - faltas
-
-    if segundos_totais < segundos_trabalhados:
-        percentage_extras = get_percentage(segundos_trabalhados - segundos_totais, segundos_trabalhados)
-        horas_extras = (segundos_trabalhados - segundos_totais) // 3600
-        segundos_trabalhados = segundos_totais
-        
-    else:
-        percentage_extras = 0
-        horas_extras = 0
-        
-    horas_devendo = get_horas_devendo(segundos_trabalhados, segundos_totais)
-    percentage = get_percentage(segundos_trabalhados, segundos_totais)
-    horas_trabalhadas = segundos_trabalhados // 3600
-
-    start_date_html = start_date.strftime('%d-%m-%Y')
-    end_date_html = end_date.strftime('%d-%m-%Y')
-
-    
-    return render_template('painel-func.html', user=funcionario, painel_active='active',
-                                            percentage=percentage,
-                                            percentage_extras=percentage_extras,
-                                            horas_mes=horas_trabalhadas,
-                                            horas_extras=horas_extras,
-                                            horas_totais=horas_trabalhadas + horas_extras,
-                                            assiduidade=assiduidade,
-                                            faltas=faltas,
-                                            start_date=start_date_html,
-                                            end_date=end_date_html,
-                                            media_horas=media_horas,
-                                            dias_trabalhados=dias_trabalhados,
-                                            horas_devendo=horas_devendo)

@@ -24,6 +24,9 @@ def painel():
             
             # Func not found
             except Exception as e:
+                if(type(e) == AttributeError):
+                    return flask.abort(404, 'Funcionário não encontrado')
+
                 return flask.abort(404, e)
     else:
         turnos = db.get_turnos_timedelta(user.id,start_date, end_date)
