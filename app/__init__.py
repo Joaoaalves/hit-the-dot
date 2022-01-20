@@ -53,10 +53,7 @@ except Exception as e:
     exit()
 
 # IP Ban
-ip_ban = IpBan(
-        ban_count=3, 
-        persist=True,
-        ban_seconds=60 * 15, secret_key=app.secret_key)
+ip_ban = IpBan()
 ip_ban.init_app(app)
 
 def create_app():
@@ -130,7 +127,6 @@ def create_app():
 
     @app.errorhandler(401)
     def permission_error(e):
-        ip_ban.add(reason='Permission Denied')
         if 'user' in session:
             user = session['user']
             return render_template('404.html', user=user, error=e), 401
