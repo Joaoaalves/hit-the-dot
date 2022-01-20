@@ -33,13 +33,11 @@ def log_in():
                 users.append(user)
                 
             except Exception as e:
-                ip_ban.add(ip=request.remote_addr)
                 return  render_template(
                     'login.html',
                     erro='Email ou senha incorreto(s)!'
                 ), 401
         else:
-            ip_ban.add(ip=request.remote_addr)
             return render_template('login.html',
                                    erro='Recaptcha inválido!'), 401
             
