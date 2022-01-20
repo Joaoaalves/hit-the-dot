@@ -1,4 +1,4 @@
-from flask import Flask, render_template, session, redirect, url_for
+from flask import Flask, render_template, session, redirect, url_for, request
 from flask_ipban import IpBan
 from flask_mail import Mail
 from flask_wtf import CSRFProtect
@@ -7,8 +7,6 @@ import os
 from apscheduler.schedulers.background import BackgroundScheduler
 
 from app.models.database import Database
-from app.rotinas import backup_db
-import redis
 
 # Rotina do verificador de turnos
 rotina_turnos = BackgroundScheduler(daemon=True)
@@ -124,6 +122,7 @@ def create_app():
     @app.errorhandler(404)
     @app.errorhandler(500)
     def page_not_found(e):
+        ip_ban.ban(reason='404')
         if 'user' in session:
             user = session['user']
             return render_template('404.html', user=user, error=e), 404
@@ -131,6 +130,7 @@ def create_app():
 
     @app.errorhandler(401)
     def permission_error(e):
+        ip_ban.add(reason='Permission Denied')
         if 'user' in session:
             user = session['user']
             return render_template('404.html', user=user, error=e), 401

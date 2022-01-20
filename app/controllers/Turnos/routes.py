@@ -18,7 +18,7 @@ def turnos():
         funcionarios = None
 
         turnos = get_turnos()
-        
+
         funcionarios, dict_func_ids = get_funcionarios()
 
         if turnos and funcionarios:
