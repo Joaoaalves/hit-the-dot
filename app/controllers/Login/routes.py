@@ -11,6 +11,8 @@ login = Blueprint("login", __name__,
 @login.route("/login", methods=['GET', 'POST'])
 def log_in():
     if request.method == 'GET':
+        if 'user' in session:
+            return redirect(url_for('painel.painel'))
 
         return render_template("login.html")
 
