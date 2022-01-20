@@ -33,10 +33,6 @@ csrf = CSRFProtect(app)
 users = list()
 invalid_sessions = list()
 
-# IP Ban
-ip_ban = IpBan(ban_count=5)
-ip_ban.init_app(app)
-
 # App configs
 app.config.from_object("config")
     
@@ -57,6 +53,13 @@ except Exception as e:
     print(e)
 
     exit()
+
+# IP Ban
+ip_ban = IpBan(
+        ban_count=3, 
+        persist=True,
+        ban_seconds=60 * 15, secret_key=app.secret_key)
+ip_ban.init_app(app)
 
 def create_app():
     
