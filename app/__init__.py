@@ -119,7 +119,6 @@ def create_app():
     @app.errorhandler(404)
     @app.errorhandler(500)
     def page_not_found(e):
-        ip_ban.ban(reason='404')
         if 'user' in session:
             user = session['user']
             return render_template('404.html', user=user, error=e), 404
