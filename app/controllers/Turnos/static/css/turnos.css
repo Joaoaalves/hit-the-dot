@@ -71,11 +71,6 @@ form{
 }
 
 
-#data:hover, #funcionario:hover{
-    cursor: pointer;
-    font-size: 1.1em;
-}
-
 .container-buttons{
     display: flex;
     flex-direction: column;
