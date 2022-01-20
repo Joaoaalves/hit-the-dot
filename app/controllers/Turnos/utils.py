@@ -1,20 +1,24 @@
-from datetime import timedelta
+from datetime import timedelta, datetime
+import time
 from . import db, Turno, Funcionario
+from google.cloud import firestore
 
 def get_turnos():
     turnos = list()
 
     list_turnos = db.get_all_rows_from_firestore('Turnos')
-    
+
     if list_turnos:
         for t in list_turnos:
             if t['current_status'] == 'clocked_out':
                 turnos.append(Turno(t))
 
-        return turnos
+        return sorted(turnos, key=lambda x: get_timestamp(x.dia), reverse=True)
 
     return None
 
+def get_timestamp(dia):
+    return time.mktime(datetime.strptime(dia, '%d/%m/%Y').timetuple())
 
 def get_turno(date, user_id):
 
@@ -51,8 +55,6 @@ def filtra_turnos(turnos, filter):
 
 def update_turno(form, date, user_id):
     data = dict(form)
-    # data['report'] = form.getlist('report')
-    print(data)
     dt = form['dia']
     dt = f'{dt[-2:]}/{dt[5:7]}/{dt[:4]}'  
     
