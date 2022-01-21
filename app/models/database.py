@@ -350,7 +350,16 @@ class Database():
             return tarefas
         
         return None
-    
+
+    def get_tarefa(self, tarefa_id):
+
+        stream = self.firestore.collection('Tarefas').where('id', '==', tarefa_id).stream()
+
+        for t in stream:
+            return Tarefa(t.to_dict())
+        
+        return None
+        
     def get_all_relatorios(self, func_id=None):
         relatorios = list()
         collection = self.firestore.collection('Relatorios')
@@ -481,3 +490,5 @@ class Database():
             
         return (list_faltas if len(list_faltas) > 0
                 else None)
+
+        
