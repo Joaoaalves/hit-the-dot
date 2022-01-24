@@ -44,7 +44,7 @@ def baterponto():
             else 
         redis_con.set(f"session:{user.id}", 'false'))
 
-        if db.add_new_shift_status_on_firestore(status, user.id):   
+        if db.add_new_shift_status_on_firestore(status, user):   
             return redirect(url_for('bater_ponto.baterponto'))
         
 
