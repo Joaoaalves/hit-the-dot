@@ -220,7 +220,7 @@ class Database():
         return None
     
     # Add new shift Status to firestore
-    def add_new_shift_status_on_firestore(self, new_status, user_id):
+    def add_new_shift_status_on_firestore(self, new_status, funcionario):
 
         now = datetime.now()
         
@@ -228,7 +228,7 @@ class Database():
         
         current_hour = f"{now.hour:02d}:{now.minute:02d}:{now.second:02d}"
         
-        turno = self.get_turno(current_date, user_id)
+        turno = self.get_turno(current_date, funcionario.id)
         
         if turno:
             current_status = turno.current_status
@@ -256,7 +256,8 @@ class Database():
                     'current_status' : 'clocked_in',
                     'dia' : current_date,
                     'hora_entrada' : current_hour,
-                    'user_id' : user_id
+                    'user_id' : funcionario.id,
+                    'turno_funcionario' : funcionario.turno 
                 }
                 
                 turno = Turno(data)
