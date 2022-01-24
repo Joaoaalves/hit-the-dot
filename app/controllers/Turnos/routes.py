@@ -1,12 +1,12 @@
 from app.controllers.decorators import funcionario_required
 from . import *
 from .utils import *
+import sys, gc
 
 turnos_blueprint = Blueprint('turnos', __name__,
                     template_folder='templates',
                     static_folder='static',
                     static_url_path='/Turnos/static')
-
 
 @turnos_blueprint.route('/turnos')
 @admin_required
@@ -38,7 +38,7 @@ def turnos():
 
                 except:
                     pass
-            
+
             return render_template('turnos.html', turnos=turnos, turnos_active='active',
                                                     funcionarios=funcionarios, dict_func_ids=dict_func_ids,
                                                     user=user)

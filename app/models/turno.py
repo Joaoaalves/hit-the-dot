@@ -12,6 +12,9 @@ class Turno:
         self.user_id = int(data['user_id'])
         self.almocou = False
         
+        if 'turno_funcionario':
+            self.turno_funcionario = data['turno_funcionario']
+        
         if 'hora_saida' in data:
             self.hora_saida = data['hora_saida']
         

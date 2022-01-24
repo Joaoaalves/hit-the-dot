@@ -1,0 +1,34 @@
+<table>
+    <thead>
+        <tr class="box-shadow">
+            <td style="padding-left: calc(4% + 64px);">Cliente</td>
+            <td>Inicio do Contrato</td>
+            <td>Fim do Contrato</td>
+            <td>Ações</td>
+        </tr>
+    </thead>
+    <tbody>
+        {% for cliente in clientes %}
+        <tr class="box-shadow">
+            <td>
+                <div class="cliente">
+                    <div class="my-auto">
+                        <img class="imagem-cliente" w='64' h='64' src="{{url_for('protected.protected_file', filename='clientes/' + cliente.id|string + '/profile.jpg')}}" alt="">
+                    </div>
+                    {{cliente.nome}}
+                </div>
+            </td>
+            <td>{{cliente.get_data_inicio_str()}}</td>
+            <td>{{cliente.get_data_fim_str()}}</td>
+            <td>
+                <button class="btn btn-warning utils-button" onclick='editarCliente({{cliente.id}})'>
+                    <i class="fas fa-pencil-alt"></i>
+                </button>
+                <button class="btn btn-danger utils-button" onclick='excluirCliente({{cliente.id}}, "{{csrf_token()}}")'>
+                    <i class="fas fa-times"></i>
+                </button>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

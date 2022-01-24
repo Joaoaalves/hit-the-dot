@@ -20,6 +20,7 @@ from .tipo_tarefa import TipoTarefa
 from .tarefa import Tarefa
 from .pontuacao import Pontuacao
 from .falta import Falta
+from .cliente import Cliente
 
 class Database():
 
@@ -491,4 +492,9 @@ class Database():
         return (list_faltas if len(list_faltas) > 0
                 else None)
 
-        
+    def get_all_clientes(self):
+        clientes = list()
+
+        stream = self.firestore.collection('Clientes').stream()
+
+        return [Cliente(c.to_dict()) for c in stream]
