@@ -6,7 +6,7 @@ tarefas_blueprint = Blueprint('tarefas', __name__,
                                         static_folder='static',
                                         static_url_path='/Tarefas/static')
 
-@tarefas_blueprint.route('/tarefas')
+@tarefas_blueprint.route('/listar-tarefas')
 @funcionario_required
 def tarefas():
     

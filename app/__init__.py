@@ -116,6 +116,9 @@ def create_app():
     from app.controllers.ServerSent.routes import server_sent
     app.register_blueprint(server_sent)
 
+    from app.controllers.Clientes.routes import clientes_blueprint
+    app.register_blueprint(clientes_blueprint)
+
     @app.errorhandler(404)
     @app.errorhandler(500)
     def page_not_found(e):
