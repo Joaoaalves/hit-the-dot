@@ -62,7 +62,7 @@ def create_app():
     from app.rotinas import backup_db
     
     # Scheduler Diária Turno para fechar turnos abertos
-    rotina_turnos.add_job(check_turnos, 'cron', hour=0, minute=0)
+    rotina_turnos.add_job(check_turnos, 'cron', hour=23, minute=59)
     rotina_turnos.add_job(backup_db, 'cron', hour=0, minute=5)
 
     rotina_turnos.start()
