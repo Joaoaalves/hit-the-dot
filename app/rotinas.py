@@ -76,7 +76,7 @@ def backup_db():
     old_date_string = f"{'%.2d' % old_backup_date.day}-{'%.2d' % old_backup_date.month}-{old_backup_date.year}"
     old_backup_filename = f"backups/{old_date_string}.csv"
 
-    remove_old_backup_db(old_date_string)
+    remove_old_backup_db(old_date_string.replace('-', '_'))
     remove_old_backup_file(old_backup_filename)
     
     
