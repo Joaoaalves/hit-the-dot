@@ -40,9 +40,9 @@ def render_painel_admin(user, start_date, end_date):
 
     segundos_trabalhados, segundos_totais, dias_totais = get_trabalho_total(start_date, end_date)
 
-    percentage = get_percentage_work(segundos_trabalhados, segundos_totais)
 
     horas_extras, percentage_extras, segundos_trabalhados = get_horas_extras(segundos_trabalhados, segundos_totais)
+    percentage = get_percentage_work(segundos_trabalhados, segundos_totais)
 
     horas_trabalhadas = segundos_trabalhados // 3600
     horas_totais_mes = segundos_totais // 3600
@@ -55,7 +55,7 @@ def render_painel_admin(user, start_date, end_date):
                                             percentage_extras=percentage_extras,
                                             horas_mes=min(horas_trabalhadas, horas_totais_mes),
                                             horas_extras=horas_extras,
-                                            horas_totais=horas_trabalhadas,
+                                            horas_totais=horas_trabalhadas + horas_extras,
                                             funcionarios=db.get_all_funcionarios(),
                                             start_date=start_date_html,
                                             end_date=end_date_html)
