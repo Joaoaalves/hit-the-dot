@@ -12,9 +12,9 @@
     <tbody>
         {% for feriado in feriados %}
         <tr class="box-shadow content">
-            <td><b>{{feriado['name']}}</b></td>
-            <td>{{feriado['date']}}</td>
-            {% if feriado['repeat'] %}
+            <td><b>{{feriado.nome}}</b></td>
+            <td>{{feriado.get_formated_date()}}</td>
+            {% if feriado.repete %}
             <td>Sim</td>
             {% else %}
             <td>Não</td>
@@ -22,10 +22,10 @@
 
             {% if is_admin(user) %}
             <td>
-                <button class="btn btn-warning" onclick="editarFeriado({{feriado['id']}})">
+                <button class="btn btn-warning" onclick="editarFeriado({{feriado.id}})">
                     <i class="fas fa-pencil-alt"></i>
                 </button>
-                <button class="btn btn-danger" onclick="excluirFeriado({{feriado['id']}}, '{{csrf_token()}}' )">
+                <button class="btn btn-danger" onclick="excluirFeriado({{feriado.id}}, '{{csrf_token()}}' )">
                     <i class="fas fa-times"></i>
                 </button>
             </td>

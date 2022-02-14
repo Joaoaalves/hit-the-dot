@@ -3,7 +3,7 @@ from . import *
 def render_filtered_painel_admin(start_date, end_date, func_id):
     user = get_user_object(session['user'])
     funcionario = db.get_funcionario(func_id)
-
+    
     segundos_trabalhados, faltas, assiduidade, segundos_totais, dias_uteis = get_trabalho_total_funcionario(start_date, end_date, funcionario)
 
     media_horas =  get_media_horas(segundos_trabalhados, dias_uteis)
@@ -147,8 +147,7 @@ def get_trabalho_total_funcionario(start_date, end_date, funcionario):
     cal = BrazilDistritoFederal()
     for dia in rrule(DAILY, dtstart=start_date, until=end_date):
         if cal.is_working_day(dia):
-            date_string = dia.strftime('%d/%m/%Y')
-            turno = db.get_turno(date_string, funcionario.id)
+            turno = db.get_turno(dia.date(), funcionario.id)
 
             if turno and turno.current_status == 'clocked_out':
                 len_turno = turno.turno_funcionario
@@ -157,7 +156,7 @@ def get_trabalho_total_funcionario(start_date, end_date, funcionario):
                 segundos_trabalhados += turno._segundos_totais
 
             else:
-                falta = db.get_falta_with_date(funcionario.id, date_string)
+                falta = db.get_falta_with_date(funcionario.id, dia.date())
                 if falta and not falta.is_abonada():
                     faltas += 1
         

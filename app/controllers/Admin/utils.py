@@ -17,7 +17,7 @@ def filtra_funcionarios(funcionarios, filter):
     return tns_flt
     
 def update_func_info(form, funcionario):
-    print(form)
+
     funcionario.name = form['nome']
     funcionario.turno = int(form['turno'])
     funcionario.dias_trabalho = int(form['dias_trabalho'])
@@ -43,7 +43,7 @@ def excluir_funcionario(func_id):
     db.remove_user(func_id)
     
     # Remove Func's Turnos
-    db.remove_data_from_firestore('Turnos', 'user_id', func_id)
+    db.remove_data('users', func_id)
     
 
     
@@ -66,7 +66,7 @@ def dias_uteis_mes():
 
 def get_cargo_nome(cargos, id):
     for cargo in cargos:
-        if cargo['id'] == id:
-            return cargo['nome']
+        if cargo.id == id:
+            return cargo.name
         
 app.jinja_env.globals.update(get_cargo_nome=get_cargo_nome)

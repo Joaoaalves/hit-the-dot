@@ -12,7 +12,7 @@ def painel():
 
     user = get_user_object(session['user'])
     start_date, end_date = get_start_end_date(request.args)
-        
+    
     if is_admin(user):
         if not 'funcionario' in request.args or request.args.get('funcionario') == '':
             return render_painel_admin(user, start_date, end_date)
@@ -29,6 +29,5 @@ def painel():
 
                 return flask.abort(404, e)
     else:
-        turnos = db.get_turnos_timedelta(user.id,start_date, end_date)
-        user.set_turnos(turnos)
+
         return render_painel_func(user,start_date, end_date)

@@ -5,25 +5,12 @@ class Funcionario(User):
 
     _privilege = 2
     def __init__(self, data):
-        self.name = data['name']
         self.id = data['id']
+        self.name = data['name']
         self.email = data['email']
         self.cargo = data['cargo']
         self.turno = data['turno']
         
-        if 'inicio_trabalho' in data:
-            try:
-                if '-' in data['inicio_trabalho']:
-                    ano,mes,dia = data['inicio_trabalho'].split('-')
-                    
-                else:
-                    dia,mes,ano = data['inicio_trabalho'].split('/')
-                    
-                self.inicio_trabalho = f'{dia}/{mes}/{ano}'
-            
-            except:
-                self.inicio_trabalho = None
-                
         if 'celular' in data:
             self.celular = data['celular']
             
@@ -39,10 +26,6 @@ class Funcionario(User):
         for turno in self.turnos:
             turno.set_tempo_total()
             
-    def get_datetime_inicio_trabalho(self):
-        ano,mes,dia = self.inicio_trabalho.split('/')
-        return datetime(year=int(ano), month=int(mes), day=int(dia))
-    
     def worked_this_date(self, date):
         for turno in self.turnos:
             dt = datetime.strptime(turno.dia, '%d/%m/%Y')
@@ -51,6 +34,7 @@ class Funcionario(User):
                 return True
             
         return False
+
     def get_tempo_total_trabalho_mes(self, mes):
         if self.turnos:
             horas_totais = timedelta(seconds = 0)

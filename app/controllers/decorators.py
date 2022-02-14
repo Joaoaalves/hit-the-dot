@@ -41,7 +41,7 @@ def login_required(f):
     def verifica_login(*args, **kwargs):
         if not 'user' in session:
             return redirect(url_for('login.log_in'))
-
+        
         return f(*args, **kwargs)
     
     return verifica_login
@@ -96,7 +96,6 @@ def admin_required(f):
     def verifica_admin(*args, **kwargs):
         
         user = get_user_object(session['user'])
-
         if is_admin(user):
             return f(*args, **kwargs)
         

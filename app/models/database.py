@@ -1,36 +1,36 @@
 import ast
 import pyrebase
-from google.cloud import firestore
 from firebase_admin import auth as admin_auth
 import firebase_admin
-from datetime import date, datetime, timedelta
+from datetime import datetime
 import os
 import subprocess
 from app.models.ferias import Ferias
-import random
-
-from app.models.relatorio import Relatorio
+import mysql.connector
+from configparser import ConfigParser
 
 from .admin import Admin
 from .funcionario import Funcionario
 from .turno import Turno
 from .cargo import Cargo
-from .relatorio import Relatorio
-from .tipo_tarefa import TipoTarefa
 from .tarefa import Tarefa
-from .pontuacao import Pontuacao
 from .falta import Falta
 from .cliente import Cliente
+from .feriado import Feriado
 
 class Database():
 
     def __init__(self):
-        self.__firebase_api_key = os.environ.get('FIREBASE_API_KEY')
 
         # Configs firebase
         with open("config/firebase.cfg", "r") as f:
             firebase_config = ast.literal_eval(f.read())
-
+        
+        # Configs mysql
+        config = ConfigParser()
+        config.read('config/mysql.ini')
+        self.mysql_user = config['MYSQL']['user']
+        self.mysql_pass = config['MYSQL']['password']
 
         # Initializing firebase
         firebase = pyrebase.initialize_app(firebase_config)
@@ -38,38 +38,73 @@ class Database():
         # Auth Module
         self.auth = firebase.auth()
 
-        # Database Module
-        self.firestore = firestore.Client()
-
         # Admin Module
         firebase_admin.initialize_app()
         self.__admin_auth = admin_auth
 
+    def get_mysql_connection(self):
+        return mysql.connector.connect(
+            host="localhost",
+            user=self.mysql_user,
+            passwd=self.mysql_pass,
+            database="htd"
+        )
     
     # Returns authentication with email and password
     def login(self, email, password):
         return self.auth.sign_in_with_email_and_password(email, password)
 
-    # add new entry on Database
-    def add_data_on_firestore(self, collection, info):
-        self.firestore.collection(collection).document().set(info)
+    def insert_data(self, table, info):
+        cnx = self.get_mysql_connection()
+        with cnx.cursor() as cursor:
+            placeholders = ', '.join(['%s'] * len(info))
+            columns = ', '.join(info.keys())
+            sql = "INSERT INTO %s ( %s ) VALUES ( %s )" % (table,  columns, placeholders)
             
-    # Remove data from Firestore       
-    def remove_data_from_firestore(self, collection_name, key=None, value=None, query_arr=None):
-        collection = self.firestore.collection(collection_name)
-        
-        if query_arr:
-            stream = self.filtra_entradas(query_arr, collection)
-            
-        else:
-            stream = collection.where(key, '==', value).stream()
+            iterator = cursor.execute(sql, tuple(info.values()), multi=True)
 
-            
-        for doc in stream:
-            doc.reference.delete()
-            return True
-        
-        return False
+        cnx.commit()
+        cnx.close()
+    
+    def remove_data(self, table, id):
+        cnx = self.get_mysql_connection()
+        with cnx.cursor() as cursor:
+            sql = "DELETE FROM %s WHERE id = %s" % (table, id)
+            cursor.execute(sql)
+            affected_rows = cursor.rowcount
+
+        cnx.commit()
+        cnx.close()
+        return affected_rows > 0
+
+    def update_data(self, table, id, info):
+        cnx = self.get_mysql_connection()
+        with cnx.cursor() as cursor:
+            sql = "UPDATE %s " % table
+            sql += ' SET {}'.format(', '.join('{}=%s'.format(k) for k in info))
+            sql += ' WHERE id = %s' % id
+
+            cursor.execute(sql, tuple(info.values()))
+
+        cnx.commit()
+        cnx.close()
+    
+
+    def get_table_data(self, table):
+        cnx = self.get_mysql_connection()
+        rows = None
+        with cnx.cursor(dictionary=True) as cursor:
+            sql = "SELECT * FROM %s" % table
+            cursor.execute(sql)
+            rows = cursor.fetchall()
+
+        cnx.commit()
+        cnx.close()
+        return rows
+
+    def get_row_by_id(self, table, row_id):
+        return self.select(table, 'id', '=', row_id)[0]
+
     # Signs up a new user on Auth Module and
     # Store his info on Database
     def create_user(self, data):
@@ -84,7 +119,7 @@ class Database():
             if 'password' in data:
                 data.pop('password')
 
-            self.add_data_on_firestore("Users", data)
+            self.insert_data("users", data)
 
         except Exception as e:
             print(e)
@@ -93,15 +128,12 @@ class Database():
         return True
 
     # Get user info from DB and returns as an Object
-    def get_user(self, key, value):
+    def get_user_by_id(self, id):
         try:
-            query = self.firestore.collection("Users").where(
-                key, '==', value
-            ).limit(1).stream()
 
-            for result in query:
-                u = result.to_dict()
-                
+            u = self.get_row_by_id('users', id)
+            
+            if u:
                 role = u['role']
 
                 if role == 'Admin':
@@ -110,46 +142,55 @@ class Database():
                 if role == 'Funcionario':
                     return Funcionario(u)
 
-                return None
+            return None
 
         except Exception as e:
 
             return e
 
-    # Get specific rows from Database
-    def get_rows_from_firestore(self, collection, key, operator, value):
-
-        rows = list()
-        query = self.firestore.collection(collection).where(key, operator, value).stream()
-
-        for result in query:
-            rows.append(result.to_dict())
-
-        if len(rows) > 0:
-            return rows
-
-        return None       
-
-    # Get all rows from specific collection in db
-    # if specific_column is None, all columns will be returned
-    def get_all_rows_from_firestore(self, collection, specific_column=None):
-        rows = list()
+    def get_user_by_email(self, email):
         try:
-            query = self.firestore.collection(collection).stream()
-            
-            for result in query:
-                u = result.to_dict()
 
-                if specific_column:
-                    rows.append(u[specific_column])
-                else:
-                    rows.append(u)
-                
-            return rows
+            u = self.select('users', 'email', '=', email)[0]
 
+            if u:
+                if u['role'] == 'Funcionario':
+                    return Funcionario(u)
+
+                if u['role'] == 'Admin':
+                    return Admin(u)
+
+            return None
         except Exception as e:
-            print(e)
             return e
+  
+    
+    def select(self, table, key, operator, value):
+        cnx = self.get_mysql_connection()
+        rows = None
+        with cnx.cursor(dictionary=True) as cursor:
+            sql = "SELECT * FROM %s WHERE %s %s '%s'" % (table, key, operator, value)
+            cursor.execute(sql)
+            rows = cursor.fetchall()
+
+        cnx.commit()
+        cnx.close()
+        return rows
+
+    def multiple_select(self, table, operations):
+        cnx = self.get_mysql_connection()
+        rows = None
+        sql = "SELECT * FROM %s WHERE " % (table)
+        for op in operations:
+            sql += "%s %s %s AND " % (op[0], op[1], op[2])
+        sql = sql[:-4]
+        with cnx.cursor(dictionary=True) as cursor:
+            cursor.execute(sql)
+            rows = cursor.fetchall()
+
+        cnx.commit()
+        cnx.close()
+        return rows    
 
     def filtra_entradas(self,query_arr, collection):
         query = collection
@@ -160,76 +201,55 @@ class Database():
 
         return query.stream()
     
-    # Update data on db on specific collection with identifier tag
-    def update_info(self, collection_name, info, key=None, value=None, query_arr=None):
-        collection = self.firestore.collection(collection_name)
-        
-        # Multiple Filters
-        if query_arr:
-            stream = self.filtra_entradas(query_arr, collection)
-        
-        # Single Filter
-        if key and value:
-            stream = collection.where(
-                    key, '==', value
-                ).stream()
-        for r in stream:
-            doc = r
-            self.firestore.collection(collection_name).document(doc.id).update(info)    
         
     # Remove all user's info from app
     def remove_user(self, uid):
 
-        # Remove credentials in Auth Module
-        query = self.firestore.collection("Users").where("id", "==", uid).limit(1).stream()
-        for result in query:
-            user = self.__admin_auth.get_user_by_email(result.to_dict()['email'])
-            
-            self.__admin_auth.delete_user(user.uid)
+        user_email = self.get_user_by_id(uid)['email']
+        user = self.__admin_auth.get_user_by_email(user_email)
+        
+        self.__admin_auth.delete_user(user.uid)
 
         # Remove the user's files
         subprocess.call("rm -rf app/protected/" + str(uid), shell=True)
 
-        # Remove the user's data from firestore
-        self.remove_data_from_firestore("Users", key="id", value=uid)
+        self.remove_data('users', uid)
 
     # Get all funcionarios from db
     def get_all_funcionarios(self):
-        funcionarios = list()
-
-        query = self.firestore.collection('Users').where(
-            'role', '==', 'Funcionario'
-        ).stream()
-
-        for f in query:
-            funcionarios.append(Funcionario(f.to_dict()))
-
-        return funcionarios
+        return [Funcionario(f) for f in self.select('users', 'role', '=', 'Funcionario')]
     
     def get_funcionario(self, func_id):
         
-        query = self.firestore.collection('Users').where(
-            'role', '==', 'Funcionario'
-        ).where(
-            'id', '==', func_id
-        ).stream()
-        
-        for f in query:
-            return Funcionario(f.to_dict())
-        
+        return Funcionario(self.get_row_by_id('users', func_id))
+
+    def get_turnos(self):
+
+        return [Turno(t) for t in self.select('turnos', 'current_status', '=', 'clocked_out')]
+
+
+    def get_turno(self, date, func_id):
+        turno = self.multiple_select(
+            'turnos', operations=[['dia', '=', f"'{date}'"],['user_id', '=', func_id]]
+        )
+
+        if len(turno) == 1:
+            return Turno(turno[0])
+
         return None
-    
+
+
     # Add new shift Status to firestore
-    def add_new_shift_status_on_firestore(self, new_status, funcionario):
+    def add_new_shitf_status(self, new_status, funcionario):
 
         now = datetime.now()
         
-        current_date = f"{now.day:02d}/{now.month:02d}/{now.year:04d}"
+        current_date = str(now.date())
         
-        current_hour = f"{now.hour:02d}:{now.minute:02d}:{now.second:02d}"
+        current_hour = str(now.time())[:-7]
         
         turno = self.get_turno(current_date, funcionario.id)
-        
+
         if turno:
             current_status = turno.current_status
             
@@ -237,18 +257,21 @@ class Database():
                 return False
             
             if new_status == 'clock_out' and current_status == 'clocked_in':
-                turno.hora_saida = current_hour
-                turno.current_status = 'clocked_out'
+                self.update_data('turnos', turno.id, {'current_status': 'clocked_out','hora_saida' : current_hour})
                 
             if new_status == 'break_in' and current_status == 'clocked_in':
-                turno.inicio_almoco = current_hour
-                turno.current_status = 'break_in'
+                self.update_data('turnos', turno.id, 
+                    {
+                    'current_status': new_status,
+                    'inicio_almoco' : current_hour,
+                    'almocou' : 1
+                    }
+                )
                 
             if new_status == 'break_out' and current_status == 'break_in':
-                turno.fim_almoco = current_hour
-                turno.current_status = 'clocked_in'
-                
-            self.update_info('Turnos',vars(turno), query_arr=[['dia', turno.dia], ['user_id', turno.user_id]])
+                self.update_data('turnos', turno.id, {'current_status': 'clocked_in', 'fim_almoco' : current_hour})
+            
+
         else:
             if new_status == 'clock_in':
                         
@@ -257,245 +280,77 @@ class Database():
                     'dia' : current_date,
                     'hora_entrada' : current_hour,
                     'user_id' : funcionario.id,
-                    'turno_funcionario' : funcionario.turno 
+                    'turno_funcionario' : funcionario.turno,
+                    'almocou' : False
                 }
                 
-                turno = Turno(data)
                 
-                self.add_data_on_firestore('Turnos', vars(turno))
+                self.insert_data('turnos', data)
                 
         return True
-
-    def get_turno(self, date, user_id):
-
-        query = self.firestore.collection('Turnos').where(
-            'user_id', '==', user_id
-        ).where(
-            'dia', '==', date
-        ).limit(1).stream()
-
-        for t in query:
-            try:
-                turno = Turno(t.to_dict())
-                return turno
-            except:
-                
-                return None
-            
-        return None
     
-    def get_turnos(self, func_id):
-        turnos = list()
-        query = self.firestore.collection('Turnos').where(
-            'user_id', '==', func_id
-        ).where(
-            'current_status', '==', 'clocked_out'    
-        ).stream()
-        
-        for t in query:
-            turnos.append(Turno(t.to_dict()))
 
-        return turnos
-    
-    def get_turnos_timedelta(self,func_id, start_date, end_date):
-        turnos = list()
-        days  = (end_date - start_date).days
-        date_range = [end_date - timedelta(days=x) for x in range(days + 1)]
-        query = self.firestore.collection('Turnos').where(
-                    'user_id', '==', func_id
-            ).where(
-                    'current_status', '==', 'clocked_out'
-            ).stream()
-        
-        for result in query:
-            turno = Turno(result.to_dict())
-            if datetime.strptime(turno.dia, '%d/%m/%Y') in date_range:
-                turnos.append(turno)
-
-        return turnos
         
     def get_cargo(self, cargo_id):
-        collection = self.firestore.collection('Cargos')
-
-        query = collection.where('id', '==', cargo_id)
-            
-        for r in query.stream():
-            return Cargo(r.to_dict())
-        
+        c = self.get_row_by_id('cargos', cargo_id)
+        if c:
+            return Cargo(c)
         return None   
-
-    def get_relatorio(self, relatorio_id):
-        
-        collection = self.firestore.collection('Relatorios')
-        
-        query = collection.where(
-            'id', '==', relatorio_id
-        )
-        
-        for r in query.stream():
-            return Relatorio(r.to_dict())
-        
-        return None
     
-    def get_relatorios(self, func_id):
-        
-        collection = self.firestore.collection('Relatorios')
-        
-        query = collection.where('func_id', '==', func_id)
-        
-        tarefas = list()
-        
-        for r in query.stream():
-            tarefas.append(Relatorio(r.to_dict()))
-        
-        if len(tarefas) > 0:    
-            return tarefas
-        
-        return None
+    def get_cargos(self):
+        return [Cargo(c) for c in self.get_table_data('cargos')]
+
 
     def get_tarefa(self, tarefa_id):
 
-        stream = self.firestore.collection('Tarefas').where('id', '==', tarefa_id).stream()
-
-        for t in stream:
-            return Tarefa(t.to_dict())
+        t = self.get_row_by_id('tarefas', tarefa_id)
+        if t:
+            return Tarefa(t)
         
         return None
         
-    def get_all_relatorios(self, func_id=None):
-        relatorios = list()
-        collection = self.firestore.collection('Relatorios')
+    def get_feriado(self, id):
+        return Feriado(self.get_row_by_id('feriados', id))
         
-        
-        if func_id:
-            stream = collection.where('func_id', '==', func_id).stream()
-            
-        else:
-            stream = collection.stream()
-        
-        for rel in stream:
-            relatorio = Relatorio(rel.to_dict())
-            relatorios.append(relatorio)
-            
-        if len(relatorios) > 0:
-            return relatorios
-        
-        return None
-    
-    def get_feriados(self):
-        now = datetime.now()
-        current_year = str(now.year)
-        
-        feriados = list()
-        query = self.firestore.collection('Feriados').stream()
-        
-        for result in query:
-            f = result.to_dict()['date']
-
-            feriados.append(f if len(f) == 10
-                            else f + current_year)
+    def get_feriados(self):        
+        feriados = [Feriado(f) for f in self.get_table_data('feriados')]
             
         return feriados
         
-    def get_tipos_tarefa(self):
-        query = self.firestore.collection('TipoTarefa').stream()
-        
-        for result in query:
-            f = result.to_dict()
             
     def create_ferias(self, data):
-        
-        ids = self.get_all_rows_from_firestore('Ferias', 'id')
-        while(True):
-            new_id = random.randint(1, 1000000)  
-            if new_id not in ids:
-                break
-            
-        data['id'] = new_id
-        ferias = Ferias(data)
-        
-        self.add_data_on_firestore('Ferias', ferias.to_json())
+        self.insert_data('ferias', Ferias(data).to_json())
         
     def get_ferias(self, ferias_id):
-        stream = self.firestore.collection('Ferias').where(
-            'id', '==', ferias_id
-        ).stream()
-        
-        for f in stream:
-            return Ferias(f.to_dict())
-        
+        f = self.get_row_by_id('ferias', ferias_id)
+        if f:
+            return Ferias(f)
+    
         return None
            
     def get_all_ferias(self):
         
-        query = self.firestore.collection('Ferias').stream()
-        all_ferias = list()
-        for result in query:
-            ferias = Ferias(result.to_dict())
-            all_ferias.append(ferias)
-            
-        if len(all_ferias):
-            return all_ferias
-            
-        return None
+        return [Ferias(f) for f in self.get_table_data('ferias')]
     
     def get_falta(self, falta_id):
         
-        stream = self.firestore.collection('Faltas').where('id', '==', falta_id).stream()
-        
-        for f in stream:
-            return Falta(
-                f.to_dict()
-            )
-        
-        return None
+        return Falta(self.get_row_by_id('faltas', falta_id))
     
     def get_all_faltas(self):
-        list_faltas = list()
-        stream = self.firestore.collection('Faltas').stream()       
-        
-        for f in stream:
-            list_faltas.append(
-                Falta(f.to_dict())
-            )
-            
-        return (list_faltas if len(list_faltas) > 0
-                else None)
+        return [Falta(f) for f in self.get_table_data('faltas')]
         
     def get_falta_with_date(self, func_id, date):
         
-        stream = self.firestore.collection('Faltas').where(
-            'func_id', '==', func_id
-        ).where(
-            'date', '==', date
-        ).stream()
-
-        for f in stream:
-            return Falta(
-                f.to_dict()
-            )
+        f = self.multiple_select('faltas',[['func_id', '=', func_id],['data', '=', date]])
+        
+        if f:
+            return Falta(f[0])
             
         return None
     
     def get_faltas_funcionario(self, func_id):
-        
-        list_faltas = list()
-        
-        stream = self.firestore.collection('Faltas').where(
-            'func_id', '==', func_id
-        ).stream()
-        
-        for f in stream:
-            list_faltas.append(
-                Falta(f.to_dict())
-            )
-            
-        return (list_faltas if len(list_faltas) > 0
-                else None)
+        faltas = self.get_all_faltas()
+        return [f for f in faltas if f.func_id == func_id]
 
     def get_all_clientes(self):
-        clientes = list()
-
-        stream = self.firestore.collection('Clientes').stream()
-
-        return [Cliente(c.to_dict()) for c in stream]
+        return [Cliente(c) for c in self.get_table_data('clientes')]

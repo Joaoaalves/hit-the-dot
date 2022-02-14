@@ -1,6 +1,6 @@
 var myCalendar = new TavoCalendar('#my-calendar', {
     range_select: false,
-    format: "DD-MM-YYYY",
+    format: "YYYY-MM-DD",
     locale: 'pt-br',
     future_select: true,
     past_select: true,
@@ -24,7 +24,7 @@ document.getElementById('sbt-btn').addEventListener("click", function(event){
         return;
     }
     
-    repeat = document.getElementById('repeat').checked;
+    repeat = document.getElementById('repete').checked;
 
     csrf_token = document.getElementsByName('csrf_token')[0].value;
     
@@ -37,9 +37,9 @@ document.getElementById('sbt-btn').addEventListener("click", function(event){
                 request.setRequestHeader("X-CSRFToken", csrf_token);
             },
             data : {
-                name : nome,
+                nome : nome,
                 date : date,
-                repeat : repeat
+                repete : repeat
             },
             error : function(){
                 alert('Ocorreu algum erro');

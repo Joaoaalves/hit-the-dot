@@ -7,4 +7,4 @@ from app.models.funcionario import Funcionario
 
 from app.controllers.decorators import admin_required, get_user_object, is_admin, funcionario_required
 
-from datetime import datetime
+from datetime import datetime, timedelta

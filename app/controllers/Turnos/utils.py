@@ -1,36 +1,22 @@
-from datetime import timedelta, datetime
-import time
-from . import db, Turno, Funcionario
-from google.cloud import firestore
+from . import db, Turno, Funcionario, datetime
 
-def get_turnos():
-    turnos = list()
+def get_sorted_turnos(funcionario=None):
 
-    list_turnos = db.get_all_rows_from_firestore('Turnos')
+    turnos = db.get_turnos()
 
-    if list_turnos:
-        for t in list_turnos:
-            if t['current_status'] == 'clocked_out':
-                turnos.append(Turno(t))
+    if funcionario:
+        turnos_funcionario = list()
+        for t in turnos:
+            if t.user_id == funcionario:
+                turnos_funcionario.append(t)
+                
+        return sorted(turnos_funcionario, key=lambda x: x.dia, reverse=True)
 
-        return sorted(turnos, key=lambda x: get_timestamp(x.dia), reverse=True)
-
-    return None
-
-def get_timestamp(dia):
-    return time.mktime(datetime.strptime(dia, '%d/%m/%Y').timetuple())
-
-def get_turno(date, user_id):
-
-    turno = db.get_turno(date, user_id)
-    if turno:
-        return Turno(turno)
-
-    return None
+    return sorted(turnos, key=lambda x: x.dia, reverse=True)
 
 def get_funcionarios():
     
-    fs = db.get_rows_from_firestore('Users', 'role', '==', 'Funcionario')
+    fs = db.select('users', 'role', '=', 'funcionario')
     if not fs:
         return None, None
     
@@ -53,50 +39,41 @@ def filtra_turnos(turnos, filter):
 
     return tns_flt
 
-def update_turno(form, date, user_id):
+def update_turno(form, user_id, turno):
     data = dict(form)
-    dt = form['dia']
-    dt = f'{dt[-2:]}/{dt[5:7]}/{dt[:4]}'  
-    
-    data['dia'] = dt
-    
+    if 'inicio_almoco' in data:
+        data['almocou'] = True
+    data['dia'] = datetime.strptime(data['dia'], '%Y-%m-%d').strftime('%d/%m/%Y')
     data['user_id'] = user_id
     data['current_status'] = 'clocked_out'
+    data['turno_funcionario'] = turno.turno_funcionario
+    
     updated_turno = Turno(data)
     
+    db.update_data('turnos', turno.id, updated_turno.to_json())
     
-    query = db.firestore.collection('Turnos').where(
-        'user_id', '==', user_id).where(
-        'dia', '==', date
-    ).stream()
-    for s in query:
-        doc_id = s.id
-    db.firestore.collection('Turnos').document(document_id=doc_id).update(updated_turno.to_json())
+def get_work(turno):
     
-def get_work(turno, funcionario):
-    horas_trabalhadas = turno.get_total_time_str()
-    
-    trabalho = datetime_seconds(turno.converter_str_datetime(horas_trabalhadas))
+    turno.set_tempo_total()
 
-    turno_total = funcionario.turno * 3600
+    trabalho = turno._segundos_totais
+    turno_total = turno.turno_funcionario * 3600
     
-    percentage = ('%.1f' % ((trabalho * 100) / turno_total) 
+    percentage = (round((trabalho * 100) / turno_total, 1)
                   if trabalho < turno_total and turno_total > 0
                   else 100)
     
     horas_extras_totais = 2 * 3600
-    if trabalho > funcionario.turno * 3600:
+
+    if trabalho > turno_total:
         
-        trabalho_extra = trabalho - (funcionario.turno * 3600)
+        trabalho_extra = trabalho - (turno_total)
         trabalho = trabalho - trabalho_extra
-        percentage_extras = ('%.1f' % ((trabalho_extra * 100) / horas_extras_totais)
+        percentage_extras = (round((trabalho_extra * 100) / horas_extras_totais, 1)
                             if trabalho_extra < horas_extras_totais
                             else 100)
     else:
         percentage_extras = 0
         trabalho_extra = 0
+
     return percentage, trabalho, percentage_extras, trabalho_extra
-
-def datetime_seconds(dt):
-    return timedelta(hours=dt.hour, minutes=dt.minute, seconds=dt.second).seconds
-

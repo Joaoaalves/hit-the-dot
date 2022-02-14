@@ -1,30 +1,21 @@
 import numpy as np
 from . import db
 
-def get_cargo_id():
-    ids = db.get_all_rows_from_firestore('Cargos', 'id')
-    
-    return int(np.amax(ids)) + 1
-
-
 def adiciona_cargo(form):
     nome = form['nome']
     
     funcs_string = form.getlist('funcionarios')
     funcs_ids = [int(f) for f in funcs_string]
-    
     desc = form['descricao']
-    
-    id = get_cargo_id()
-    
+
     data = {
         'nome' : nome,
-        'id' : id,
         'descricao' : desc
     }
     
-    db.add_data_on_firestore('Cargos', data)
-    
+    db.insert_data('cargos', data)
+    id = db.select('cargos', 'nome', '=', nome)[0]['id']
+
     update_funcs_cargo(funcs_ids, id)
     
 def update_cargo(form, cargo_id, funcionarios_do_cargo):
@@ -39,49 +30,38 @@ def update_cargo(form, cargo_id, funcionarios_do_cargo):
         
         data = {
             'nome' : nome,
-            'funcionarios' : funcs,
-            'id' : cargo_id,
             'descricao' : desc
         }
-        
-        db.update_info('Cargos', data, key='id', value=cargo_id)
-        
+
+        db.update_data('cargos', cargo_id, data)    
+    
         update_funcs_cargo(funcs, cargo_id, funcionarios_do_cargo)
     
     except:
-        
         return
     
-def update_funcs_cargo(funcs_ids, cargo_id, funcionarios_do_cargo):
-    for f in funcs_ids:
-        if f in funcionarios_do_cargo:
-            funcionarios_do_cargo.remove(f)
+def update_funcs_cargo(funcs_ids, cargo_id, funcionarios_do_cargo=[]):
+    sem_cargo_id = db.select('cargos', 'nome', '=', 'Sem Cargo')[0]['id']
+
+    for fid in funcs_ids:
+        if fid in funcionarios_do_cargo:
+            funcionarios_do_cargo.remove(fid)
             
-        funcionario = db.get_funcionario(f)
+        funcionario = db.get_funcionario(fid)
         funcionario.cargo = cargo_id
-        db.update_info('Users', vars(funcionario), key='id', value=f)
+        db.update_data('users', fid, funcionario.to_json())
     
-    for f in funcionarios_do_cargo:
-        funcionario = db.get_funcionario(f)
-        funcionario.cargo = 0
-        db.update_info('Users', vars(funcionario), key='id', value=f)
+    for fid in funcionarios_do_cargo:
+        funcionario = db.get_funcionario(fid)
+        funcionario.cargo = sem_cargo_id
+        db.update_data('users', fid, funcionario.to_json())
 
 def excluir_cargo(cargo_id):
     
-    cargo = db.get_cargo(cargo_id)
-    funcionarios = db.get_rows_from_firestore('Users', 'cargo', '==', cargo.id)
+    funcionarios = db.select('users', 'cargo', '=', cargo_id)
     if funcionarios:
         for funcionario in funcionarios:
             funcionario['cargo'] = 0
-            db.update_info('Users', funcionario, key='id', value=funcionario['id'])
+            db.update_data('users', funcionario['id'], funcionario)
 
-    db.remove_data_from_firestore('Cargos', 'id', cargo_id)
-    
-
-def clear_funcionarios(funcs):
-    for f in funcs:
-        funcionario = db.get_user('id', f)
-        
-        funcionario.cargo = "default"
-        
-        db.update_info('Users', vars(funcionario), key='id',value=f)
+    db.remove_data('cargos', cargo_id)

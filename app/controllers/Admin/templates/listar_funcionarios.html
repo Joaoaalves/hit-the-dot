@@ -44,7 +44,7 @@
                             <select name="cargo" id="cargo-select" class="form-control">
                                 <option disabled="disabled" selected hidden>Selecione um Cargo</option>
                                 {% for cargo in cargos %}
-                                <option value="{{cargo['nome']}}">{{cargo['nome']}}</option>
+                                <option value="{{cargo.name}}">{{cargo.name}}</option>
                                 {% endfor %}
                             </select>
                             <br>
