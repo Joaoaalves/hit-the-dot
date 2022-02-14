@@ -27,8 +27,8 @@ def adicionar():
     else:
         form = dict(request.form)
     
-        form['inicio'] = html_date_to_timestamp(form['inicio'], '00:00:00')
-        form['fim'] = html_date_to_timestamp(form['fim'], '23:59:59')
+        form['inicio'] = datetime.strptime(form['inicio'], '%Y-%m-%d')
+        form['fim'] = datetime.strptime(form['fim'], '%Y-%m-%d')
         db.create_ferias(form)
         
         return redirect(url_for('ferias.listar_ferias'))
@@ -46,12 +46,12 @@ def editar(ferias_id):
     else:
         
         form = dict(request.form)
-        form['inicio'] = html_date_to_timestamp(form['inicio'], '00:00:00')
-        form['fim'] = html_date_to_timestamp(form['fim'], '23:59:59')
+        form['inicio'] = datetime.strptime(form['inicio'], '%Y-%m-%d')
+        form['fim'] = datetime.strptime(form['fim'], '%Y-%m-%d')
         form['id'] = ferias_id
         ferias = Ferias(form)
 
-        db.update_info('Ferias', ferias.to_json(), 'id', ferias.id)
+        db.update_data('ferias', ferias.id, ferias.to_json())
         
         return redirect(url_for('ferias.listar_ferias'))
     
@@ -64,9 +64,9 @@ def excluir():
     try:
         ferias_id = int(form['id'])
         
-        db.remove_data_from_firestore('Ferias', 'id', ferias_id)
+        db.remove_data('ferias', ferias_id)
 
-        return '', 200    
+        return '', 200
     except:
         
         return '', 404

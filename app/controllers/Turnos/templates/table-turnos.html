@@ -12,7 +12,7 @@
     <tbody>
         {% for turno in turnos %}
         <tr class="box-shadow table-content">
-            <th>{{turno.dia}}</th>
+            <th>{{turno.get_formated_date()}}</th>
             <th>{{dict_func_ids[turno.user_id][0]}}</th>
             <th>{{turno.get_total_time_str()}}</th>
             <th>{{turno.hora_entrada}}</th>
@@ -25,7 +25,7 @@
                     onclick="editarTurno({{turno.user_id}}, '{{turno.dia}}')"><i
                         class="fas fa-pencil-alt"></i></button>
                 <button title="Excluir" class="btn-danger btn"
-                    onclick="excluirTurno({{turno.user_id}}, '{{turno.dia}}', '{{csrf_token()}}')"><i
+                    onclick="excluirTurno({{turno.id}}, '{{csrf_token()}}')"><i
                         class="fas fa-times"></i></button>
             </th>
         </tr>

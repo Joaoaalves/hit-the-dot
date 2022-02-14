@@ -16,13 +16,13 @@ def listar_funcionarios():
         
         funcionarios = db.get_all_funcionarios()
         
-        cargos = db.get_all_rows_from_firestore('Cargos')
+        cargos = db.get_cargos()
         
         if request.args.get('cargo'):
             cargo_nome = request.args.get('cargo')
             for cargo in cargos:
-                if cargo['nome'] == cargo_nome:
-                    funcionarios = filtra_funcionarios(funcionarios, lambda x: x.cargo == cargo['id'])
+                if cargo.name == cargo_nome:
+                    funcionarios = filtra_funcionarios(funcionarios, lambda x: x.cargo == cargo.id)
     
         if funcionarios:
             return render_template('listar_funcionarios.html', funcionarios=funcionarios,
@@ -30,7 +30,7 @@ def listar_funcionarios():
                                                                 user=user,
                                                                 funcionarios_active='active')
         
-                
+    
         return render_template('listar_funcionarios.html', user=user,
                                                         funcionarios_active='active',
                                                         cargos=cargos)
@@ -85,9 +85,7 @@ def ver_funcionario(func_id):
     user = get_user_object(session['user'])
     
     funcionario = db.get_funcionario(func_id)
-    turnos = db.get_turnos(funcionario.id)
-    funcionario.set_turnos(turnos)
-    
+
     cargo = db.get_cargo(funcionario.cargo)
         
     return render_template('funcionario.html', user=user,

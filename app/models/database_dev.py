@@ -218,7 +218,7 @@ class DatabaseDev():
         return None
     
     # Add new shift Status to firestore
-    def add_new_shift_status_on_firestore(self, new_status, user_id):
+    def add_new_shitf_status(self, new_status, user_id):
 
         now = datetime.now()
         

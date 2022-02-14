@@ -36,7 +36,7 @@
                     <input type="hidden" name="csrf_token" value="{{csrf_token()}}">
     
                     <label for="date">Data da Falta</label>
-                    <input class="form-control" type="date" value="{{falta.get_html_date()}}" name="date">
+                    <input class="form-control" type="date" value="{{falta.get_html_date()}}" name="date" disabled>
     
                     {% if falta.is_abonada() %}
                     <label for="status">Estado atual da falta:</label>

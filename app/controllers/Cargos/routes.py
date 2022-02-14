@@ -1,5 +1,6 @@
 from . import *
 from .utils import *
+from app.models.cargo import Cargo
 
 cargos_blueprint = Blueprint('cargos', __name__,
                             template_folder='templates',
@@ -11,22 +12,9 @@ cargos_blueprint = Blueprint('cargos', __name__,
 @cargos_blueprint.route('/')
 @admin_required
 def cargos():
-    cargos = db.get_all_rows_from_firestore('Cargos')
-    
-    # Remove o cargo com ids menores ou iguais a 0
-    i = 0
-    length = len(cargos)
-    while(i < length):
-        cargo = cargos[i]
-        if cargo['id'] <= 0:
-            cargos.remove(cargo)
-            length -= 1
-            continue
-        
-        else:
-            cargo['funcionarios'] = db.get_rows_from_firestore('Users', 'cargo', '==', cargo['id'])
-            i += 1
-            
+    sem_cargo_id = db.select('cargos', 'nome', '=', 'Sem Cargo')[0]['id']
+    cargos = [c for c in db.get_table_data('cargos') if c['id'] != sem_cargo_id]
+
     user = get_user_object(session['user'])
     
     if cargos:

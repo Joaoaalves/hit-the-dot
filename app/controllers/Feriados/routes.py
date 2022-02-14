@@ -10,17 +10,21 @@ feriado_blueprint = Blueprint('feriado', __name__,
 @funcionario_required
 def feriados():
     user = get_user_object(session['user'])
+    all_feriados = db.get_feriados()
     feriados = list()
-    all_feriados = db.get_all_rows_from_firestore('Feriados')
     
-    if 'month' in request.args and request.args.get('month') != '':
-        year,month = request.args.get('month').split('-')
-        for f in all_feriados:
-            if f['repeat'] and f['date'][-2:] == month:
-                feriados.append(f)
-            else:
-                if f['date'][3:] == f'{month}/{year}':
+    if 'mes' in request.args and request.args.get('mes') != '':
+        try:
+            ano, mes = request.args.get('mes').split('-')
+
+            for f in all_feriados:
+                if f.repete and f.mes == int(mes):
                     feriados.append(f)
+                else:
+                    if f.mes == int(mes) and f.ano == int(ano):
+                        feriados.append(f)
+        except:
+            return abort(400, 'Mês inválido')
                     
     else:
         feriados = all_feriados
@@ -34,20 +38,17 @@ def feriados():
 def editar_feriado(feriado_id):
     
     user = get_user_object(session['user'])
-    feriado = get_feriado(feriado_id)
-    date,month = treat_date(feriado)
+    feriado = db.get_feriado(feriado_id)
 
     if request.method == 'GET':
         
         return render_template('editar_feriado.html', user=user, 
-                                                    feriado=feriado, 
-                                                    date=date, 
-                                                    month=month,
+                                                    feriado=feriado,
                                                     feriados_active='active')
     
     if request.method == 'POST':
         
-        form = request.form
+        form = dict(request.form)
         
         edit_feriado(form, feriado)
         
@@ -60,7 +61,7 @@ def excluir_feriado():
     try:
         feriado_id = int(request.form['id'])
         
-        db.remove_data_from_firestore('Feriados', 'id', feriado_id)
+        db.remove_data('feriados', feriado_id)
         
         return '',200
 
@@ -74,14 +75,14 @@ def adicionar_feriado():
     user = get_user_object(session['user'])
     
     if request.method == 'GET':
-        feriado_list = get_all_feriados()
+        feriado_list = [f.get_html_date() for f in db.get_feriados()]
         return render_template('adicionar_feriado.html', user=user,
                                                         feriados=feriado_list,
                                                         feriados_active='active')
     
     if request.method == 'POST':
         
-        form = request.form
+        form = dict(request.form)
         
         try:
             create_feriado(form)

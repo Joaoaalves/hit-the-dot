@@ -71,7 +71,8 @@ def abonar_falta():
         if falta:
         
             falta.abonar()
-            db.update_info('Faltas', falta.to_json(), key='id', value=falta.id)
+        
+            db.update_data('faltas', falta.id, falta.to_json())
         
             return '', 200
         else:

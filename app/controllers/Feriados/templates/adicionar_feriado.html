@@ -41,11 +41,11 @@
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     
                     <label for="name" class="form-label">Nome do Feriado</label>
-                    <input type="text" name='name' class="form-control" required>
+                    <input type="text" name='nome' class="form-control" required>
     
                     <div class="form-check">
                         <label for="repetir-feriado" class="form-check-label">Este feriado se repete nesta data todo ano?</label>
-                        <input type="checkbox" class="form-check-input" name="repetir-feriado" id='repeat'>
+                        <input type="checkbox" class="form-check-input" name="repetir-feriado" id='repete'>
                     </div>
     
                     <input type="button" class="btn btn-dark form-control" id='sbt-btn' value="Adicionar Feriado">
@@ -59,7 +59,7 @@
     <script>
         var myCalendar = new TavoCalendar('#my-calendar', {
             range_select: false,
-            format: "DD-MM-YYYY",
+            format: "YYYY-MM-DD",
             locale: 'pt-br',
             future_select: true,
             past_select: true,

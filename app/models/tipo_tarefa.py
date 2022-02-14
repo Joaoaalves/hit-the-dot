@@ -6,4 +6,4 @@ class TipoTarefa():
         self.nome = data['nome']
         self.pontuacao = data['pontuacao']
         self.horas_planejadas = data['horas_planejadas']
-        
+    

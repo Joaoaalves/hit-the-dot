@@ -37,17 +37,17 @@
                         <input class="form-control" type="hidden" name="csrf_token" value="{{csrf_token()}}">
                         <div class="date">
                             <label for="dia" class="form-label">Data</label>
-                            <input class="form-control" type="date" name='dia' value='{{html_date}}' required>
+                            <input class="form-control" type="date" name='dia' value='{{turno.dia}}' required>
                         </div>
 
                         <div class="input-group">
                             <div>
                                 <label for="hora_entrada" class="form-label">Horário de Entrada</label>
-                                <input class="form-control me-3" type="time" name='hora_entrada' value="{{turno.hora_entrada}}" step="1" required>
+                                <input class="form-control me-3" type="time" name='hora_entrada' value="{{hora_entrada}}" step="1" required>
                             </div>
                             <div>
                                 <label for="hora_saida" class="form-label ms-3">Horário de Saída</label>
-                                <input class="form-control ms-3" type="time" name="hora_saida" value="{{turno.hora_saida}}" step="1" required>
+                                <input class="form-control ms-3" type="time" name="hora_saida" value="{{hora_saida}}" step="1" required>
                             </div>
                         </div>
 

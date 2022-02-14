@@ -28,8 +28,8 @@ def log_in():
                 db.login(email, senha)
                 
                 # This gets the user info from db on login success
-                user = db.get_user('email', email)
-
+                user = db.get_user_by_email(email)
+                print(user)
                 flask.session['user'] = user.__dict__
                 flask.session['user']['role'] = user.__class__.__name__
                 users.append(user)

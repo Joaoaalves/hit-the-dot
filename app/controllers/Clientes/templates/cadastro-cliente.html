@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clientes</title>
+    <link rel="shortcut icon" href="{{url_for('static', filename='favicon.ico')}}" type="image/x-icon">
+
+    {% include 'common-imports.html' %}
+    <link rel="stylesheet" href="{{url_for('static', filename='css/default-table.css')}}">
+    <link rel="stylesheet" href="{{url_for('painel.static', filename='css/painel.css')}}">
+    <link rel="stylesheet" href="{{url_for('cargos.static', filename='css/multi-select.css')}}">
+
+    <!-- Custom JS -->
+    <script src="{{url_for('cargos.static', filename='js/multi-select.js')}}"></script>
+    <script src="{{url_for('clientes.static', filename='js/cadastro-cliente.js')}}"></script>
+    <link rel="stylesheet" href="{{url_for('login.static', filename='css/registro.css')}}">
+</head>
+
+<body>
+    <button title="Voltar" onclick='window.location.href = "/listar-funcionarios"' class='btn mx-auto bck-btn'><i
+            class="fa fa-arrow-left" aria-hidden="true"></i></button>
+    <div class="signup-container">
+        <section class="formulario-cadastro">
+            <h1>Cadastro de Cliente</h1>
+            <form method='POST'>
+                <input type="hidden" value="{{csrf_token()}}" name='csrf_token'>
+                <ul class="nav nav-tabs flex-column flex-sm-row mb-3" id="pills-tab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="pills-informacoes-tab" data-bs-toggle="pill"
+                            data-bs-target="#pills-info-inicial" type="button" role="tab"
+                            aria-controls="pills-info-inicial" aria-selected="true">
+                            Informações Iniciais
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="pills-servicos-web-tab" data-bs-toggle="pill"
+                            data-bs-target="#pills-servicos-web" type="button" role="tab"
+                            aria-controls="pills-servicos-web" aria-selected="false">
+                            Serviços Web
+                        </button>
+                    </li>
+                    <li class='nav-item' role='presentation'>
+                        <button class='nav-link' id="pills-servicos-branding-tab" data-bs-toggle='pill'
+                            data-bs-target="#pills-servicos-branding" type='button' role='tab'
+                            aria-controls='pills-servicos-branding' aria-selected='false'>
+                            Serviços Branding
+                        </button>
+                    </li>
+                    <li class="nav-item" role='presentation'>
+                        <button class="nav-link" id="pills-servicos-social-tab" data-bs-toggle="pill"
+                            data-bs-target="#pills-servicos-social" type="button" role="tab"
+                            aria-controls="pills-servicos-social" aria-selected="false">
+                            Serviços Social
+                        </button>
+                    </li>
+                </ul>
+                <hr>
+                <div class="tab-content" id="pills-tabContent">
+                    <div class="tab-pane fade show active" id="pills-info-inicial" role="tabpanel"
+                        aria-labelledby="pills-informacoes-tab">
+                        <label for="name" class='form-label'>Nome</label>
+                        <input type="text" name="name" class="form-control" required>
+
+                        <h4>Data de Serviço</h4>
+                        <div class="row">
+                            <div class="col me-3">
+                                <label for="date-inicio" class="form-label">Inicio</label>
+                                <input type="date" name='date-inicio' class="form-control" required>
+                            </div>
+
+                            <div class="col ms-3">
+                                <label for="date-fim" class="form-label">Fim</label>
+                                <input type="date" name='date-fim' class="form-control" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="pills-servicos-web" role="tabpanel"
+                        aria-labelledby="pills-servicos-web-tab">
+                        <select multiple="multiple" name='servicos-web' id="servicos-web" required>
+                            <option value="1">Site</option>
+                            <option value="2">E-commerce</option>
+                            <option value="3">Agendamento</option>
+                        </select>
+                    </div>
+                    <div class="tab-pane fade" id="pills-servicos-branding" role="tabpanel"
+                        aria-labelledby="pills-servicos-branding-tab">
+                        <select multiple='multiple' name='servicos-branding' id="servicos-branding" required>
+                            <option value="4">Logo</option>
+                            <option value="5">a</option>
+                            <option value="6">b</option>
+                        </select>
+                    </div>
+                    <div class="tab-pane fade" id="pills-servicos-social" role="tabpanel"
+                        aria-labelledby="pills-servicos-social-tab">
+                        <select multiple='multiple' name='servicos-social' id="servicos-social" required>
+                            <option value="7">Facebook</option>
+                            <option value="8">Instagram</option>
+                            <option value="9">Twitter</option>
+                        </select>
+                    </div>
+                </div>
+                <input type="submit" value="Cadastrar" class="btn btn-warning submit-btn mt-5">
+            </form>
+        </section>
+    </div>
+
+    <svg viewBox="0 0 1920 634" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path
+            d="M954 95.001C526.4 -75.399 140.167 23 0 94L-1 634.088L1920 634.001V94.0006C1775.5 165.001 1381.6 265.401 954 95.001Z"
+            fill="#F8BE00" />
+    </svg>
+</body>
+
+<footer>
+    <script>
+        $('#servicos-web').multiSelect({
+            selectableHeader: "<div class='custom-header'>Serviços Gerais</div>",
+            selectionHeader: "<div class='custom-header'>Serviços Prestados</div>"
+        });
+
+        $('#servicos-branding').multiSelect({
+            selectableHeader: "<div class='custom-header'>Serviços Gerais</div>",
+            selectionHeader: "<div class='custom-header'>Serviços Prestados</div>"
+        });
+        $('#servicos-social').multiSelect({
+            selectableHeader: "<div class='custom-header'>Serviços Gerais</div>",
+            selectionHeader: "<div class='custom-header'>Serviços Prestados</div>"
+        });
+    </script>
+    <link rel="stylesheet" href="{{url_for('clientes.static', filename='css/cadastro-cliente.css')}}">
+</footer>
+
+
+</html>

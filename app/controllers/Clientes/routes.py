@@ -27,29 +27,10 @@ def cadastrar_cliente():
         user = get_user_object(session['user'])
         
         if request.method == 'POST':
-                nome = request.form['nome']
-                cpf = request.form['cpf']
-                rg = request.form['rg']
-                endereco = request.form['endereco']
-                numero = request.form['numero']
-                complemento = request.form['complemento']
-                bairro = request.form['bairro']
-                cidade = request.form['cidade']
-                estado = request.form['estado']
-                cep = request.form['cep']
-                telefone = request.form['telefone']
-                celular = request.form['celular']
-                email = request.form['email']
-                data_nascimento = request.form['data_nascimento']
 
-                cliente = Cliente(nome, cpf, rg, endereco, 
-                        numero, complemento, bairro, cidade, estado, 
-                        cep, telefone, celular, email, data_nascimento)
-                
-                db.add_data_on_firestore('Clientes', cliente)
                 
                 return redirect(url_for('clientes.clientes'))
-        
+
         return render_template('cadastro-cliente.html', user=user, clientes_active='active')
 
 @clientes_blueprint.route('/editar-cliente/<id>', methods=['GET', 'POST'])
@@ -61,24 +42,7 @@ def editar_cliente(id):
         cliente = db.get_data_from_firestore('Clientes', id)
         
         if request.method == 'POST':
-                nome = request.form['nome']
-                cpf = request.form['cpf']
-                rg = request.form['rg']
-                endereco = request.form['endereco']
-                numero = request.form['numero']
-                complemento = request.form['complemento']
-                bairro = request.form['bairro']
-                cidade = request.form['cidade']
-                estado = request.form['estado']
-                cep = request.form['cep']
-                telefone = request.form['telefone']
-                celular = request.form['celular']
-                email = request.form['email']
-                data_nascimento = request.form['data_nascimento']
-
-                cliente = Cliente(nome, cpf, rg, endereco, 
-                        numero, complemento, bairro, cidade, estado, 
-                        cep, telefone, celular, email, data_nascimento)
+                cliente = Cliente(request.form)
                 
                 db.update_info('Clientes', cliente, key='id', value=cliente.id)
                 
