@@ -3,7 +3,6 @@ import pyrebase
 from firebase_admin import auth as admin_auth
 import firebase_admin
 from datetime import datetime
-import os
 import subprocess
 from app.models.ferias import Ferias
 import mysql.connector
@@ -34,7 +33,7 @@ class Database():
 
         # Initializing firebase
         firebase = pyrebase.initialize_app(firebase_config)
-        
+
         # Auth Module
         self.auth = firebase.auth()
 
@@ -103,7 +102,11 @@ class Database():
         return rows
 
     def get_row_by_id(self, table, row_id):
-        return self.select(table, 'id', '=', row_id)[0]
+        rows = self.select(table, 'id', '=', row_id)
+        if rows:
+            return rows[0]
+        return None
+
 
     # Signs up a new user on Auth Module and
     # Store his info on Database
