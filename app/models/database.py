@@ -238,10 +238,7 @@ class Database():
             'turnos', operations=[['dia', '=', f"'{date}'"],['user_id', '=', func_id]]
         )
 
-        if len(turno) == 1:
-            return Turno(turno[0])
-
-        return None
+        return Turno(turno[0]) if turno else None
 
 
     # Add new shift Status to firestore
