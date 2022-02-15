@@ -193,7 +193,7 @@ class Database():
 
         cnx.commit()
         cnx.close()
-        return rows    
+        return rows if len(rows) > 0 else None
 
     def filtra_entradas(self,query_arr, collection):
         query = collection
@@ -220,15 +220,17 @@ class Database():
 
     # Get all funcionarios from db
     def get_all_funcionarios(self):
-        return [Funcionario(f) for f in self.select('users', 'role', '=', 'Funcionario')]
+        funcionarios = self.select('users', 'role', '=', 'Funcionario')
+        return [Funcionario(f) for f in funcionarios] if funcionarios else None
     
     def get_funcionario(self, func_id):
+        func = self.get_row_by_id('users', func_id)
         
-        return Funcionario(self.get_row_by_id('users', func_id))
+        return Funcionario(func) if func and func['role'] == 'Funcionario' else None
 
     def get_turnos(self):
-
-        return [Turno(t) for t in self.select('turnos', 'current_status', '=', 'clocked_out')]
+        turnos = self.select('turnos', 'current_status', '=', 'clocked_out')
+        return [Turno(t) for t in turnos] if turnos else None
 
 
     def get_turno(self, date, func_id):
@@ -301,24 +303,24 @@ class Database():
         return None   
     
     def get_cargos(self):
-        return [Cargo(c) for c in self.get_table_data('cargos')]
+        cargos = self.get_table_data('cargos')
+
+        return [Cargo(c) for c in cargos] if cargos else None
 
 
     def get_tarefa(self, tarefa_id):
 
         t = self.get_row_by_id('tarefas', tarefa_id)
-        if t:
-            return Tarefa(t)
-        
-        return None
+        return Tarefa(t) if t else None
         
     def get_feriado(self, id):
-        return Feriado(self.get_row_by_id('feriados', id))
+        feriado = self.get_row_by_id('feriados', id)
+        return Feriado(feriado) if feriado else None
         
     def get_feriados(self):        
-        feriados = [Feriado(f) for f in self.get_table_data('feriados')]
+        feriados = self.get_table_data('feriados')
             
-        return feriados
+        return [Feriado(f) for f in feriados] if feriados else None
         
             
     def create_ferias(self, data):
@@ -326,34 +328,31 @@ class Database():
         
     def get_ferias(self, ferias_id):
         f = self.get_row_by_id('ferias', ferias_id)
-        if f:
-            return Ferias(f)
-    
-        return None
+        return Ferias(f) if f else None
            
     def get_all_ferias(self):
-        
-        return [Ferias(f) for f in self.get_table_data('ferias')]
+        ferias = self.get_table_data('ferias')
+        return [Ferias(f) for f in ferias] if ferias else None
     
     def get_falta(self, falta_id):
-        
-        return Falta(self.get_row_by_id('faltas', falta_id))
+        falta = self.get_row_by_id('faltas', falta_id)
+        return Falta(falta) if falta else None
     
     def get_all_faltas(self):
-        return [Falta(f) for f in self.get_table_data('faltas')]
+        faltas = self.get_table_data('faltas')  
+        return [Falta(f) for f in faltas] if faltas else None
         
     def get_falta_with_date(self, func_id, date):
         
         f = self.multiple_select('faltas',[['func_id', '=', func_id],['data', '=', date]])
-        
-        if f:
-            return Falta(f[0])
-            
-        return None
+                
+        return Falta(f[0]) if f else None
+
     
     def get_faltas_funcionario(self, func_id):
         faltas = self.get_all_faltas()
-        return [f for f in faltas if f.func_id == func_id]
+        return [Falta(f) for f in faltas if f.func_id == func_id] if faltas else None
 
     def get_all_clientes(self):
-        return [Cliente(c) for c in self.get_table_data('clientes')]
+        clientes = self.get_table_data('clientes')
+        return [Cliente(c) for c in clientes] if clientes else None
