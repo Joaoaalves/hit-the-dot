@@ -21,11 +21,11 @@ class Ferias():
     def formated_fim_html(self):
         return datetime.strftime(self.fim, '%Y-%m-%d')
 
-    def is_working_day(self, timestamp):
-        return self.timestamp_inicio > timestamp or timestamp > self.timestamp_fim
-        
+    def is_working_day(self, date):
+        return self.inicio > date or date > self.fim
+
     def to_json(self):
         return {
-            'inicio' : self.formated_inicio_html(),
-            'fim' : self.formated_fim_html()
+            'inicio' : self.inicio,
+            'fim' : self.fim
         }

@@ -4,7 +4,7 @@ class Falta():
     
     def __init__(self, data):
         self.id = data['id']
-        self.date = data['data']
+        self.date = data['date']
         self.current_status = data['current_status']
         
         try:
@@ -27,7 +27,7 @@ class Falta():
     def to_json(self):
         
         return {
-            'data' : self.get_html_date(),
+            'data' : self.date,
             'func_id' : self.func_id,
             'current_status' : self.current_status
         }

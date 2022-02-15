@@ -21,18 +21,16 @@ def is_dia_util():
     if now.weekday() > 4:
         return False
     
-    current_date = get_current_date()
-    timestamp_now = now.timestamp()
-    
-    feriados = db.get_all_rows_from_firestore('Feriados', 'date')
+    feriados = db.get_feriados()
     list_ferias = db.get_all_ferias()
     
-    if current_date[:5] in feriados:
-        return False
+    for f in feriados:
+        if f.get_date().date() == now.date():
+            return False
 
     if list_ferias:
         for ferias in list_ferias:
-            if not ferias.is_working_day(timestamp_now):
+            if not ferias.is_working_day(now.date()):
                 return False
         
     return True
