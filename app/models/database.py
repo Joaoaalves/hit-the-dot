@@ -259,7 +259,12 @@ class Database():
                 return False
             
             if new_status == 'clock_out' and current_status == 'clocked_in':
-                self.update_data('turnos', turno.id, {'current_status': 'clocked_out','hora_saida' : current_hour})
+                self.update_data('turnos', turno.id, 
+                    {
+                        'current_status': 'clocked_out',
+                        'hora_saida' : current_hour
+                    }
+                )
                 
             if new_status == 'break_in' and current_status == 'clocked_in':
                 self.update_data('turnos', turno.id, 
@@ -271,7 +276,12 @@ class Database():
                 )
                 
             if new_status == 'break_out' and current_status == 'break_in':
-                self.update_data('turnos', turno.id, {'current_status': 'clocked_in', 'fim_almoco' : current_hour})
+                self.update_data('turnos', turno.id, 
+                    {
+                    'current_status': 'clocked_in', 
+                    'fim_almoco' : current_hour
+                    }
+                )
             
 
         else:

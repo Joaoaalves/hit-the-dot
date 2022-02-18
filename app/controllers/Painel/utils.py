@@ -65,11 +65,12 @@ def render_painel_func(funcionario, start_date, end_date):
 
     media_horas = get_media_horas(segundos_trabalhados, dias_totais)
     dias_trabalhados = dias_totais - faltas
-
+    
     horas_extras, percentage_extras, segundos_trabalhados = get_horas_extras(segundos_trabalhados, segundos_totais)
         
     horas_devendo = get_horas_devendo(segundos_trabalhados, segundos_totais)
     percentage = get_percentage_work(segundos_trabalhados, segundos_totais)
+
     horas_trabalhadas = segundos_trabalhados // 3600
 
     start_date_html = start_date.strftime('%d-%m-%Y')

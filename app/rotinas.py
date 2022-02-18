@@ -18,26 +18,17 @@ def finaliza_turno(funcionario, turno):
     turno_in_minutes = funcionario.turno * 3600
 
     half_turno = timedelta(seconds=turno_in_minutes/2)
+ 
+    turno.hora_saida = turno.hora_entrada + half_turno
 
-    hour,minute,seconds = turno.hora_entrada.split(':')
-    
-    inicio_turno_segundos = (int(hour) * 3600) + (int(minute) * 60) + (int(seconds))
-    
-    inicio_turno = timedelta(seconds=inicio_turno_segundos)
-    
-    fim_turno = inicio_turno + half_turno
-    
-    turno.hora_saida = str(fim_turno)
-    
     turno.current_status = 'clocked_out'
     
-    db.update_info('Turnos', turno.to_json(), query_arr=[['dia', turno.dia], ['user_id', funcionario.id]])
+    db.update_data('turnos', turno.id, vars(turno))
 
 def adiciona_falta(funcionario, now):
     from app import db
-    db.add_data_on_firestore('Faltas', {
-        'date' : now,
-        'id' : generate_falta_id(),
+    db.insert_data('faltas', {
+        'data' : now,
         'func_id' : funcionario.id,
         'current_status' : 'falta'
     })
@@ -50,47 +41,40 @@ def check_turnos():
     if BrazilDistritoFederal().is_working_day(day=now):
         from app import db
         for ferias in list_ferias:
-            if ferias.is_working_day(now.timestamp()):
+            if ferias.is_working_day(now.date()):
                 funcionarios = db.get_all_funcionarios()
-                now = f"{'%.02d' % now.day}/{'%.02d' % now.month}/{now.year}"
+
                 for funcionario in funcionarios:
-                    turno_hoje = db.get_turno(now, funcionario.id)
+                    turno_hoje = db.get_turno(now.date(), funcionario.id)
                     if turno_hoje:
                         if turno_hoje.current_status == 'clocked_in':       
                             finaliza_turno(funcionario, turno_hoje)
                     else:
-                        adiciona_falta(funcionario, now)
+                        adiciona_falta(funcionario, now.date())
                 break
+            
      
 def backup_db():
     
     now = datetime.now()
     date_string = f"{'%.2d' % now.day}-{'%.2d' % now.month}-{now.year}"
-    filename = f"backups/{date_string}.csv"
+    filename = f"backups/{date_string}.sql"
     
     write_backup_file(filename)
-    write_backup_db(date_string)
+    #write_backup_db(date_string)
     
     # Remove old backups
     old_backup_date = now - timedelta(days=15)
     old_date_string = f"{'%.2d' % old_backup_date.day}-{'%.2d' % old_backup_date.month}-{old_backup_date.year}"
-    old_backup_filename = f"backups/{old_date_string}.csv"
+    old_backup_filename = f"backups/{old_date_string}.sql"
 
     remove_old_backup_db(old_date_string.replace('-', '_'))
     remove_old_backup_file(old_backup_filename)
     
     
 def write_backup_file(filename):
-    collections = ['Cargos', 'Faltas', 'Feriados', 'Ferias', 'Turnos', 'Users']
-    from app import db
     try:
-        with open(filename, 'w', newline='\n') as csvfile:
-            writer = csv.writer(csvfile, delimiter=',', quotechar='"')
-            
-            for collection in collections:
-                rows = db.get_all_rows_from_firestore(collection)
-                for row in rows:
-                    writer.writerow([collection, row])
+        os.system('mysqldump htd > ' + filename)
         
         os.chmod(filename, 600)
         
@@ -103,7 +87,7 @@ def write_backup_db(date_string):
     
     mysql_db_name = date_string.replace('-', '_')
     
-    collections = ['Cargos', 'Faltas', 'Ferias', 'Turnos', 'Users']
+    collections = ['cargos', 'faltas', 'ferias', 'turnos', 'users']
     try:
         create_database(mysql_db_name)
         create_tables(mysql_db_name)
@@ -114,7 +98,7 @@ def write_backup_db(date_string):
             cursor.execute(f'USE {mysql_db_name}')
             
             for collection in collections:
-                rows = db.get_all_rows_from_firestore(collection)
+                rows = db.get_table_data()
 
                 for row in rows:
                     placeholders = ', '.join(['%s'] * len(row))
@@ -185,12 +169,3 @@ def remove_old_backup_file(filename):
         
     except Exception as e:
         print(e)
-    
-def generate_falta_id():
-    from app import db
-    ids_faltas = db.get_all_rows_from_firestore('Ferias', 'id')
-    
-    while True:
-        new_id = randint(10000, 99999)
-        if new_id not in ids_faltas:
-            return new_id

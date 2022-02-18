@@ -66,6 +66,7 @@ class Turno:
                 'turno_funcionario' : self.turno_funcionario
             }
         else:
+                
             return {
                 'dia' : datetime.strptime(self.dia, '%d/%m/%Y').strftime('%Y-%m-%d'),
                 'hora_entrada' : str(self.hora_entrada),
