@@ -4,7 +4,7 @@ class Falta():
     
     def __init__(self, data):
         self.id = data['id']
-        self.date = data['date']
+        self.date = data['data']
         self.current_status = data['current_status']
         
         try:

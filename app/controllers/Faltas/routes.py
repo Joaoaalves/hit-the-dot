@@ -37,13 +37,11 @@ def minhas_faltas():
     
     user = get_user_object(session['user'])
     date = ''
-    
     if 'date' in request.args:
         try:
             date = request.args.get('date')
-            formated_date = f'{date[8:]}/{date[5:7]}/{date[:4]}'
-        
-            falta = db.get_falta_with_date(user.id, formated_date)
+            
+            falta = db.get_falta_with_date(user.id, date)
             
             if falta:
                 faltas = [falta]
