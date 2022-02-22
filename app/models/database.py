@@ -347,18 +347,20 @@ class Database():
     
     def get_all_faltas(self):
         faltas = self.get_table_data('faltas')  
+        
         return [Falta(f) for f in faltas] if faltas else None
         
     def get_falta_with_date(self, func_id, date):
         
-        f = self.multiple_select('faltas',[['func_id', '=', func_id],['data', '=', date]])
-                
+        f = self.multiple_select('faltas',[['func_id', '=', func_id],['data', '=', f"'{date}'"]])
+
         return Falta(f[0]) if f else None
 
     
     def get_faltas_funcionario(self, func_id):
         faltas = self.get_all_faltas()
-        return [Falta(f) for f in faltas if f.func_id == func_id] if faltas else None
+
+        return [f for f in faltas if f.func_id == func_id] if faltas else None
 
     def get_all_clientes(self):
         clientes = self.get_table_data('clientes')
