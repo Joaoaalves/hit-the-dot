@@ -141,8 +141,7 @@
         var config = [[{{percentage}}, '#E328AF', 'rgba(227,40,175,0.1)'] ,[{{percentage_extras}}, '#1CBBFF', 'rgba(28,187,255,0.1)']];
         {% endif %}
         
-
-        var unordered = { 'Segunda': 5, 'Terça': 2, 'Quarta': 6, 'Quinta': 3, 'Sexta': 7 };
+        var unordered = JSON.parse('{{ demanda_dict | tojson}}');
 
         var days = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'];
 

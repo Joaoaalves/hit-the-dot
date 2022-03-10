@@ -40,7 +40,9 @@ def demandas():
 @funcionario_required
 def minhas_demandas():
         user = get_user_object(session['user'])
-        demandas = [d for d in db.get_all_demandas() if d.func_id == user.id]
+        
+        demandas = db.get_demandas_by_funcionario(user.id)
+
         funcionarios = {f.id : f.name for f in db.get_all_funcionarios()}
         return render_template('minhas-demandas.html', user=user, 
                                                 demandas_active='active',
