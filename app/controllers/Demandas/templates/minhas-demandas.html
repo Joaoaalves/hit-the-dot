@@ -42,18 +42,6 @@
                         <h4 class="mx-auto">Filtro</h4>
                         <form method="get">
     
-                            <label for="funcionario" class="form-label ">Funcionario</label>
-                            <select name="funcionario" id="filtro-funcionario" class="form-control">
-                                <option selected='true' disabled hidden>Selecione um Funcionário</option>
-                                {% if funcionarios %}
-                                {% for funcionario in funcionarios %}
-                                <option value="{{funcionario.id}}">{{funcionario.name}}</option>
-                                {% endfor %}
-                                {% else %}
-                                <option value="0">Nenhum Funcionário Cadastrado!</option>
-                                {% endif %}
-                            </select>
-                            <br>
                             <label for="date" class="form-label">Data</label>
                             <input type="date" name='date' id="date-picker" min="2020-01-01" max="max_date"  class="form-control">
                             <br>
