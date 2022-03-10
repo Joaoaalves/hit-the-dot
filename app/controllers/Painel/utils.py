@@ -20,6 +20,8 @@ def render_filtered_painel_admin(start_date, end_date, func_id):
     
     dias_trabalhados = dias_uteis - faltas    
 
+    demandas, demanda_dict = get_demandas(start_date, end_date, func_id)
+
     return render_template('painel-admin.html', user=user, painel_active='active',
                                             percentage=percentage,
                                             percentage_extras=percentage_extras,
@@ -33,7 +35,9 @@ def render_filtered_painel_admin(start_date, end_date, func_id):
                                             end_date=end_date_html,
                                             media_horas=media_horas,
                                             dias_trabalhados=dias_trabalhados,
-                                            horas_devendo=horas_devendo)
+                                            horas_devendo=horas_devendo,
+                                            demandas=demandas,
+                                            demanda_dict=demanda_dict)
 
 
 def render_painel_admin(user, start_date, end_date):
@@ -49,7 +53,7 @@ def render_painel_admin(user, start_date, end_date):
 
     start_date_html = start_date.strftime('%d-%m-%Y')
     end_date_html = end_date.strftime('%d-%m-%Y')
-
+    demandas, demanda_dict = get_demandas(start_date, end_date)
     return render_template('painel-admin.html', user=user, painel_active='active',
                                             percentage=percentage,
                                             percentage_extras=percentage_extras,
@@ -58,7 +62,9 @@ def render_painel_admin(user, start_date, end_date):
                                             horas_totais=horas_trabalhadas + horas_extras,
                                             funcionarios=db.get_all_funcionarios(),
                                             start_date=start_date_html,
-                                            end_date=end_date_html)
+                                            end_date=end_date_html,
+                                            demandas=demandas,
+                                            demanda_dict=demanda_dict)
 
 def render_painel_func(funcionario, start_date, end_date):
     segundos_trabalhados, faltas, assiduidade, segundos_totais, dias_totais = get_trabalho_total_funcionario(start_date, end_date, funcionario)
@@ -194,3 +200,30 @@ def get_start_end_date(args):
         end_date_datetime = datetime(year=now.year, month=now.month, day=now.day - 1)
 
     return start_date_datetime, end_date_datetime
+
+
+def get_demandas(start_date, end_date, func_id=None):
+
+
+    demanda_dict = { 'Segunda': 0, 'Terça': 0, 'Quarta': 0, 'Quinta': 0, 'Sexta': 0 }
+    week_days = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta']
+
+    if func_id:
+        demandas = db.get_demandas_by_funcionario_and_daterange(func_id, start_date, end_date)
+        if not demandas:
+            return [], demanda_dict
+            
+    else:
+        funcionarios = db.get_all_funcionarios()
+        demandas = list()
+        for f in funcionarios:
+            ds = db.get_demandas_by_funcionario_and_daterange(f.id, start_date, end_date)
+            if ds:
+                demandas += ds
+
+    for demanda in demandas:
+        with suppress(TypeError):
+            week_day = week_days[demanda.date.weekday()] if demanda.date.weekday() < 5 else 'Sexta'
+            demanda_dict[week_day] += 1
+
+    return demandas, demanda_dict

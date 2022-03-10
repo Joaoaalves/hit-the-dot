@@ -10,3 +10,4 @@ from datetime import datetime, timedelta, date
 from time import strptime
 from workalendar.america.brazil import BrazilDistritoFederal
 from dateutil.rrule import rrule, DAILY
+from contextlib import suppress

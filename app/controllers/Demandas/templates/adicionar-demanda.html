@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <link rel="shortcut icon" href="{{url_for('static', filename='favicon.ico')}}" type="image/x-icon">
+
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hit the Dot</title>
+
+    {% include 'common-imports.html' %}
+    <link rel="stylesheet" href="{{url_for('painel.static', filename='css/painel.css')}}">
+    <link rel="stylesheet" href="{{url_for('turnos.static', filename='css/turnos.css')}}">
+    <link rel="stylesheet" href="{{url_for('demandas.static', filename='css/demandas.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/default-table.css')}}">
+    <link rel="stylesheet" href="{{url_for('demandas.static', filename='css/adicionar-demanda.css')}}">
+
+    <!-- custom JS -->
+    <script src="{{url_for('demandas.static', filename='js/demandas.js')}}"></script>
+
+</head>
+
+<body>
+
+    {% include 'nav-bar.html' %}
+
+    <div class='container'>
+        <div class="col">
+            {% include "sidebar-admin.html" %}
+        </div>
+        <div class="col-6 content-container">
+
+            <form method="POST" class="box-shadow gradient-background">
+                <h2>Demanda</h2>
+                <input type="hidden" name="csrf_token" value='{{csrf_token()}}'>
+
+                <label for="name" class="form-label">Titulo da Demanda</label>
+                <input type="text" name='name' class="form-control" placeholder="Titulo">
+
+                <label for="url" class="form-label">Url do Card</label>
+                <input type="text" name='url' class="form-control" placeholder="Url do card da demanda">
+
+                <input type="submit" class="btn btn-warning" value="Adicionar">
+            </form>
+        </div>
+
+    </div>
+
+</body>
+
+
+</html>

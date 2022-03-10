@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <link rel="shortcut icon" href="{{url_for('static', filename='favicon.ico')}}" type="image/x-icon">
+    
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hit the Dot</title>
+
+    {% include 'common-imports.html' %}
+    <link rel="stylesheet" href="{{url_for('painel.static', filename='css/painel.css')}}">
+    <link rel="stylesheet" href="{{url_for('turnos.static', filename='css/turnos.css')}}">
+    <link rel="stylesheet" href="{{url_for('demandas.static', filename='css/demandas.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/default-table.css')}}">
+    <!-- custom JS -->
+    <script src="{{url_for('demandas.static', filename='js/demandas.js')}}"></script>
+
+</head>
+
+<body>
+
+    {% include 'nav-bar.html' %}
+
+    <div class='container'>
+        <div class="col">
+            {% include "sidebar-admin.html" %}
+        </div>
+        <div class="col-6 content-container">
+            <div class="flex">
+                <div class="container-table">
+                    <div class="turnos">
+                        {% if demandas %}
+                        {% include 'table-minhas-demandas.html' %}
+                        {% endif %}
+                    </div>
+
+                </div>
+                <section class="utils-container">
+                    <div class="container-filtro box-shadow">
+                        <h4 class="mx-auto">Filtro</h4>
+                        <form method="get">
+    
+                            <label for="funcionario" class="form-label ">Funcionario</label>
+                            <select name="funcionario" id="filtro-funcionario" class="form-control">
+                                <option selected='true' disabled hidden>Selecione um Funcionário</option>
+                                {% if funcionarios %}
+                                {% for funcionario in funcionarios %}
+                                <option value="{{funcionario.id}}">{{funcionario.name}}</option>
+                                {% endfor %}
+                                {% else %}
+                                <option value="0">Nenhum Funcionário Cadastrado!</option>
+                                {% endif %}
+                            </select>
+                            <br>
+                            <label for="date" class="form-label">Data</label>
+                            <input type="date" name='date' id="date-picker" min="2020-01-01" max="max_date"  class="form-control">
+                            <br>
+                            <input type="submit" value="Buscar" class="btn-dark btn">
+                            <br>
+                            <a href="/demandas" class="btn btn-warning mt-3">Remover Filtros</a>
+                        </form>
+                    </div>
+
+                    <div class="container-buttons box-shadow">
+                        <a href='/demandas/adicionar' class="btn btn-warning">Adicionar Demanda</a>
+                    </div>
+
+                </section>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+
+
+</html>

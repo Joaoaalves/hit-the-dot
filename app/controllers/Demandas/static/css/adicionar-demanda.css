@@ -1,0 +1,33 @@
+form{
+        margin: auto !important;
+        display: flex;
+        flex-direction: column;
+        width: 50%;
+        height: 50%;
+        padding: 1% 3%;
+}
+
+.col-6.content-container{
+        display: flex;;
+}
+
+form *{
+        margin: auto;
+}
+
+.form-control{
+        margin-top: 0.8em!important;
+        margin-bottom: auto !important;
+}
+
+form .btn{
+        width: 50%;
+        color: white;
+
+        font-size: 18px;
+        font-weight: bold;
+}
+
+form .form-label{
+        margin: 0!important;
+}

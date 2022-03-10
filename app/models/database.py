@@ -6,9 +6,10 @@ from datetime import datetime
 import subprocess
 from app.models.ferias import Ferias
 import mysql.connector
-from configparser import ConfigParser
+from configparser import ConfigParser   
 
 from .admin import Admin
+from .gestor import Gestor
 from .funcionario import Funcionario
 from .turno import Turno
 from .cargo import Cargo
@@ -16,6 +17,7 @@ from .tarefa import Tarefa
 from .falta import Falta
 from .cliente import Cliente
 from .feriado import Feriado
+from .demanda import Demanda
 
 class Database():
 
@@ -163,6 +165,9 @@ class Database():
                 if u['role'] == 'Admin':
                     return Admin(u)
 
+                if u['role'] == 'Gestor':
+                    return Gestor(u)
+
             return None
         except Exception as e:
             return e
@@ -188,6 +193,7 @@ class Database():
             sql += "%s %s %s AND " % (op[0], op[1], op[2])
         sql = sql[:-4]
         with cnx.cursor(dictionary=True) as cursor:
+            
             cursor.execute(sql)
             rows = cursor.fetchall()
 
@@ -220,8 +226,8 @@ class Database():
 
     # Get all funcionarios from db
     def get_all_funcionarios(self):
-        funcionarios = self.select('users', 'role', '=', 'Funcionario')
-        return [Funcionario(f) for f in funcionarios] if funcionarios else None
+        funcionarios = self.get_table_data('users')
+        return [Funcionario(f) for f in funcionarios if f['role'] in ['Funcionario', 'Gestor']] if funcionarios else None
     
     def get_funcionario(self, func_id):
         func = self.get_row_by_id('users', func_id)
@@ -358,10 +364,28 @@ class Database():
 
     
     def get_faltas_funcionario(self, func_id):
-        faltas = self.get_all_faltas()
+        faltas = self.select('faltas', 'func_id', '=', func_id)
 
-        return [f for f in faltas if f.func_id == func_id] if faltas else None
+        return [Falta(f) for f in faltas] if faltas else None
 
     def get_all_clientes(self):
         clientes = self.get_table_data('clientes')
         return [Cliente(c) for c in clientes] if clientes else None
+
+    def get_demanda(self, demanda_id):
+        return Demanda(self.get_row_by_id('demandas', demanda_id))
+
+    def get_all_demandas(self):
+        demandas = self.get_table_data('demandas')
+        return [Demanda(d) for d in demandas] if demandas else None
+
+    def get_demandas_by_funcionario(self, func_id):
+        demandas = self.select('demandas', 'func_id', '=', func_id)
+        return [Demanda(d) for d in demandas] if demandas else None
+
+    def get_demandas_by_funcionario_and_daterange(self, func_id, date_inicio, date_fim):
+        demandas = self.multiple_select('demandas',[['func_id', '=', func_id],
+                                                    ['date', '>=', f"'{date_inicio}'"], 
+                                                    ['date', '<=', f"'{date_fim}'"],
+                                                    ['status', '=', f"'Verificada'"]])
+        return [Demanda(d) for d in demandas] if demandas else None

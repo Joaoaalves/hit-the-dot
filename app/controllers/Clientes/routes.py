@@ -28,7 +28,6 @@ def cadastrar_cliente():
         
         if request.method == 'POST':
 
-                
                 return redirect(url_for('clientes.clientes'))
 
         return render_template('cadastro-cliente.html', user=user, clientes_active='active')
@@ -39,13 +38,13 @@ def editar_cliente(id):
                 
         user = get_user_object(session['user'])
         
-        cliente = db.get_data_from_firestore('Clientes', id)
-        
+        cliente = db.get_table_data('clientes', id)
+
         if request.method == 'POST':
                 cliente = Cliente(request.form)
-                
-                db.update_info('Clientes', cliente, key='id', value=cliente.id)
-                
+
+                db.update_data('clientes', cliente.id, cliente.to_json())
+
                 return redirect(url_for('clientes.clientes'))
         
         return render_template('editar_cliente.html', user=user, cliente=cliente,
@@ -58,4 +57,6 @@ def deletar_cliente():
 
         id = request.form.get('uid', type=int)  
         
-        return '', 200 if db.remove_data_from_firestore('Clientes', key='id', value=id) else '', 404
+        db.remove_data('clientes', id)
+
+        return '', 200

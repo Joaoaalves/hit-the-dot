@@ -4,9 +4,11 @@ from app import app
 
 from app.models.funcionario import Funcionario
 from app.models.admin import Admin
+from app.models.gestor import Gestor
 
 FUNC_PRIVILEGE = 2
-ADMIN_PRIVILEGE = 3
+GESTOR_PRIVILEGE = 3
+ADMIN_PRIVILEGE = 4
 
 def is_admin(user):
     #
@@ -14,9 +16,16 @@ def is_admin(user):
     #
     return user.get_privilege() == ADMIN_PRIVILEGE
 
+def is_gestor(user):
+    #
+    # Verify if the user is logged in and is Gestor
+    #
+
+    return user.get_privilege() >= GESTOR_PRIVILEGE
+
 def is_func(user):
     #
-    # Verify is the user is Funcionario
+    # Verify if the user is Funcionario
     #
     return user.get_privilege() >= FUNC_PRIVILEGE
 
@@ -30,6 +39,9 @@ def get_user_object(user):
 
     if user['role'] == 'Admin':
         return Admin(user)
+
+    if user['role'] == 'Gestor':
+        return Gestor(user)
 
     return None
 
@@ -58,6 +70,25 @@ def funcionario_required(f):
         user = get_user_object(session['user'])
 
         if is_admin(user) or is_func(user):
+            return f(*args, **kwargs)
+
+        else:
+            return abort(401, "Você não tem permissão para acessar essa página")
+        
+    return verifica_funcionario
+
+def gestor_required(f):
+    #
+    #   Decorator that verify if the user is a funcionario
+    #
+
+    @wraps(f)
+    @login_required
+    def verifica_funcionario(*args, **kwargs):
+
+        user = get_user_object(session['user'])
+
+        if is_gestor(user):
             return f(*args, **kwargs)
 
         else:
@@ -126,3 +157,4 @@ def block_cross_site_requests(f = None):
 # Transport these functions to jinja
 app.jinja_env.globals.update(is_admin=is_admin)
 app.jinja_env.globals.update(is_func=is_func)
+app.jinja_env.globals.update(is_gestor=is_gestor)
