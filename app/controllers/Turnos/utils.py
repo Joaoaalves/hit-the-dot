@@ -16,16 +16,13 @@ def get_sorted_turnos(funcionario=None):
 
 def get_funcionarios():
     
-    fs = db.select('users', 'role', '=', 'funcionario')
-    if not fs:
+    funcionarios = db.get_all_funcionarios()
+    if not funcionarios:
         return None, None
     
-    funcionarios = list()
     dict_func_ids = dict()
 
-    for f in fs:
-        func = Funcionario(f)
-        funcionarios.append(func)
+    for func in funcionarios:
         dict_func_ids[func.id] = [func.name, func.turno]
         
     return funcionarios, dict_func_ids

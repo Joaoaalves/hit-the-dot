@@ -1,0 +1,52 @@
+<link rel="stylesheet" href="{{url_for('static', filename='css/sidebar.css')}}">
+
+<div class="d-flex flex-column flex-shrink-0 bg-white sidebar" id="sidebar">
+  <a href="/" class="link-dark text-decoration-none mx-auto">
+    <img src="{{url_for('static', filename='images/logo.png')}}" alt="">
+  </a>
+  <ul class="nav nav-pills flex-column mt-auto">
+    <li class="nav-item">
+      <a href="/painel" class="nav-link link-dark {{painel_active}}" aria-current="page">
+        <i class="fas fa-stream my-auto"></i>
+        Visão Geral
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="/demandas" class="nav-link link-dark {{demandas_active}}" aria-current="page">
+        <i class="fas fa-tasks"></i>
+        Demandas
+      </a>
+    </li>
+    <li>
+      <a href="/turnos" class="nav-link link-dark {{turnos_active}}">
+        <i class="far fa-clock my-auto"></i>
+        Turnos
+      </a>
+    </li>
+    <li>
+      <a href="/listar-funcionarios" class="nav-link link-dark {{funcionarios_active}}">
+        <i class="fas fa-user-tie"></i>
+        Funcionarios
+      </a>
+    </li>
+    <li>
+      <a href="/feriados" class="nav-link link-dark {{feriados_active}}">
+        <i class="far fa-calendar my-auto"></i>
+        Feriados
+      </a>
+    </li>
+    <li>
+      <a href="/ferias" class="nav-link link-dark {{ferias_active}}">
+      <i class="far fa-calendar my-auto"></i>
+      Férias
+      </a>
+    </li>
+
+  </ul>
+
+  <div class="disclaimer mt-auto">
+    <p class="text-muted">Plataforma Hit The Dot</p>
+    <p class="text-muted">Desenvolvida por:</p>
+    <a href="https://dbsweb.com.br/" class='yellow'>DBS WEB</a>
+  </div>
+</div>

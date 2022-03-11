@@ -19,6 +19,7 @@ def turnos():
         turnos = get_sorted_turnos()
    
         funcionarios, dict_func_ids = get_funcionarios()
+        
         if turnos and funcionarios:
             if request.args.get('date'):
                 try:

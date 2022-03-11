@@ -26,22 +26,6 @@ def clear_session():
 
     app.logger.warning(f"{current_user['name']} logged out ({flask.request.remote_addr})")
 
-def generate_user_id():
-    ids = list()
-    query = db.get_all_rows_from_firestore("Users", 'id')
-
-    for i in query:
-        ids.append(int(i))
-    
-    while True:
-        user_id = random.randint(1001, 9999)
-        
-        if user_id not in ids:
-            break
-
-    return user_id
-
-
 def weak_password(password):
     """
         Verify if the password is strong enough
@@ -82,7 +66,6 @@ def cadastrar(form):
     turno = int(form['turno'])
     dias_trabalho = int(form['dias_trabalho'])
     cargo_id = int(form['cargo'])
-    inicio_trabalho = str(form['inicio_trabalho']).replace('-', '/')
     
     if 'celular' in form and is_a_valid_phone(form['celular']):
         celular = international_phone(form['celular'])
@@ -96,11 +79,7 @@ def cadastrar(form):
     # Throw exceptions on fails
     verify_entrys(nome, email, password, password_confirm, image)
     
-    id = generate_user_id()
-    
-    
     user_data = {
-        'id' : id,
         'email' : email,
         'name' : nome,
         'password' : password,
@@ -108,8 +87,7 @@ def cadastrar(form):
         'cargo' : cargo_id,
         'dias_trabalho' : dias_trabalho,
         'turno' : int(turno),
-        'celular' : celular,
-        'inicio_trabalho' : inicio_trabalho
+        'celular' : celular
     }
     
     if create_user( user_data, image):    
@@ -120,7 +98,8 @@ def cadastrar(form):
 def create_user(data, image):
     # Create user on db and save the profile image on protected/ folder
     if db.create_user(data):
-        save_profile_image(image, data['id'])
+        user = db.select('users', 'email', '=', data['email'])[0]
+        save_profile_image(image, user['id'])
         return True
     
     return False
@@ -151,8 +130,3 @@ def get_secure_file(filename, type):
 def save_profile_image(image, user_id):
     os.makedirs("app/protected/" + str(user_id), exist_ok=True)
     image.save(os.path.join(app.config['PROFILE_UPLOAD_FOLDER'] + str(user_id),  "profile.jpg"))
-
-
-def get_cargos():
-    
-    return db.get_all_rows_from_firestore('Cargos')

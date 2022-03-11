@@ -82,8 +82,7 @@ def render_painel_func(funcionario, start_date, end_date):
     start_date_html = start_date.strftime('%d-%m-%Y')
     end_date_html = end_date.strftime('%d-%m-%Y')
 
-    demandas, demanda_dict = get_demandas(start_date, end_date, funcionario.id)
-
+    
     return render_template('painel-func.html', user=funcionario, painel_active='active',
                                             percentage=percentage,
                                             percentage_extras=percentage_extras,
@@ -96,9 +95,7 @@ def render_painel_func(funcionario, start_date, end_date):
                                             end_date=end_date_html,
                                             media_horas=media_horas,
                                             dias_trabalhados=dias_trabalhados,
-                                            horas_devendo=horas_devendo,
-                                            demandas=demandas,
-                                            demanda_dict = demanda_dict)
+                                            horas_devendo=horas_devendo)
 
 
 def get_percentage_work(segundos_trabalhados, segundos_totais):

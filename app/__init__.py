@@ -122,18 +122,20 @@ def create_app():
     from app.controllers.Demandas.routes import demandas_blueprint
     app.register_blueprint(demandas_blueprint)
 
+    from app.controllers.decorators import get_user_object
+
     @app.errorhandler(404)
     @app.errorhandler(500)
     def page_not_found(e):
         if 'user' in session:
-            user = session['user']
+            user = get_user_object(session['user'])
             return render_template('404.html', user=user, error=e), 404
         return redirect(url_for('login.log_in'))
 
     @app.errorhandler(401)
     def permission_error(e):
         if 'user' in session:
-            user = session['user']
+            user = get_user_object(session['user'])
             return render_template('404.html', user=user, error=e), 401
 
         return redirect(url_for('login.log_in'))
@@ -141,7 +143,7 @@ def create_app():
     @app.errorhandler(400)
     def unknown_error(e):
         if 'user' in session:
-            user = session['user']
+            user = get_user_object(session['user'])
             return render_template('404.html', user=user, error=e), 404
         return redirect(url_for('login.log_in'))
     

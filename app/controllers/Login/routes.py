@@ -74,7 +74,7 @@ def registrar():
     # GET -> Show Signup Page
     # POST -> Try to signup a new user
     #
-    cargos = get_cargos()
+    cargos = db.get_cargos()
 
     if request.method == 'GET':
         return render_template('signup.html',
