@@ -20,6 +20,7 @@ def painel():
         else:
             try:
                 func_id = int(request.args.get('funcionario'))
+                
                 return render_filtered_painel_admin(start_date, end_date, func_id)
             
             # Func not found

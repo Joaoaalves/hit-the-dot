@@ -232,6 +232,8 @@ class Database():
     def get_funcionario(self, func_id):
         func = self.get_row_by_id('users', func_id)
         
+        if func:
+            return Funcionario(func) if func['role'] == 'Funcionario' else Gestor(func)
         return Funcionario(func) if func and func['role'] == 'Funcionario' else None
 
     def get_turnos(self):
