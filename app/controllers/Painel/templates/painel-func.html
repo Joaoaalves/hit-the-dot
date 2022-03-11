@@ -142,7 +142,7 @@
         {% endif %}
         
 
-        var unordered = { 'Segunda': 5, 'Terça': 2, 'Quarta': 6, 'Quinta': 3, 'Sexta': 7 };
+        var unordered = JSON.parse('{{ demanda_dict | tojson}}');
 
         var days = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'];
 
