@@ -25,7 +25,13 @@ def demandas():
                         date = datetime.strptime(request.args['date'], '%Y-%m-%d').date()
                         demandas = [d for d in demandas if d.date == date]
 
-
+        if 'status' in request.args and demandas:
+                status = request.args.getlist('status')
+                for d in demandas:
+                        print(d.status)
+                        
+                demandas = [d for d in demandas if d.status.lower() in status]
+                
         func_dict = {f.id : f.name for f in db.get_all_funcionarios()}
 
         funcionarios = db.get_all_funcionarios()

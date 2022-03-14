@@ -1,35 +1,39 @@
 <table id="demandas-table">
-        <tr class="box-shadow">
-            <th>Dia</th>
-            <th>Funcionario</th>
-            <th>Titulo</th>
-            <th>Status</th>
-            <th>Ações</th>
-        </tr>
-        {% for demanda in demandas %}
-        <tr class="box-shadow content">
-            <th>{{demanda.get_formated_date()}}</th>
-            <th>{{func_dict[demanda.func_id]}}</th>
-            <th>{{demanda.name}}</th>
-            {% if demanda.is_verified() %}
-                <th class="verified">Verificada</th>
+    <tr class="box-shadow">
+        <th>Dia</th>
+        <th>Funcionario</th>
+        <th>Titulo</th>
+        <th>Status</th>
+        <th>Ações</th>
+    </tr>
+    {% for demanda in demandas %}
+    <tr class="box-shadow content">
+        <th>{{demanda.get_formated_date()}}</th>
+        <th>{{func_dict[demanda.func_id]}}</th>
+        <th>{{demanda.name}}</th>
+        {% if demanda.is_verified() %}
+        <th class="verified">Verificada</th>
+        {% else %}
+        <th class="not-verified">Pendente</th>
+        {% endif %}
+        <th>
+            {% if demanda.url %}
+            <button title="Ver" class="btn-warning btn" onclick="abrirDemanda('{{demanda.url}}')"><i
+                    class="fas fa-eye"></i></button>
             {% else %}
-                <th class="not-verified">Pendente</th>
+            <button title="Sem Url" class="btn-secondary btn" disabled='true'>
+                <i class="fas fa-eye"></i></button>
             {% endif %}
-            <th>
-                <button title="Ver" class="btn-warning btn"
-                    onclick="abrirDemanda('{{demanda.url}}')"><i
-                        class="fas fa-eye"></i></button>
-                {% if demanda.is_verified() %}
-                <button title="Desverificar" class="btn-danger btn"
-                        onclick="marcarComoNaoVerificada({{demanda.id}}, '{{csrf_token()}}', false)"><i
-                        class="fas fa-times"></i></button>
-                {% else %}
-                <button title="Verificar" class="btn-success btn"
+            {% if demanda.is_verified() %}
+            <button title="Desverificar" class="btn-danger btn"
+                onclick="marcarComoNaoVerificada({{demanda.id}}, '{{csrf_token()}}', false)"><i
+                    class="fas fa-times"></i></button>
+            {% else %}
+            <button title="Verificar" class="btn-success btn"
                 onclick="marcarComoVerificada({{demanda.id}}, '{{csrf_token()}}', true)">
                 <i class="fas fa-check"></i></button>
-                {% endif %}
-            </th>
-        </tr>
-        {% endfor %}
+            {% endif %}
+        </th>
+    </tr>
+    {% endfor %}
 </table>

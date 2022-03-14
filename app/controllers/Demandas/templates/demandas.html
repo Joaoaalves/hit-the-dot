@@ -3,7 +3,7 @@
 
 <head>
     <link rel="shortcut icon" href="{{url_for('static', filename='favicon.ico')}}" type="image/x-icon">
-    
+
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,7 +15,6 @@
     <link rel="stylesheet" href="{{url_for('demandas.static', filename='css/demandas.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename='css/default-table.css')}}">
     <!-- custom JS -->
-    <script src="{{url_for('demandas.static', filename='js/demandas.js')}}"></script>
 
 </head>
 
@@ -41,7 +40,7 @@
                     <div class="container-filtro box-shadow">
                         <h4 class="mx-auto">Filtro</h4>
                         <form method="get">
-    
+
                             <label for="funcionario" class="form-label ">Funcionario</label>
                             <select name="funcionario" id="filtro-funcionario" class="form-control">
                                 <option selected='true' disabled hidden>Selecione um Funcionário</option>
@@ -55,7 +54,17 @@
                             </select>
                             <br>
                             <label for="date" class="form-label">Data</label>
-                            <input type="date" name='date' id="date-picker" min="2020-01-01" max="max_date"  class="form-control">
+                            <input type="date" name='date' id="date-picker" min="2020-01-01" max="max_date"
+                                class="form-control">
+                            <br>
+                            <div style="text-align: justify;">   
+                                <h5 style="text-align: center;">Status</h5>
+                                <input type="checkbox" name="status" value="pendente" id="pendente">
+                                <label for="status" class="form-label">Pendente</label>
+                                <br>
+                                <input type="checkbox" name="status"  value='verificada' id="verificada">
+                                <label for="status" class="form-label">Verificada</label>
+                            </div>
                             <br>
                             <input type="submit" value="Buscar" class="btn-dark btn">
                             <br>
@@ -71,5 +80,6 @@
 
 </body>
 
+<script src="{{url_for('demandas.static', filename='js/demandas.js')}}"></script>
 
 </html>

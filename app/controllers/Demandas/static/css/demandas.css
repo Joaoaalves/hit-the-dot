@@ -5,3 +5,7 @@
 .not-verified{
         color: red;
 }
+
+.container-filtro{
+        max-height: 550px;
+}
