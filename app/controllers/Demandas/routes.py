@@ -29,6 +29,7 @@ def demandas():
         func_dict = {f.id : f.name for f in db.get_all_funcionarios()}
 
         funcionarios = db.get_all_funcionarios()
+        demandas = sorted(demandas, key=lambda d: d.date, reverse=True)
 
         return render_template('demandas.html', user=user, 
                                                 demandas_active='active',
@@ -42,6 +43,7 @@ def minhas_demandas():
         user = get_user_object(session['user'])
         demandas = [d for d in db.get_all_demandas() if d.func_id == user.id]
         funcionarios = {f.id : f.name for f in db.get_all_funcionarios()}
+        demandas = sorted(demandas, key=lambda d: d.date, reverse=True)
         return render_template('minhas-demandas.html', user=user, 
                                                 demandas_active='active',
                                                 funcionarios = funcionarios,
