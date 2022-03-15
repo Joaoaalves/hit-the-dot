@@ -222,7 +222,7 @@ def get_demandas(start_date, end_date, func_id=None):
     if func_id:
         demandas = db.get_demandas_by_funcionario_and_daterange(func_id, start_date, end_date)
         if not demandas:
-            return [], demanda_dict
+            return [], demanda_dict, []
             
     else:
         funcionarios = db.get_all_funcionarios()
