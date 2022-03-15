@@ -15,9 +15,13 @@
                 <th class="not-verified">Pendente</th>
             {% endif %}
             <th>
-                <button title="Ver" class="btn-warning btn"
-                    onclick="abrirDemanda('{{demanda.url}}')"><i
+                {% if demanda.url %}
+                <button title="Ver" class="btn-warning btn" onclick="abrirDemanda('{{demanda.url}}')"><i
                         class="fas fa-eye"></i></button>
+                {% else %}
+                <button title="Sem Url" class="btn-secondary btn" disabled='true'>
+                    <i class="fas fa-eye"></i></button>
+                {% endif %}
             </th>
         </tr>
         {% endfor %}

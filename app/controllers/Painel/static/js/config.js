@@ -31,3 +31,13 @@ if(searchParams.has('funcionario')){
 
     document.getElementById('funcionario').value = funcionario;
 }
+
+function alternarPainelStats(){
+    $('#painel-stats').toggleClass('painel-desativado');
+    
+
+    $('#painel-chart').toggleClass('painel-desativado');
+
+    $('#painel-demandas').toggleClass('gradient-background');
+    $('#painel-demandas').toggleClass('box-shadow');
+}

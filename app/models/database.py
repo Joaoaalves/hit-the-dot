@@ -388,6 +388,5 @@ class Database():
     def get_demandas_by_funcionario_and_daterange(self, func_id, date_inicio, date_fim):
         demandas = self.multiple_select('demandas',[['func_id', '=', func_id],
                                                     ['date', '>=', f"'{date_inicio}'"], 
-                                                    ['date', '<=', f"'{date_fim}'"],
-                                                    ['status', '=', f"'Verificada'"]])
+                                                    ['date', '<=', f"'{date_fim}'"]])
         return [Demanda(d) for d in demandas] if demandas else None

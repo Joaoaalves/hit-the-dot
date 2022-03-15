@@ -118,7 +118,6 @@ i.fa.fa-calendar.my-auto{
 
 .container-horas-totais,
 .container-estatisticas{
-    padding: 1% 1.5% 0 1.5%;
     margin: -10px 1%;
 
     width: 50%;
@@ -275,4 +274,40 @@ td.active.start-date.available.in-range{
     flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+
+.btn-demandas{
+    background: #f8be00;
+    color: white;
+    width: 30%;
+    min-width: 190px;
+    height: 50%;
+    max-height: 35px;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+.painel-desativado{
+    display: none!important;
+}
+
+#painel-stats{
+    height: 100%;
+    display: grid;
+    grid-template-columns: 47.5% 47.5%;
+    grid-template-rows: 49% 49%;
+    gap: 2.5%;
+    text-align: center;
+}
+
+.container-stats{
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#painel-chart{
+    padding: 1% 1.5% 0 1.5%;
 }

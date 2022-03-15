@@ -109,19 +109,33 @@
                     </div>
 
                     <!-- ESTATISTICAS -->
-                    <div class="me-0 container-estatisticas  box-shadow">
-                        <div class="flex">
-                            <div class="subtitle-container my-auto">
-                                <b class="stats-title" style="color: black">Estatísticas</b>
-                                <p style="color: #a1a1a1; font-size: 1em">Tarefas terminadas por dia da semana</p>
+                    <div class="me-0 container-estatisticas box-shadow gradient-background" id="painel-demandas">
+                        <div id="painel-chart">
+                            <div class="flex">
+                                <div class="subtitle-container my-auto">
+                                    <b class="stats-title" style="color: black">Estatísticas</b>
+                                    <p style="color: #a1a1a1; font-size: 1em">Tarefas terminadas por dia da semana</p>
+                                </div>
+                                <button class="btn btn-demandas box-shadow ms-auto" onclick="alternarPainelStats()">Ver Detalhes</button>
                             </div>
-
-                            <!-- <button class="btn-salvar-relatorio my-auto" onclick="alert('Ainda não foi desenvolvida essa feature');"><i class="fa fa-download"
-                                    aria-hidden="true"></i> Salvar Relatório</button> -->
+                            
+                            <canvas id="chartRelatorio"></canvas>
                         </div>
+                        
+                        <div class="painel-desativado" id="painel-stats">
 
-                        <canvas id="chartRelatorio"></canvas>
+                            <div class="subtitle-container my-auto box-shadow container-stats gradient-background">
+                                <b style="font-size: 6vmin;">{{demandas | length}}</b>
+                                <b class="subtitle">Verificadas</b>
+                            </div>
+                            <button class="btn btn-demandas box-shadow ms-auto" onclick="alternarPainelStats()">Ver Gráfico</button>
 
+                            <div class="mt-auto box-shadow container-stats gradient-background">
+                                <b style="font-size: 6vmin;">{{demandas_pendentes | length}}</b>
+                                <b class="subtitle">Pendentes</b>
+                            </div>
+                        </div>
+                        
                     </div>
                 </div>
             </div>

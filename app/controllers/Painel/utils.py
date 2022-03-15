@@ -22,7 +22,7 @@ def render_filtered_painel_admin(start_date, end_date, func_id):
     
     dias_trabalhados = dias_uteis - faltas    
 
-    demandas, demanda_dict = get_demandas(start_date, end_date, func_id)
+    demandas, demanda_dict, demandas_pendentes = get_demandas(start_date, end_date, func_id)
 
     return render_template('painel-admin.html', user=user, painel_active='active',
                                             percentage=percentage,
@@ -39,7 +39,8 @@ def render_filtered_painel_admin(start_date, end_date, func_id):
                                             dias_trabalhados=dias_trabalhados,
                                             horas_devendo=horas_devendo,
                                             demandas=demandas,
-                                            demanda_dict=demanda_dict)
+                                            demanda_dict=demanda_dict,
+                                            demandas_pendentes=demandas_pendentes)
 
 
 def render_painel_admin(user, start_date, end_date):
@@ -55,7 +56,7 @@ def render_painel_admin(user, start_date, end_date):
 
     start_date_html = start_date.strftime('%d-%m-%Y')
     end_date_html = end_date.strftime('%d-%m-%Y')
-    demandas, demanda_dict = get_demandas(start_date, end_date)
+    demandas, demanda_dict, demandas_pendentes = get_demandas(start_date, end_date)
     return render_template('painel-admin.html', user=user, painel_active='active',
                                             percentage=percentage,
                                             percentage_extras=percentage_extras,
@@ -66,7 +67,8 @@ def render_painel_admin(user, start_date, end_date):
                                             start_date=start_date_html,
                                             end_date=end_date_html,
                                             demandas=demandas,
-                                            demanda_dict=demanda_dict)
+                                            demanda_dict=demanda_dict,
+                                            demandas_pendentes=demandas_pendentes)
 
 def render_painel_func(funcionario, start_date, end_date):
     segundos_trabalhados, faltas, assiduidade, segundos_totais, dias_totais = get_trabalho_total_funcionario(start_date, end_date, funcionario)
@@ -84,7 +86,7 @@ def render_painel_func(funcionario, start_date, end_date):
     start_date_html = start_date.strftime('%d-%m-%Y')
     end_date_html = end_date.strftime('%d-%m-%Y')
 
-    demandas, demanda_dict = get_demandas(start_date, end_date, funcionario.id)
+    demandas, demanda_dict, demandas_pendentes = get_demandas(start_date, end_date, funcionario.id)
     
     return render_template('painel-func.html', user=funcionario, painel_active='active',
                                             percentage=percentage,
@@ -100,7 +102,8 @@ def render_painel_func(funcionario, start_date, end_date):
                                             dias_trabalhados=dias_trabalhados,
                                             horas_devendo=horas_devendo,
                                             demandas=demandas,
-                                            demanda_dict=demanda_dict)
+                                            demanda_dict=demanda_dict,
+                                            demandas_pendentes=demandas_pendentes)
 
 
 def get_percentage_work(segundos_trabalhados, segundos_totais):
@@ -212,7 +215,10 @@ def get_demandas(start_date, end_date, func_id=None):
 
     demanda_dict = { 'Segunda': 0, 'Terça': 0, 'Quarta': 0, 'Quinta': 0, 'Sexta': 0 }
     week_days = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta']
-
+    
+    demandas_veririficadas = list()
+    demandas_pendentes = list()
+    demandas = list()
     if func_id:
         demandas = db.get_demandas_by_funcionario_and_daterange(func_id, start_date, end_date)
         if not demandas:
@@ -220,15 +226,18 @@ def get_demandas(start_date, end_date, func_id=None):
             
     else:
         funcionarios = db.get_all_funcionarios()
-        demandas = list()
         for f in funcionarios:
             ds = db.get_demandas_by_funcionario_and_daterange(f.id, start_date, end_date)
             if ds:
                 demandas += ds
 
     for demanda in demandas:
-        with suppress(TypeError):
-            week_day = week_days[demanda.date.weekday()] if demanda.date.weekday() < 5 else 'Sexta'
-            demanda_dict[week_day] += 1
+        if demanda.status == 'Verificada':
+            with suppress(TypeError):
+                week_day = week_days[demanda.date.weekday()] if demanda.date.weekday() < 5 else 'Sexta'
+                demanda_dict[week_day] += 1
+                demandas_veririficadas.append(demanda)
+        else:
+            demandas_pendentes.append(demanda)
 
-    return demandas, demanda_dict
+    return demandas_veririficadas, demanda_dict, demandas_pendentes
