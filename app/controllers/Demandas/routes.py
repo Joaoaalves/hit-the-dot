@@ -1,5 +1,7 @@
 from crypt import methods
 from multiprocessing.sharedctypes import Value
+
+from app.controllers.decorators import is_admin
 from . import *
 
 demandas_blueprint = Blueprint('demandas', __name__,
@@ -54,6 +56,22 @@ def minhas_demandas():
                                                 demandas_active='active',
                                                 funcionarios = funcionarios,
                                                 demandas = demandas)
+
+@demandas_blueprint.route('/demanda/<int:id>', methods=['GET', 'POST'])
+@funcionario_required
+def demanda(id):
+        demanda = db.get_demanda(id)
+        if request.method == 'GET':
+                user = get_user_object(session['user'])
+                return render_template('demanda.html', user=user, demanda=demanda,
+                                                demandas_active='active')
+
+        else:
+                demanda.name = request.form['name']
+                demanda.url = request.form['url']
+
+                db.update_data('demandas', id ,demanda.to_json())
+                return redirect(url_for('demandas.minhas_demandas'))
 
 @demandas_blueprint.route('/demandas/adicionar', methods=['GET', 'POST'])
 @funcionario_required

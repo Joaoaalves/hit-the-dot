@@ -46,3 +46,7 @@ if(searchParams.has('mes')){
         document.getElementById('month-picker').value = mes
     }
     
+
+function editar(demanda_id){
+        window.location.href = '/demanda/' + demanda_id;
+}
