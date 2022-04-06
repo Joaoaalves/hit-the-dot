@@ -204,8 +204,12 @@ def get_start_end_date(args):
         
     except Exception as e:
         now = datetime.now()
-        start_date_datetime = datetime(year=now.year, month=now.month, day=1)
-        end_date_datetime = datetime(year=now.year, month=now.month, day=now.day - 1)
+        if now.day == 1:
+            start_date_datetime = now
+            end_date_datetime = now
+        else:
+            start_date_datetime = datetime(year=now.year, month=now.month, day=1)
+            end_date_datetime = datetime(year=now.year, month=now.month, day=now.day - 1)
 
     return start_date_datetime, end_date_datetime
 
