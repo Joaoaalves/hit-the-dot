@@ -19,6 +19,7 @@
         <button onclick="print()" class="no-print btn btn-warning">Imprimir</button>
 
         <table>
+                <h2>Turnos</h2>
                 <thead>
                         <tr>
                                 <td>Funcionario</td>
@@ -41,6 +42,45 @@
                 </tbody>
         </table>
 
+        <h2>Faltas</h2>
+        <table>
+                <thead>
+                        <tr>
+                                <td>Funcionario</td>
+                                <td>Data</td>
+                        </tr>
+                </thead>
+                <tbody>
+                        {% for falta in faltas %}
+                        <tr>
+                                <td>{{func.name}}</td>
+                                <td>{{falta.date}}</td>
+                        </tr>
+                        {% endfor %}
+                </tbody>
+        </table>
 
+
+        <table>
+                <thead>
+                        <tr>
+                                <td>Dias Trabalhados</td>
+                                <td>Faltas</td>
+                                <td>Horas Trabalhadas Totais</td>
+                                <td>Horas Extras Totais</td>
+                                <td>Horas Devendo</td>
+                        </tr>
+                </thead>
+                <tbody>
+                        <tr>
+                                <td>{{dias_trabalhados}}</td>
+                                <td>{{faltas|length}}</td>
+                                <td>{{horas_trabalhadas}}</td>
+                                <td>{{horas_extras}}</td>
+                                <td>{{horas_devendo}}</td>
+                        </tr>
+                </tbody>
+
+        </table>
 </body>
 </html>

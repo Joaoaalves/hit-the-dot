@@ -158,11 +158,39 @@ def meus_turnos():
 @admin_required
 def extrato(func_id):
     func = db.get_funcionario(func_id)
-
+    now = datetime.now()
+    init = datetime(year=2021, month=12, day=1)
     if func:
         turnos = get_sorted_turnos(funcionario=func.id)
+        fs = db.get_all_faltas()
+        faltas = [f for f in fs if f.func_id == func.id]
+        segundos_trabalhados, num_faltas, assiduidade, tempo_total, dias_totais = get_trabalho_total_funcionario(init, now, func)
+        dias_trabalhados = dias_totais - len(faltas)
+
+        if segundos_trabalhados > tempo_total:
+            horas_extras = segundos_trabalhados - tempo_total
+            horas_devendo = 0
+
+        else:
+            horas_extras = 0
+            horas_devendo = tempo_total - segundos_trabalhados
+
+        htotais = segundos_trabalhados // 3600
+        segundos_trabalhados = segundos_trabalhados // 3600
+        mintotais = segundos_trabalhados // 60
+        segundos_trabalhados = segundos_trabalhados // 60
         
+        horas_trabalhadas = f"{htotais}:{'%.2d' % mintotais}:{'%.2d' % segundos_trabalhados}"
         return render_template('extrato.html', turnos=turnos,
-                                                func=func)
+                                                func=func,
+                                                faltas=faltas,
+                                                num_faltas=num_faltas,
+                                                dias_trabalhados=dias_trabalhados,
+                                                trabalho_total=timedelta(seconds=tempo_total),
+                                                dias_totais=dias_totais,
+                                                horas_trabalhadas=horas_trabalhadas,
+                                                horas_devendo=timedelta(seconds=horas_devendo),
+                                                horas_extras=timedelta(seconds=horas_extras)
+                                                )
 
                                             

@@ -1,4 +1,4 @@
-from . import db, Turno, Funcionario, datetime
+from . import db, Turno, Funcionario, datetime, BrazilDistritoFederal, rrule, DAILY
 
 def get_sorted_turnos(funcionario=None):
 
@@ -74,3 +74,37 @@ def get_work(turno):
         trabalho_extra = 0
 
     return percentage, trabalho, percentage_extras, trabalho_extra
+
+def get_trabalho_total_funcionario(start_date, end_date, funcionario):
+    
+    segundos_trabalhados = 0
+    faltas = 0
+    dias_totais = 0
+    tempo_total = 0
+    len_turno = 0
+
+    cal = BrazilDistritoFederal()
+    for dia in rrule(DAILY, dtstart=start_date, until=end_date):
+        if cal.is_working_day(dia):
+            turno = db.get_turno(dia.date(), funcionario.id)
+
+            if turno and turno.current_status == 'clocked_out':
+                len_turno = turno.turno_funcionario
+
+                turno.set_tempo_total()
+                segundos_trabalhados += turno._segundos_totais
+
+            else:
+                falta = db.get_falta_with_date(funcionario.id, dia.date())
+                if falta and not falta.is_abonada():
+                    faltas += 1
+        
+            if turno or falta:
+                dias_totais += 1
+                tempo_total += len_turno * 3600
+    
+    assiduidade = ( round((dias_totais - faltas) * 100/ dias_totais, 1)
+                    if faltas > 0 
+                    else 100)
+    
+    return segundos_trabalhados, faltas, assiduidade, tempo_total, dias_totais
