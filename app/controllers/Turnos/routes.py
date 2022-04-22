@@ -181,6 +181,13 @@ def extrato(func_id):
         segundos_trabalhados = segundos_trabalhados // 60
         
         horas_trabalhadas = f"{htotais}:{'%.2d' % mintotais}:{'%.2d' % segundos_trabalhados}"
+
+        dhtotais = horas_devendo // 3600
+        horas_devendo = horas_devendo // 3600
+        dmintotais = horas_devendo // 60
+        horas_devendo = horas_devendo // 60
+        
+        hs_devendo = f"{dhtotais}:{'%.2d' % dmintotais}:{'%.2d' % horas_devendo}"
         return render_template('extrato.html', turnos=turnos,
                                                 func=func,
                                                 faltas=faltas,
@@ -189,7 +196,7 @@ def extrato(func_id):
                                                 trabalho_total=timedelta(seconds=tempo_total),
                                                 dias_totais=dias_totais,
                                                 horas_trabalhadas=horas_trabalhadas,
-                                                horas_devendo=timedelta(seconds=horas_devendo),
+                                                horas_devendo=hs_devendo,
                                                 horas_extras=timedelta(seconds=horas_extras)
                                                 )
 
