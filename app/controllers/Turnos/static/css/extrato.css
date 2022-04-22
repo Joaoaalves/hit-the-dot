@@ -19,6 +19,11 @@ td{
 header{
         display: none;
 }
+
+h2, h4{
+        margin-top: 62px!important;
+        margin-bottom: 24px!important;
+}
 @media print
 {    
         header{
