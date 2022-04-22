@@ -4,7 +4,6 @@ def render_filtered_painel_admin(start_date, end_date, func_id):
     user = get_user_object(session['user'])
     
     funcionario = db.get_funcionario(func_id)
-    print(funcionario)
     
     segundos_trabalhados, faltas, assiduidade, segundos_totais, dias_uteis = get_trabalho_total_funcionario(start_date, end_date, funcionario)
 

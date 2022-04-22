@@ -153,3 +153,16 @@ def meus_turnos():
     return render_template('meus-turnos.html', user=user,
                                             turnos=turnos,
                                             turnos_active='active')
+
+@turnos_blueprint.route('/extrato/<int:func_id>')
+@admin_required
+def extrato(func_id):
+    func = db.get_funcionario(func_id)
+
+    if func:
+        turnos = get_sorted_turnos(funcionario=func.id)
+        
+        return render_template('extrato.html', turnos=turnos,
+                                                func=func)
+
+                                            
