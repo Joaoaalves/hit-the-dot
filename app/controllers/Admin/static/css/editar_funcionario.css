@@ -66,3 +66,16 @@ input.bnt.btn-warning.form-control:hover{
     background-color: #f8be00;
     border-color: #f8be00;
 }
+
+.buttons{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.buttons button,
+.buttons input{
+    width: 30%;
+    margin: 0 50px;
+}

@@ -43,8 +43,8 @@ def listar_funcionarios():
 @admin_required
 def editar_funcionario(func_id):
     user = get_user_object(session['user'])
-    funcionario = db .get_funcionario(func_id)
-    cargos = get_cargos()
+    funcionario = db.get_funcionario(func_id)
+    cargos = db.get_cargos()
     
     if funcionario:
         if request.method == 'GET':
@@ -62,6 +62,18 @@ def editar_funcionario(func_id):
             return redirect(url_for('admin.listar_funcionarios'))
     
     return abort(404, 'Funcionario não encontrado!')
+
+@admin_blueprint.route('/status-funcionario/<int:func_id>', methods=['POST'])
+@admin_required
+def status_funcionario(func_id):
+    funcionario = db.get_funcionario(func_id)
+    if funcionario:
+        funcionario.is_active = request.form['status'] == 'true'
+        db.update_data('users', funcionario.id, vars(funcionario))
+        return '', 200
+        
+    return abort(404, 'Funcionario não encontrado!')
+
 
 @admin_blueprint.route("/excluir-usuario", methods=['DELETE'])
 @admin_required

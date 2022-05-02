@@ -50,7 +50,8 @@ def check_turnos():
                         if turno_hoje.current_status == 'clocked_in':       
                             finaliza_turno(funcionario, turno_hoje)
                     else:
-                        adiciona_falta(funcionario, now.date())
+                        if funcionario.is_active:
+                            adiciona_falta(funcionario, now.date())
                 break
             
      

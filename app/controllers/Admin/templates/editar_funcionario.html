@@ -15,6 +15,8 @@
 
     <link rel="stylesheet" href="{{url_for('painel.static', filename='css/painel.css')}}">
 
+    <script src="{{url_for('admin.static', filename='js/editar_funcionario.js')}}"></script>
+
 
 </head>
 
@@ -79,7 +81,14 @@
                             </div>
 
                         </div>
-                        <input class="btn btn-dark form-control mt-5" type="submit" value="Alterar">
+                        <div class="input-group buttons">
+                            <input class="btn btn-dark mt-5" type="submit" value="Alterar">
+                            {% if funcionario.is_active -%}
+                            <button type="button" onclick='statusFuncionario("{{csrf_token()}}", {{funcionario.id}}, false)' class="btn btn-warning mt-5">Desativar</button>
+                            {% else %}
+                            <button type="button" onclick='statusFuncionario("{{csrf_token()}}", {{funcionario.id}}, true)' class="btn btn-success mt-5">Ativar</button>
+                            {%- endif %}
+                        </div>
                     </form>
                 </div>
             </div>
