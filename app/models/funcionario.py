@@ -10,7 +10,7 @@ class Funcionario(User):
         self.email = data['email']
         self.cargo = data['cargo']
         self.turno = data['turno']
-        self.is_active = data['is_active']
+        self.is_active = data['is_active'] if 'is_active' in data else True
         
         if 'celular' in data:
             self.celular = data['celular']
