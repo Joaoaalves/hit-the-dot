@@ -111,14 +111,16 @@
             {% endif %}
             {% else %}
             <div class="box-shadow center iniciar-turno">
-                {% if is_dia_util() %}
+                {% if is_func(user) and user.is_active and is_dia_util() and not is_admin(user) %}
                 <form method="POST">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <input type="hidden" name='status' value="clock_in">
                     <input type="submit" class="btn btn-dark mx-auto" value="Iniciar Turno">
                 </form>
-                {% else %}
+                {% elif not is_dia_util() %}
                 <h4 class="my-auto">Hoje não é um dia útil!</h4>
+                {% else %}
+                <h4 class="my-auto">Você não é um funcionário!</h4>
                 {% endif %}
             </div>
 
