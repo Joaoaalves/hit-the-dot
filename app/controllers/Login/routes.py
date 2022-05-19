@@ -34,7 +34,7 @@ def log_in():
                 users.append(user)
                 
             except Exception as e:
-
+                print(e)
                 ip_ban.add()
                 return  render_template(
                     'login.html',

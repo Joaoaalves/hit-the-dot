@@ -23,6 +23,16 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
+    <script src="{{url_for('static', filename='js/register_service_worker.js')}}"></script>
+
+    <script>
+        registerServiceWorker(
+            "/static/js/register_service_worker.js",
+            {{config['VAPID_PUBLIC_KEY'] | safe}},
+            "/api/push-subscriptions",
+            "{{csrf_token()}}"
+        );
+    </script>
 </head>
 
 <body>
@@ -120,20 +130,21 @@
                         {% endif %}
 
                     </div>
-                        {% else %}
-                        <!-- HORAS TOTAIS DE TRABALHO-->
-                        <div class="ms-0 container-horas-totais box-shadow gradient-background">
-                                <div>
-                                    <b style="font-size: 6vmin;">{{horas_totais}}</b>
-                                    <br>
-                                    <b class="subtitle">Horas totais trabalhadas</b>
-                                </div>
+                    {% else %}
+                    <!-- HORAS TOTAIS DE TRABALHO-->
+                    <div class="ms-0 container-horas-totais box-shadow gradient-background">
+                        <div>
+                            <b style="font-size: 6vmin;">{{horas_totais}}</b>
+                            <br>
+                            <b class="subtitle">Horas totais trabalhadas</b>
+                        </div>
 
-                                <p>Esta estatística representa as horas totais trabalhadas de todos os funcionários juntos,
-                                    caso queira as informações de um funcionário em específico, utilize o filtro no canto superior
-                                    direito.
-                                </p>
-                                <a class="btn-funcionarios" href="/listar-funcionarios">Ver Funcionários</a>
+                        <p>Esta estatística representa as horas totais trabalhadas de todos os funcionários juntos,
+                            caso queira as informações de um funcionário em específico, utilize o filtro no canto
+                            superior
+                            direito.
+                        </p>
+                        <a class="btn-funcionarios" href="/listar-funcionarios">Ver Funcionários</a>
                     </div>
                     {% endif %}
 
@@ -145,26 +156,28 @@
                                     <b class="stats-title" style="color: black">Estatísticas</b>
                                     <p style="color: #a1a1a1; font-size: 1em">Tarefas terminadas por dia da semana</p>
                                 </div>
-                                <button class="btn btn-demandas box-shadow ms-auto" onclick="alternarPainelStats()">Ver Detalhes</button>
+                                <button class="btn btn-demandas box-shadow ms-auto" onclick="alternarPainelStats()">Ver
+                                    Detalhes</button>
                             </div>
-                            
+
                             <canvas id="chartRelatorio"></canvas>
                         </div>
-                        
+
                         <div class="painel-desativado" id="painel-stats">
 
                             <div class="subtitle-container my-auto box-shadow container-stats gradient-background">
                                 <b style="font-size: 6vmin;">{{demandas | length}}</b>
                                 <b class="subtitle">Verificadas</b>
                             </div>
-                            <button class="btn btn-demandas box-shadow ms-auto" onclick="alternarPainelStats()">Ver Gráfico</button>
+                            <button class="btn btn-demandas box-shadow ms-auto" onclick="alternarPainelStats()">Ver
+                                Gráfico</button>
 
                             <div class="mt-auto box-shadow container-stats gradient-background">
                                 <b style="font-size: 6vmin;">{{demandas_pendentes | length}}</b>
                                 <b class="subtitle">Pendentes</b>
                             </div>
                         </div>
-                        
+
                     </div>
                 </div>
             </div>
@@ -177,13 +190,17 @@
     <script src="{{url_for('static', filename='js/progress-circle.js')}}"></script>
     <!-- Generate the progress rings -->
     <script>
-
         {% if assiduidade %}
-        var config = [[{{ percentage }}, '#E328AF', 'rgba(227,40,175,0.1)'], [{{ assiduidade }}, '#19facc', 'rgba(25,250,204,0.1)'], [{{ percentage_extras }}, '#1CBBFF', 'rgba(28,187,255,0.1)']];
-        {% else %}
-        var config = [[{{ percentage }}, '#E328AF', 'rgba(227,40,175,0.1)'] , [{{ percentage_extras }}, '#1CBBFF', 'rgba(28,187,255,0.1)']];
-        {% endif %}
-        
+        var config = [
+            [{{percentage}}, '#E328AF', 'rgba(227,40,175,0.1)'],
+            [{{assiduidade}}, '#19facc', 'rgba(25,250,204,0.1)'],
+            [{{percentage_extras}}, '#1CBBFF', 'rgba(28,187,255,0.1)']
+        ]; {% else %}
+        var config = [
+            [{{percentage}}, '#E328AF', 'rgba(227,40,175,0.1)'],
+            [{{percentage_extras}}, '#1CBBFF', 'rgba(28,187,255,0.1)']
+        ]; {% endif %}
+
 
         var unordered = JSON.parse('{{ demanda_dict | tojson}}');
 
@@ -220,11 +237,10 @@
             });
         });
 
-    
-	$(document).ready( () => {
-		setProgressCircles(config);
-	});
 
+        $(document).ready(() => {
+            setProgressCircles(config);
+        });
     </script>
 
     <!-- Generate the charts -->

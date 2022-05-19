@@ -87,7 +87,8 @@ def cadastrar(form):
         'cargo' : cargo_id,
         'dias_trabalho' : dias_trabalho,
         'turno' : int(turno),
-        'celular' : celular
+        'celular' : celular,
+        'is_active' : True
     }
     
     if create_user( user_data, image):    
@@ -107,7 +108,7 @@ def get_secure_file(filename, type):
     #
     #    Verify if the file is really an image to prevent the upload of malicious files
     #    (Just a simple check, a more complex one should be implemented)
-
+    
     image_format = ['image/jpg', 'image/png', 'image/jpeg']
     permited_ext = ['png', 'jpg', 'jpeg']
 

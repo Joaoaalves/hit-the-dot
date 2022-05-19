@@ -47,7 +47,7 @@ def baterponto():
             if status == 'clock_in' or status == 'break_out'
             else 
         redis_con.set(f"session:{user.id}", 'false'))
-
+        
         if db.add_new_shitf_status(status, user):   
             return redirect(url_for('bater_ponto.baterponto'))
         

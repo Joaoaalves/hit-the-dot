@@ -10,6 +10,7 @@ from configparser import ConfigParser
 
 from .admin import Admin
 from .gestor import Gestor
+from .estagiario import Estagiario
 from .funcionario import Funcionario
 from .turno import Turno
 from .cargo import Cargo
@@ -159,6 +160,9 @@ class Database():
             u = self.select('users', 'email', '=', email)[0]
 
             if u:
+                if u['role'] == 'Estagiario':
+                    return Estagiario(u)
+
                 if u['role'] == 'Funcionario':
                     return Funcionario(u)
 
@@ -227,7 +231,7 @@ class Database():
     # Get all funcionarios from db
     def get_all_funcionarios(self):
         funcionarios = self.get_table_data('users')
-        return [Funcionario(f) for f in funcionarios if f['role'] in ['Funcionario', 'Gestor']] if funcionarios else None
+        return [Funcionario(f) for f in funcionarios if f['role'] in ['Funcionario', 'Gestor', 'Estagiario']] if funcionarios else None
     
     def get_funcionario(self, func_id):
         func = self.get_row_by_id('users', func_id)
@@ -390,3 +394,15 @@ class Database():
                                                     ['date', '>=', f"'{date_inicio}'"], 
                                                     ['date', '<=', f"'{date_fim}'"]])
         return [Demanda(d) for d in demandas] if demandas else None
+
+    def insert_push_endpoint(self, data, user):
+        if not self.select('push', 'user', '=', user):
+            data = {
+                'user' : user,
+                'subscription_json' : data
+            }
+
+            return self.insert_data('push', data)
+
+    def get_pushs(self):
+        return self.get_table_data('push')

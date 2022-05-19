@@ -2,13 +2,15 @@ from flask import redirect, url_for, session, abort, request
 from functools import wraps
 from app import app
 
+from app.models.estagiario import Estagiario
 from app.models.funcionario import Funcionario
 from app.models.admin import Admin
 from app.models.gestor import Gestor
 
-FUNC_PRIVILEGE = 2
-GESTOR_PRIVILEGE = 3
-ADMIN_PRIVILEGE = 4
+EST_PRIVILEGE = 2
+FUNC_PRIVILEGE = 3
+GESTOR_PRIVILEGE = 4
+ADMIN_PRIVILEGE = 5
 
 def is_admin(user):
     #
@@ -29,11 +31,19 @@ def is_func(user):
     #
     return user.get_privilege() >= FUNC_PRIVILEGE
 
+def is_estagiario(user):
+    #
+    # Verify if the user is Estagiario
+    #
+    return user.get_privilege() >= EST_PRIVILEGE
 
 def get_user_object(user):
     #
     # Get the user object from the session
     #
+    if user['role'] == 'Estagiario':
+        return Estagiario(user)
+    
     if user['role'] == 'Funcionario':
         return Funcionario(user)
 
@@ -69,7 +79,7 @@ def funcionario_required(f):
 
         user = get_user_object(session['user'])
 
-        if is_admin(user) or is_func(user):
+        if is_estagiario(user):
             return f(*args, **kwargs)
 
         else:
@@ -158,3 +168,4 @@ def block_cross_site_requests(f = None):
 app.jinja_env.globals.update(is_admin=is_admin)
 app.jinja_env.globals.update(is_func=is_func)
 app.jinja_env.globals.update(is_gestor=is_gestor)
+app.jinja_env.globals.update(is_estagiario=is_estagiario)

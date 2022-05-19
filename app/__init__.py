@@ -5,7 +5,7 @@ from flask_wtf import CSRFProtect
 from flask_recaptcha import ReCaptcha
 import os
 from apscheduler.schedulers.background import BackgroundScheduler
-
+from configparser import ConfigParser
 from app.models.database import Database
 
 # Rotina do verificador de turnos
@@ -17,6 +17,14 @@ if not 'instance_path' in os.environ:
 else:
     instance_path = os.environ['instance_path']
 app = Flask(__name__, instance_path=instance_path)
+
+
+# Push Notifications
+push = ConfigParser()
+push.read('config/push.ini')
+app.config['VAPID_PUBLIC_KEY'] = push['VAPID']['VAPID_PUBLIC_KEY']
+app.config['VAPID_PRIVATE_KEY'] = push['VAPID']['VAPID_PRIVATE_KEY']
+app.config['VAPID_CLAIM_EMAIL'] = push['VAPID']['VAPID_CLAIM_EMAIL']
 
 # Firebase Admin Config
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'config/firebase.json'
@@ -123,6 +131,9 @@ def create_app():
     app.register_blueprint(demandas_blueprint)
 
     from app.controllers.decorators import get_user_object
+    
+    from app.controllers.Push.routes import push_blueprint
+    app.register_blueprint(push_blueprint)
 
     @app.errorhandler(404)
     @app.errorhandler(500)

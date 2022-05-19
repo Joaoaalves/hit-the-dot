@@ -2,6 +2,6 @@
 {% include "sidepanel/admin.html" %}
 {% elif is_gestor(user) %}
 {% include 'sidepanel/gestor.html' %}
-{% elif is_func(user) %}
+{% elif is_func(user) or is_estagiario(user) %}
 {% include 'sidepanel/funcionario.html' %}
 {% endif %}

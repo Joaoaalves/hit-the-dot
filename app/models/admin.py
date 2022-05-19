@@ -2,7 +2,7 @@ from .funcionario import Funcionario
 
 class Admin(Funcionario):
 
-    _privilege = 4
+    _privilege = 5
 
     def remove_user(self, user_id, db):
         try:

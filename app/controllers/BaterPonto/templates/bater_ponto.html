@@ -21,8 +21,13 @@
 
     <!-- JS Files -->
     <script src="{{url_for('static', filename='js/progress-circle.js')}}"></script>
+    {% if is_func(user) %}
     <script src="{{url_for('bater_ponto.static', filename='js/asyncTimer.js')}}"></script>
+    {% else %}
+    <script src="{{url_for('bater_ponto.static', filename='js/asyncTimerEst.js')}}"></script>
+    {% endif %}
     <script src="{{url_for('bater_ponto.static', filename='js/bater_ponto.js')}}"></script>
+
 
 
 </head>
@@ -111,7 +116,7 @@
             {% endif %}
             {% else %}
             <div class="box-shadow center iniciar-turno">
-                {% if is_func(user) and user.is_active and is_dia_util() and not is_admin(user) %}
+                {% if is_estagiario(user) and user.is_active and is_dia_util() and not is_admin(user) %}
                 <form method="POST">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <input type="hidden" name='status' value="clock_in">
@@ -136,8 +141,11 @@
     <script>
         // Seta o timestamp do inicio do turno
         // Para calcular o tempo total no front-end
+        {% if is_func(user) %}
         startTimer({{ current_shift_time }}, {{user.turno}});
-
+        {% else %}
+        startTimer({{current_shift_time}}, {{user.turno}}, "{{csrf_token()}}");
+        {% endif %}
     </script>
     {% else %}
     <script>
