@@ -1,15 +1,17 @@
-from . import webpush, WebPushException, json, db, app
+from time import sleep
+from . import webpush, WebPushException, json, db, app, Turno,datetime, timedelta
 
-def trigger_push_notification(push_subscription, title, body):
+def trigger_push_notification(push_subscription, body):
         try:
                 response = webpush(
-                subscription_info=json.loads(push_subscription['subscription_json']),
-                data=json.dumps({"title": title, "body": body}),
-                vapid_private_key=app.config["VAPID_PRIVATE_KEY"],
-                vapid_claims={
-                        "sub": "mailto:{}".format(
-                        app.config["VAPID_CLAIM_EMAIL"])
-                }
+                        subscription_info=json.loads(push_subscription['subscription_json']),
+                        data=json.dumps(body),
+                        vapid_private_key=app.config["VAPID_PRIVATE_KEY"],
+                        vapid_claims={
+                                "sub": "mailto:{}".format(
+                                app.config["VAPID_CLAIM_EMAIL"])
+                        },
+                        ttl=5000
                 )
                 return response.ok
         except WebPushException as ex:
@@ -21,15 +23,3 @@ def trigger_push_notification(push_subscription, title, body):
                                 extra.message
                                 )
                 return False
-
-
-def trigger_push_notifications_for_subscriptions(subscriptions, title, body):
-        return [trigger_push_notification(subscription, title, body)
-                for subscription in subscriptions]
-
-
-
-
-p = db.get_pushs()
-
-print(trigger_push_notifications_for_subscriptions(p, 'Teste', 'Teste'))

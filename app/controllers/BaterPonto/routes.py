@@ -30,7 +30,7 @@ def baterponto():
                                                         bater_ponto_active='active')
             else:
                 return render_template('bater_ponto.html',
-                        turno=turno,
+                        turno=turno,    
                         user=user,
                         bater_ponto_active='active')
             
@@ -41,7 +41,7 @@ def baterponto():
     else:
         form = request.form
         status = form['status']
-        redis_con = redis.Redis(host='localhost', port=6379, db=0)
+        
         
         (redis_con.set(f"session:{user.id}", 'true')
             if status == 'clock_in' or status == 'break_out'
@@ -51,6 +51,5 @@ def baterponto():
         if db.add_new_shitf_status(status, user):   
             return redirect(url_for('bater_ponto.baterponto'))
         
-
 
         return flask.abort(400, 'Você ja bateu seu ponto!')

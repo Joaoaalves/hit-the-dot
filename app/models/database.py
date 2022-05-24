@@ -14,7 +14,6 @@ from .estagiario import Estagiario
 from .funcionario import Funcionario
 from .turno import Turno
 from .cargo import Cargo
-from .tarefa import Tarefa
 from .falta import Falta
 from .cliente import Cliente
 from .feriado import Feriado
@@ -326,12 +325,6 @@ class Database():
 
         return [Cargo(c) for c in cargos] if cargos else None
 
-
-    def get_tarefa(self, tarefa_id):
-
-        t = self.get_row_by_id('tarefas', tarefa_id)
-        return Tarefa(t) if t else None
-        
     def get_feriado(self, id):
         feriado = self.get_row_by_id('feriados', id)
         return Feriado(feriado) if feriado else None
@@ -339,8 +332,7 @@ class Database():
     def get_feriados(self):        
         feriados = self.get_table_data('feriados')
             
-        return [Feriado(f) for f in feriados] if feriados else None
-        
+        return [Feriado(f) for f in feriados] if feriados else None    
             
     def create_ferias(self, data):
         self.insert_data('ferias', Ferias(data).to_json())
@@ -396,13 +388,21 @@ class Database():
         return [Demanda(d) for d in demandas] if demandas else None
 
     def insert_push_endpoint(self, data, user):
-        if not self.select('push', 'user', '=', user):
-            data = {
-                'user' : user,
-                'subscription_json' : data
-            }
+        insertion_data = {
+            'user' : user,
+            'subscription_json' : data
+        }
 
-            return self.insert_data('push', data)
+        push_entry = self.select('push', 'subscription_json', '=', data)[0]
+        
+        if push_entry:
+            return self.update_data('push', push_entry['id'], insertion_data)
+
+        return self.insert_data('push', insertion_data)
+
+    def get_push(self, func_id):
+        pushs = self.select('push', 'user', '=', func_id)
+        return pushs[0] if pushs else None
 
     def get_pushs(self):
         return self.get_table_data('push')

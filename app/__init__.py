@@ -1,21 +1,26 @@
-from flask import Flask, render_template, session, redirect, url_for, request
+from flask import Flask, render_template, session, redirect, url_for
 from flask_ipban import IpBan
 from flask_mail import Mail
 from flask_wtf import CSRFProtect
 from flask_recaptcha import ReCaptcha
+import redis
 import os
 from apscheduler.schedulers.background import BackgroundScheduler
 from configparser import ConfigParser
 from app.models.database import Database
 
+
+
 # Rotina do verificador de turnos
 rotina_turnos = BackgroundScheduler(daemon=True)
+rotina_notificoes = BackgroundScheduler(daemon=True)
 
 # App
 if not 'instance_path' in os.environ:
     instance_path = os.getcwd() + '/app/protected/'
 else:
     instance_path = os.environ['instance_path']
+
 app = Flask(__name__, instance_path=instance_path)
 
 
@@ -41,9 +46,12 @@ invalid_sessions = list()
 
 # App configs
 app.config.from_object("config")
-    
+
 # Google Recaptcha
 recaptcha = ReCaptcha(app=app)
+
+# Redis Connection
+redis_con = redis.Redis(host='localhost', port=6379, db=0)
 
 try:
 
@@ -68,12 +76,16 @@ def create_app():
     
     from app.rotinas import check_turnos
     from app.rotinas import backup_db
+    from app.rotinas import notifica_turnos
     
     # Scheduler Diária Turno para fechar turnos abertos
     rotina_turnos.add_job(check_turnos, 'cron', hour=23, minute=58)
     rotina_turnos.add_job(backup_db, 'cron', hour=0, minute=5)
 
     rotina_turnos.start()
+
+    rotina_notificoes.add_job(notifica_turnos, "interval", minutes=3)
+    rotina_notificoes.start()
 
     # Mail configs
     with open('config/mail_creds.txt', 'r') as f:
@@ -157,5 +169,10 @@ def create_app():
             user = get_user_object(session['user'])
             return render_template('404.html', user=user, error=e), 404
         return redirect(url_for('login.log_in'))
+
+    # Service Worker (NOTIFICACOES)
+    @app.route('/sw.js', methods=['GET'])
+    def sw():
+        return app.send_static_file('sw.js')
     
     return app

@@ -5,6 +5,8 @@ import os
 from random import randint
 import mysql.connector
 from configparser import ConfigParser
+from app.controllers.Push.utils import trigger_push_notification
+from app.models.turno import Turno
 
 config = ConfigParser()
 config.read('config/mysql.ini')
@@ -62,7 +64,6 @@ def backup_db():
     filename = f"backups/{date_string}.sql"
     
     write_backup_file(filename)
-    #write_backup_db(date_string)
     
     # Remove old backups
     old_backup_date = now - timedelta(days=15)
@@ -170,3 +171,21 @@ def remove_old_backup_file(filename):
         
     except Exception as e:
         print(e)
+
+def notifica_turnos():
+    from app import db
+    turnos_abertos = [Turno(t) for t in db.select('turnos', 'current_status', '=' ,'clocked_in')]
+    for turno in turnos_abertos:
+        
+            now = datetime.now()
+        
+            turno.hora_saida = timedelta(seconds=now.second, minutes=now.minute, hours=now.hour)
+            turno.set_tempo_total()
+    
+            tempo_total = turno.turno_funcionario * 3600
+        
+            if tempo_total - turno._segundos_totais <= 300:
+                funcionario = db.get_funcionario(turno.user_id)
+                push = db.get_push(funcionario.id)
+                if push:
+                    trigger_push_notification(push, f'{funcionario.name}, faltam menos de 5 minutos para seu turno finalizar')

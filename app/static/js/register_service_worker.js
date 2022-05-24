@@ -19,7 +19,7 @@ function updateSubscriptionOnServer(subscription, apiEndpoint, csrf_token) {
   return fetch(apiEndpoint, {
     method: 'POST',
     headers: {
-      'X-CSRFToken' : csrf_token,
+      'X-CSRFToken': csrf_token,
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
@@ -32,42 +32,58 @@ function updateSubscriptionOnServer(subscription, apiEndpoint, csrf_token) {
 function subscribeUser(swRegistration, applicationServerPublicKey, apiEndpoint, csrf_token) {
   const applicationServerKey = urlB64ToUint8Array(applicationServerPublicKey);
   swRegistration.pushManager.subscribe({
-    userVisibleOnly: true,
-    applicationServerKey: applicationServerKey
-  })
-  .then(function(subscription) {
- 
-    return updateSubscriptionOnServer(subscription, apiEndpoint, csrf_token);
+      userVisibleOnly: true,
+      applicationServerKey: applicationServerKey
+    })
+    .then(function (subscription) {
 
-  })
-  .then(function(response) {
-    if (!response.ok) {
-      throw new Error('Bad status code from server.');
-    }
-    return response.json();
-  })
-  .then(function(responseData) {
-    if (responseData.status!=="success") {
-      throw new Error('Bad response from server.');
-    }
-  })
-  .catch(function(err) {
-  });
+      return updateSubscriptionOnServer(subscription, apiEndpoint, csrf_token);
+
+    })
+    .then(function (response) {
+      if (!response.ok) {
+        throw new Error('Bad status code from server.');
+      }
+      return response.json();
+    })
+    .then(function (responseData) {
+      if (responseData.status !== "success") {
+        throw new Error('Bad response from server.');
+      }
+    })
+    .catch(function (err) {});
 }
 
-function registerServiceWorker(serviceWorkerUrl, applicationServerPublicKey, apiEndpoint, csrf_token){
+function registerServiceWorker(serviceWorkerUrl, applicationServerPublicKey, apiEndpoint, csrf_token) {
   let swRegistration = null;
   if ('serviceWorker' in navigator && 'PushManager' in window) {
-    navigator.serviceWorker.register(serviceWorkerUrl)
-    .then(function(swReg) {
-      subscribeUser(swReg, applicationServerPublicKey, apiEndpoint, csrf_token);
+    navigator.serviceWorker.register('/sw.js')
+      .then(function (swReg) {
+        subscribeUser(swReg, applicationServerPublicKey, apiEndpoint, csrf_token);
 
-      swRegistration = swReg;
-    })
-    .catch(function(error) {
-    });
+        swRegistration = swReg;
+      })
+      .catch(function (error) {});
   } else {
     console.warn('Push messaging is not supported');
-  } 
+  }
   return swRegistration;
+}
+
+
+function askPermission() {
+  return new Promise(function (resolve, reject) {
+    const permissionResult = Notification.requestPermission(function (result) {
+      resolve(result);
+    });
+
+    if (permissionResult) {
+      permissionResult.then(resolve, reject);
+    }
+  }).then(function (permissionResult) {
+    if (permissionResult !== 'granted') {
+      throw new Error("We weren't granted permission.");
+    }
+    console.log(permissionResult)
+  });
 }

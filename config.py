@@ -21,3 +21,6 @@ MAIL_SERVER = 'smtp.gmail.com'
 MAIL_USE_SSL = True
 MAIL_PORT = 465
 MAIL_DEBUG = True
+
+BROKER_URL = 'redis://localhost:6379'
+RESULT_BACKEND = 'redis://localhost:6379'     
