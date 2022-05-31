@@ -1,0 +1,28 @@
+<table>
+        <thead>
+                <tr>
+                        <td>Funcionário</td>
+                        <td>Cliente</td>
+                        <td>Serviço</td>
+                        <td>Ações</td>
+                </tr>
+        </thead>
+        <tbody>
+                {% for servico in servicos -%}
+                <tr>
+                        <td>{{funcionarios[servico.user_id]}}</td>
+                        <td>{{clientes[servico.cliente_id]}}</td>
+                        <td>{{servicos_dict[servico.service_id]}}</td>
+                        <td>
+                                <button class="btn btn-danger" onclick="excluirServico({{servico.id}}, '{{csrf_token()}}')">Excluir</button>
+                                <button class="btn btn-warning" onclick="verServico('{{servico.link_trello}}')">Ver</button>
+                                {% if not servico.is_verified %}
+                                <button class="btn btn-success" onclick="atualizarStatus({{servico.id}}, '{{csrf_token()}}', true)">Validar</button>
+                                {% else %}
+                                <button class="btn btn-danger" onclick="rejeitarServico({{servico.id}}, '{{csrf_token()}}', false)">Rejeitar</button>
+                                {% endif %}
+                        </td>
+                </tr>
+                {%- endfor %}
+        </tbody>
+</table>

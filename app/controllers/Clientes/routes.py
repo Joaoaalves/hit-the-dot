@@ -1,4 +1,5 @@
 from . import *
+from .utils import *
 
 clientes_blueprint = Blueprint('clientes', __name__,
                                 template_folder='templates',
@@ -7,56 +8,63 @@ clientes_blueprint = Blueprint('clientes', __name__,
 
 
 
-@clientes_blueprint.route('/listar-clientes')
-@funcionario_required
-def clientes():
-        
-        user = get_user_object(session['user'])
-        
-        clientes = db.get_all_clientes()
-        
-        return render_template('clientes.html', user=user,
-                                                clientes=clientes,
-                                                clientes_active='active')
-
-
 @clientes_blueprint.route('/cliente/cadastro', methods=['GET', 'POST'])
-@admin_required
-def cadastrar_cliente():
-                
-        user = get_user_object(session['user'])
+@gestor_required
+def criar_cliente():
+        if request.method == 'GET':
+                user = get_user_object(session['user'])
+                return render_template('cadastro-cliente.html', user=user, clientes_active='active')
         
-        if request.method == 'POST':
+        else:
+                form = request.form
+                name = form['name']
+                try:
+                        image = get_secure_file('logo', 'image')
 
-                return redirect(url_for('clientes.clientes'))
+                        db.insert_data('cliente', {'name' : name})
 
-        return render_template('cadastro-cliente.html', user=user, clientes_active='active')
+                        cliente_criado = db.select('cliente', 'name', '=', name)[0]
+
+                        save_logo_cliente(image, cliente_criado['id'])
+
+                        return redirect(url_for('clientes.clientes'))
+
+                except Exception as e:
+                        return abort(500, e)
+
+
+@gestor_required
+@clientes_blueprint.route('/clientes')
+def clientes():
+        user = get_user_object(session['user'])
+        clientes = db.get_table_data('cliente')
+        return render_template('clientes.html', user=user, clientes=clientes, clientes_active='active')
 
 @clientes_blueprint.route('/editar-cliente/<id>', methods=['GET', 'POST'])
-@admin_required
+@gestor_required
 def editar_cliente(id):
                 
-        user = get_user_object(session['user'])
         
-        cliente = db.get_table_data('clientes', id)
-
         if request.method == 'POST':
                 cliente = Cliente(request.form)
-
-                db.update_data('clientes', cliente.id, cliente.to_json())
+        
+                db.update_data('cliente', id, cliente.to_json())
 
                 return redirect(url_for('clientes.clientes'))
         
-        return render_template('editar_cliente.html', user=user, cliente=cliente,
+
+        user = get_user_object(session['user'])
+        cliente = db.select('cliente', 'id', '=', id)[0]
+        return render_template('editar-cliente.html', user=user, cliente=cliente,
                                         clientes_active='active')
 
 
 @clientes_blueprint.route('/deletar-cliente', methods=['delete'])
-@admin_required
+@gestor_required
 def deletar_cliente():
 
         id = request.form.get('uid', type=int)  
         
-        db.remove_data('clientes', id)
+        db.remove_data('cliente', id)
 
         return '', 200

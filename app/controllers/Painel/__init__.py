@@ -11,3 +11,6 @@ from time import strptime
 from workalendar.america.brazil import BrazilDistritoFederal
 from dateutil.rrule import rrule, DAILY
 from contextlib import suppress
+import calendar
+
+import numpy as np

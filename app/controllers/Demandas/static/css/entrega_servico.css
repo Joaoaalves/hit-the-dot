@@ -1,0 +1,43 @@
+.search-container {
+        width: 350px;
+        margin-bottom: 5%;
+}
+
+.content-container{
+        background-color: #f0f0f1!important;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+}
+
+form{
+        width: 100%!important;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-top: auto;
+        margin-bottom: auto;
+        width: 600px;
+        max-width: 600px;
+        height: 400px;
+        background-color: white;
+        p
+}
+
+.form-control{
+        width: 350px;
+}
+
+form .btn{
+        margin-top: 5%;
+        color: white;
+        background-color: #f8be00;
+        width: 200px;
+        transition: all ease-in-out 0.2s;
+}
+
+form .btn:hover{
+        color: white;
+        transform: scale(1.1);
+}

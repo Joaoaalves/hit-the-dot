@@ -18,6 +18,8 @@ from .falta import Falta
 from .cliente import Cliente
 from .feriado import Feriado
 from .demanda import Demanda
+from .servico import Servico
+from .servico_atribuido import ServicoAtribuido
 
 class Database():
 
@@ -84,12 +86,10 @@ class Database():
             sql = "UPDATE %s " % table
             sql += ' SET {}'.format(', '.join('{}=%s'.format(k) for k in info))
             sql += ' WHERE id = %s' % id
-
             cursor.execute(sql, tuple(info.values()))
 
         cnx.commit()
         cnx.close()
-    
 
     def get_table_data(self, table):
         cnx = self.get_mysql_connection()
@@ -406,3 +406,26 @@ class Database():
 
     def get_pushs(self):
         return self.get_table_data('push')
+
+    def get_servico(self, serv_id):
+        serv = self.select('service', 'id', '=', serv_id)
+        return Servico(serv[0]) if serv else None
+
+    def get_servicos(self):
+        servs = self.get_table_data('service')
+
+        return [Servico(s) for s in servs] if servs else None
+
+    def get_servico_atribuido(self, at_id):
+        serv_atb = self.select('servicos_atribuidos', 'id', '=', at_id)
+
+        return ServicoAtribuido(serv_atb[0]) if serv_atb else None
+
+    def get_servicos_atribuidos(self):
+        svs_atb = self.get_table_data('servicos_atribuidos')
+
+        return [ServicoAtribuido(s) for s in svs_atb] if svs_atb else None
+
+    def get_clientes(self):
+
+        return self.get_table_data('cliente')

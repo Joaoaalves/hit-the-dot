@@ -24,13 +24,6 @@ else:
 app = Flask(__name__, instance_path=instance_path)
 
 
-# Push Notifications
-push = ConfigParser()
-push.read('config/push.ini')
-app.config['VAPID_PUBLIC_KEY'] = push['VAPID']['VAPID_PUBLIC_KEY']
-app.config['VAPID_PRIVATE_KEY'] = push['VAPID']['VAPID_PRIVATE_KEY']
-app.config['VAPID_CLAIM_EMAIL'] = push['VAPID']['VAPID_CLAIM_EMAIL']
-
 # Firebase Admin Config
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'config/firebase.json'
 

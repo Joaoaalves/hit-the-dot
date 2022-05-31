@@ -20,3 +20,7 @@ function excluirCliente(cliente_id, csrf_token){
     }
 
 }
+
+function editarCliente(cliente_id){
+    window.location.href = '/editar-cliente/' + cliente_id;
+}

@@ -23,6 +23,8 @@ def render_filtered_painel_admin(start_date, end_date, func_id):
 
     demandas, demanda_dict, demandas_pendentes = get_demandas(start_date, end_date, func_id)
 
+    demandas_diarias, demandas_semanas, demandas_totais = get_relatorio(start_date, end_date, func_id)
+
     return render_template('painel-admin.html', user=user, painel_active='active',
                                             percentage=percentage,
                                             percentage_extras=percentage_extras,
@@ -39,7 +41,10 @@ def render_filtered_painel_admin(start_date, end_date, func_id):
                                             horas_devendo=horas_devendo,
                                             demandas=demandas,
                                             demanda_dict=demanda_dict,
-                                            demandas_pendentes=demandas_pendentes)
+                                            demandas_pendentes=demandas_pendentes,
+                                            demandas_diarias=demandas_diarias,
+                                            demandas_semanas=demandas_semanas,
+                                            demandas_totais=demandas_totais)
 
 
 def render_painel_admin(user, start_date, end_date):
@@ -56,6 +61,7 @@ def render_painel_admin(user, start_date, end_date):
     start_date_html = start_date.strftime('%d-%m-%Y')
     end_date_html = end_date.strftime('%d-%m-%Y')
     demandas, demanda_dict, demandas_pendentes = get_demandas(start_date, end_date)
+
     return render_template('painel-admin.html', user=user, painel_active='active',
                                             percentage=percentage,
                                             percentage_extras=percentage_extras,
@@ -244,3 +250,46 @@ def get_demandas(start_date, end_date, func_id=None):
             demandas_pendentes.append(demanda)
 
     return demandas_veririficadas, demanda_dict, demandas_pendentes
+
+def get_relatorio(start_date, end_date, func):
+    demandas_diarias = dict() 
+    demandas_semanas = dict()
+    calendario = calendar.monthcalendar(start_date.year, start_date.month)
+    month = start_date.month
+    year = start_date.year
+    total = 0
+    dias_semana = ['Segunda Feira', 'Terça Feira', 'Quarta Feira', 'Quinta Feira', 'Sexta-feira']
+    for week in calendario:
+        if week[0] != 0:
+            inicio = f"{'%.2d' % week[0]}/{'%.2d' % month}/{year}"
+
+        else:
+            inicio = f"01/{'%.2d' % month}/{year}"
+
+        if week[6] == 0:
+            fim = f"{end_date.day}/{'%.2d' % month}/{year}"
+
+        else:
+            fim = f"{week[6]}/{'%.2d' % month}/{year}"
+        inicio_dt = datetime.strptime(inicio, '%d/%m/%Y')
+        fim_dt = datetime.strptime(fim, '%d/%m/%Y')
+
+        dem = db.get_demandas_by_funcionario_and_daterange(func, inicio_dt, fim_dt)
+
+        qtd_sem = len(dem) if dem else 0
+        demandas_semanas[f"{inicio} - {fim}"] = qtd_sem 
+        total += qtd_sem
+        for day in week:
+            if  day > 0:
+                dia = f"{'%.2d' % day}/{'%.2d' % month}/{year}"
+                dt = datetime.strptime(dia, '%d/%m/%Y').date()
+                qtd = 0
+                if dt.weekday() < 5:
+                    if dem:
+                        for d in dem:
+                            if d.date == dt:
+                                qtd += 1
+
+                    demandas_diarias[f"{dia} ({dias_semana[dt.weekday()]})"] = qtd
+
+    return demandas_diarias, demandas_semanas, total

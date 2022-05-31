@@ -22,6 +22,7 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <link rel="stylesheet" href="{{url_for('static', filename='css/default-table.css')}}">
 
     <script src="{{url_for('static', filename='js/register_service_worker.js')}}"></script>
 
@@ -176,6 +177,8 @@
                                 <b style="font-size: 6vmin;">{{demandas_pendentes | length}}</b>
                                 <b class="subtitle">Pendentes</b>
                             </div>
+                            <button class="btn btn-demandas box-shadow ms-auto" onclick="print()">Imprimir Relatório</button>
+                            
                         </div>
 
                     </div>
@@ -184,6 +187,48 @@
         </div>
     </div>
 
+
+<div class="relatorio">
+    <table>
+        <thead>
+            <tr>
+                <td>Dia</td>
+                <td>Numéro de Demandas Entregues</td>    
+            </tr>
+        </thead>   
+        <tbody>
+            {% for key, value in demandas_diarias.items() -%}
+            <tr>
+                <td>{{key}}</td>
+                <td>{{value}}</td>    
+            </tr>
+            {%- endfor %}    
+        </tbody>
+    </table>
+
+    <br>
+
+    <table>
+        <thead>
+            <tr>
+                <td>Semana</td>
+                <td>Numéro de Demandas Entregues</td>    
+            </tr>
+        </thead>   
+        <tbody>
+            {% for key, value in demandas_semanas.items() %}
+            <tr>
+                <td>{{key}}</td>
+                <td>{{value}}</td>    
+            </tr>
+            {%- endfor %}    
+        </tbody>
+    </table>
+
+    <br>
+
+    <h4>Demandas entregues totais no mês: {{demandas_totais}}</h4>
+</div>
 
 </body>
 <footer>
