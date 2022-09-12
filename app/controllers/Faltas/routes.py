@@ -23,7 +23,7 @@ def listar_faltas():
         faltas = db.get_all_faltas()
         
     funcionarios = db.get_all_funcionarios()
-    func_dict = {func.id : func.name for func in funcionarios}
+    func_dict = dict((func.id, func.name) for func in funcionarios)
     
     return render_template('faltas.html', user=user,
                                         faltas=faltas,
@@ -36,27 +36,12 @@ def listar_faltas():
 def minhas_faltas():
     
     user = get_user_object(session['user'])
-    date = ''
     
-    if 'date' in request.args:
-        try:
-            date = request.args.get('date')
-            
-            falta = db.get_falta_with_date(user.id, date)
-            
-            if falta:
-                faltas = [falta]
-            else:
-                faltas = None
-        except Exception as e:
-            faltas = None
-    else:
-        faltas = db.get_faltas_funcionario(user.id)
+    faltas = db.get_faltas_funcionario(user.id)
     
     return render_template('minhas-faltas.html', user=user,
                                                 faltas=faltas,
-                                                turnos_active='active',
-                                                date=date)
+                                                turnos_active='active')
     
     
 @faltas_blueprint.route('/abonar-falta', methods=['POST'])
@@ -88,8 +73,11 @@ def abonar_falta():
 def ver_falta(falta_id):
     
     falta = db.get_falta(falta_id)
+
     user = get_user_object(session['user'])
+    
     funcionario = db.get_funcionario(falta.func_id)
+    
     return render_template('falta.html', user=user,
                                         falta=falta,
                                         funcionario=funcionario,

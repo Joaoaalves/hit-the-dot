@@ -1,22 +1,21 @@
 function excluirFeriado(feriado_id, csrf_token){
     if(confirm("Deseja realmente excluir o feriado?")){
-        
+
         // Request Delete
         rqst = $.ajax({
             url : '/excluir-feriado',
-            method : 'delete',
+            type : 'DELETE',
             beforeSend: function(request) {
                 request.setRequestHeader("X-CSRFToken", csrf_token);
             },
             data : {
                 id : feriado_id
+            },
+            success: function(){
+                location.reload();
             }
         })
         
-        // Request done
-        rqst.done(function(){   
-            location.reload();
-        });
     }
 }
 

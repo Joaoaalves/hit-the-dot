@@ -1,5 +1,5 @@
 @media only screen and (min-width: 1080px) {
-    .utils-container{
+    .utils-container {
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -9,22 +9,23 @@
         width: 25%;
         margin: 0px auto;
     }
+
     .container-filtro {
         display: flex;
         flex-direction: column;
         width: 100%;
-    
+
         margin-top: 10%;
-        
-        height: auto;
-        max-height: 300px;
-        min-height: 350px;
-    
+
+        height: 40%;
+        max-height: 400px;
+        min-height: 300px;
+
         text-align: center;
         padding: 8% 5%;
     }
 
-    .container-filtro .btn{
+    .container-filtro .btn {
         width: 60%;
         max-width: 250px;
     }
@@ -35,45 +36,60 @@
         display: block;
         width: 100%;
     }
-    .container-filtro form input, .container-filtro form select {
+
+    .container-filtro form input,
+    .container-filtro form select {
         margin: 5px 0;
     }
+
     .funcionarios {
         height: 100%;
         max-height: 100%;
         overflow-y: auto;
         border-radius: 14px;
-    } 
+    }
+
     .container-buttons {
         margin-top: auto;
         margin-bottom: 10%;
+
+        padding: 1vh 0;
+
         width: 100%;
+
         height: auto;
+        max-height: 200px;
+
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
         text-align: center;
     }
+
     .container-buttons a.btn {
-        width: 80%;
-        max-width: 200px;
-        margin: 12px 0!important;
+        width: 90%;
+        max-width: 300px;
+
+        margin: 1vh 0 !important;
         background-color: #f8be00;
         color: white;
         transition: 0.2s;
         font-size: 1.1em;
     }
+
     .container-buttons a.btn:hover {
         transform: scale(1.05);
     }
+
     input:checked {
         filter: invert(100%) hue-rotate(1deg) brightness(1.7);
     }
 
-    .imagem-funcionario{
+    .imagem-funcionario {
         margin-left: 4%;
     }
+
     a.btn.btn-warning.mt-3 {
         color: white;
     }

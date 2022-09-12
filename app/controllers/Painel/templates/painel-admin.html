@@ -62,6 +62,7 @@
                             </select>
                         </form>
                     </div>
+
                 </div>
                 <br>
                 <div class="second-line">
@@ -106,24 +107,24 @@
                         and dias_trabalhados >= 0 %}
                     <!-- HORAS TOTAIS DE TRABALHO-->
                     <div class="ms-0 grid-stats">
-                        <div class="horas-totais box-shadow">
+                        <div class="horas-totais box-shadow gradient-background">
                             <b style="font-size: 6vmin;">{{horas_totais}}</b>
 
                             <b class="subtitle">Horas totais trabalhadas</b>
                         </div>
-                        <div class="media-horas box-shadow">
+                        <div class="media-horas box-shadow gradient-background">
                             <b style="font-size: 6vmin;">{{media_horas}}</b>
 
                             <b class="subtitle">Média de horas trabalhadas por dia</b>
                         </div>
-                        <div class="dias-trabalho box-shadow">
+                        <div class="dias-trabalho box-shadow gradient-background">
                             <b style='font-size: 6vmin;'>{{dias_trabalhados}}</b>
 
                             <b class="subtitle">Dias trabalhados</b>
                         </div>
 
                         {% if horas_devendo %}
-                        <div class="horas-devendo box-shadow">
+                        <div class="horas-devendo box-shadow  gradient-background ">
                             <b style='font-size: 6vmin'>{{horas_devendo}}</b>
 
                             <b class="subtitle">Horas que está devendo</b>
@@ -167,18 +168,27 @@
                         <div class="painel-desativado" id="painel-stats">
 
                             <div class="subtitle-container my-auto box-shadow container-stats gradient-background">
-                                <b style="font-size: 6vmin;">{{demandas | length}}</b>
+                                <b style="font-size: 6vmin;">{{servicos | length}}</b>
                                 <b class="subtitle">Verificadas</b>
                             </div>
                             <button class="btn btn-demandas box-shadow ms-auto" onclick="alternarPainelStats()">Ver
                                 Gráfico</button>
 
                             <div class="mt-auto box-shadow container-stats gradient-background">
-                                <b style="font-size: 6vmin;">{{demandas_pendentes | length}}</b>
+                                <b style="font-size: 6vmin;">{{servicos_pendentes | length}}</b>
                                 <b class="subtitle">Pendentes</b>
                             </div>
-                            <button class="btn btn-demandas box-shadow ms-auto" onclick="print()">Imprimir Relatório</button>
-                            
+
+                            {% if pontuacao -%}
+                            <div class="mt-auto box-shadow container-stats gradient-background">
+                                {% if indice_rendimento > 1 -%}
+                                <b style="font-size: 5vmin;color:green;">DB$ {{pontuacao}}</b>
+                                {% else %}
+                                <b style="font-size: 5vmin;color:red;">DB$ {{pontuacao}}</b>
+                                {%- endif %}
+                                <b class="subtitle">Pontuação</b>
+                            </div>
+                            {% endif %}
                         </div>
 
                     </div>
@@ -186,49 +196,6 @@
             </div>
         </div>
     </div>
-
-
-<div class="relatorio">
-    <table>
-        <thead>
-            <tr>
-                <td>Dia</td>
-                <td>Numéro de Demandas Entregues</td>    
-            </tr>
-        </thead>   
-        <tbody>
-            {% for key, value in demandas_diarias.items() -%}
-            <tr>
-                <td>{{key}}</td>
-                <td>{{value}}</td>    
-            </tr>
-            {%- endfor %}    
-        </tbody>
-    </table>
-
-    <br>
-
-    <table>
-        <thead>
-            <tr>
-                <td>Semana</td>
-                <td>Numéro de Demandas Entregues</td>    
-            </tr>
-        </thead>   
-        <tbody>
-            {% for key, value in demandas_semanas.items() %}
-            <tr>
-                <td>{{key}}</td>
-                <td>{{value}}</td>    
-            </tr>
-            {%- endfor %}    
-        </tbody>
-    </table>
-
-    <br>
-
-    <h4>Demandas entregues totais no mês: {{demandas_totais}}</h4>
-</div>
 
 </body>
 <footer>
@@ -247,7 +214,7 @@
         ]; {% endif %}
 
 
-        var unordered = JSON.parse('{{ demanda_dict | tojson}}');
+        var unordered = JSON.parse('{{ servicos_dict | tojson}}');
 
         var days = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'];
 

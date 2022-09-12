@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+        <link rel="shortcut icon" href="{{url_for('static', filename='favicon.ico')}}" type="image/x-icon">
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Hit the Dot</title>
+        {% include 'common-imports.html' %}
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/sifter/0.5.4/sifter.min.js"
+                integrity="sha512-B60IUvYpG4cibCeQ30J8k/+qtN+fxKAIENb3DL2DVdzIt76IDIynAt92chPEwlCuKejOt//+OZL61i1xsvCIDQ=="
+                crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/microplugin/0.0.3/microplugin.min.js"
+                integrity="sha512-7amIsiQ/hxbdPNawBZwmWBWPiwQRNEJlxTj6eVO+xmWd71fs79Iydr4rYARHwDf0rKHpysFxWbj64fjPRHbqfA=="
+                crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <link rel="stylesheet"
+                href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.13.5/css/selectize.bootstrap5.min.css"
+                integrity="sha512-w4sRMMxzHUVAyYk5ozDG+OAyOJqWAA+9sySOBWxiltj63A8co6YMESLeucKwQ5Sv7G4wycDPOmlHxkOhPW7LRg=="
+                crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.13.5/js/selectize.min.js"
+                integrity="sha512-8MxMBA7Rt4u4Hub7fgUVqRm2XQxEUybzTK5D2KAKHfToOR/5+1Y3dll3U4rtnyleGdW0O5GG2wYGAp9ZaebsbQ=="
+                crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+        <link rel="stylesheet" href="{{url_for('servicos.static', filename='css/entrega-servico.css')}}">
+
+        <link rel="stylesheet" href="{{url_for('servicos.static', filename='css/criar-servico.css')}}">
+</head>
+
+<body>
+
+        {% include 'nav-bar.html' %}
+
+        <div class='container'>
+                <div class="col">
+                        {% include 'sidepanel/sidepanel.html' %}
+                </div>
+                <div class="col-6 content-container">
+                        <form method="POST" class="box-shadow" id="form-servico">
+                                <h2 style="text-align: center;">Novo Serviço</h2>
+                                <input type="hidden" value="{{csrf_token()}}" name="csrf_token">
+
+                                <div class="form-floating mb-3">
+                                        <input type="text" name="name" class="form-control" required>
+
+                                        <label for="name">Nome</label>
+                                </div>
+                                
+                                <div class="form-floating mb-3">
+                                        <input type="number" name="tempo" step=1 min=1  class="form-control" required>
+
+                                        <label for="tempo">Tempo de Finalização</label>
+                                </div>
+
+                                <div class="form-floating mb-3">
+                                        <input type="number" name="valor" step=1 min=1  class="form-control" required>
+
+                                        <label for="valor">Pontuação</label>
+                                </div>
+
+                                <button type="button" class="btn btn-warning"  data-bs-toggle="modal" data-bs-target="#atributos-modal">Adicionar Atributo</button>
+
+                                <input class="btn" type="submit" value="Enviar">
+                        </form>
+                </div>
+        </div>
+</body>
+<div class="modal fade" id="atributos-modal" tabindex="-1" aria-labelledby="atributos-modal-label" aria-hidden="true">
+        <div class="modal-dialog">
+                <div class="modal-content">
+                        <div class="modal-header">
+                                <h5 class="modal-title" id="atributos-modal-label">Adicionar Atributo</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                                <span id="aviso-modal"></span>
+
+                                <div class="form-floating mb-3">
+                                        <input type="text" id="atb_name" class="form-control">
+                                        <label for="atb_name">Nome do Atributo</label>
+                                </div>
+                                
+                                <select id="atb_type" class="form-control">
+                                        <option disabled selected>Tipo de Campo</option>
+                                        <option value="text">Texto</option>
+                                        <option value="number">Número</option>
+                                </select>
+
+                                <div class="form-floating mb-3">
+                                        <input type="text" id="atb_default" class="form-control">
+                                        <label for="atb_default">Valor Padrão</label>
+                                </div>
+                        </div>
+                        <div class="modal-footer">
+                                <button type="button" class="btn btn-warning" onclick="add_atributo()">Adicionar</button>
+                                <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Fechar</button>
+                        </div>
+                </div>
+        </div>
+</div>
+<script>
+        function add_atributo(){
+                var name = $('#atb_name').val();
+                var type = $('#atb_type').val();
+                var default_value = $('#atb_default').val();
+                if(name && type){
+                        add_param('atb_name', name);
+                        add_param('atb_type', type);
+                        add_param('atb_default', default_value);
+                        add_param('has_atb', true);
+                        $('#atributos-modal').html('');
+                        bootstrap.Modal.getInstance(document.getElementById('atributos-modal')).hide();
+                }
+                else{
+                        $('#aviso-modal').html('Preencha todos os campos');
+                }
+        }
+        function add_param(name, value){
+                var input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = name;
+                input.value = value;
+                document.getElementById('form-servico').appendChild(input);
+        }
+        $(document).ready(function () {
+                $('#select-serv').selectize({
+                        sortField: 'text'
+                });
+                $('#select-cliente').selectize({
+                        sortField: 'text'
+                });
+        });
+</script>
+
+</html>

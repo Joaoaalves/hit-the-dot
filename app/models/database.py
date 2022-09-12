@@ -17,13 +17,17 @@ from .cargo import Cargo
 from .falta import Falta
 from .cliente import Cliente
 from .feriado import Feriado
-from .demanda import Demanda
 from .servico import Servico
-from .servico_atribuido import ServicoAtribuido
+from .servico_entregue import ServicoEntregue
+from .atributo import AtributoServico
+from .pausa import Pausa
+from .tag_servico import TagServico
 
 class Database():
 
-    def __init__(self):
+    def __init__(self, name):
+
+        self.name = name
 
         # Configs firebase
         with open("config/firebase.cfg", "r") as f:
@@ -41,16 +45,12 @@ class Database():
         # Auth Module
         self.auth = firebase.auth()
 
-        # Admin Module
-        firebase_admin.initialize_app()
-        self.__admin_auth = admin_auth
-
     def get_mysql_connection(self):
         return mysql.connector.connect(
             host="localhost",
             user=self.mysql_user,
             passwd=self.mysql_pass,
-            database="htd"
+            database=self.name
         )
     
     # Returns authentication with email and password
@@ -65,9 +65,10 @@ class Database():
             sql = "INSERT INTO %s ( %s ) VALUES ( %s )" % (table,  columns, placeholders)
             
             iterator = cursor.execute(sql, tuple(info.values()), multi=True)
-
+            insert_id = cursor.lastrowid
         cnx.commit()
         cnx.close()
+        return insert_id
     
     def remove_data(self, table, id):
         cnx = self.get_mysql_connection()
@@ -132,27 +133,6 @@ class Database():
 
         return True
 
-    # Get user info from DB and returns as an Object
-    def get_user_by_id(self, id):
-        try:
-
-            u = self.get_row_by_id('users', id)
-            
-            if u:
-                role = u['role']
-
-                if role == 'Admin':
-                    return Admin(u)
-
-                if role == 'Funcionario':
-                    return Funcionario(u)
-
-            return None
-
-        except Exception as e:
-
-            return e
-
     def get_user_by_email(self, email):
         try:
 
@@ -180,13 +160,17 @@ class Database():
         cnx = self.get_mysql_connection()
         rows = None
         with cnx.cursor(dictionary=True) as cursor:
-            sql = "SELECT * FROM %s WHERE %s %s '%s'" % (table, key, operator, value)
+            if operator != 'IN':
+                sql = "SELECT * FROM %s WHERE %s %s '%s'" % (table, key, operator, value)
+            else:
+                sql = "SELECT * FROM %s WHERE %s %s %s" % (table, key, operator, value)
             cursor.execute(sql)
             rows = cursor.fetchall()
 
         cnx.commit()
         cnx.close()
         return rows
+
 
     def multiple_select(self, table, operations):
         cnx = self.get_mysql_connection()
@@ -213,19 +197,6 @@ class Database():
 
         return query.stream()
     
-        
-    # Remove all user's info from app
-    def remove_user(self, uid):
-
-        user_email = self.get_user_by_id(uid)['email']
-        user = self.__admin_auth.get_user_by_email(user_email)
-        
-        self.__admin_auth.delete_user(user.uid)
-
-        # Remove the user's files
-        subprocess.call("rm -rf app/protected/" + str(uid), shell=True)
-
-        self.remove_data('users', uid)
 
     # Get all funcionarios from db
     def get_all_funcionarios(self):
@@ -265,11 +236,33 @@ class Database():
 
         if turno:
             current_status = turno.current_status
-            
-            if new_status == 'clock_in' and current_status == 'clocked_out':
-                return False
-            
+            if new_status == 'pausa':
+                self.update_data('turnos', turno.id,
+                    {
+                        'current_status' : 'pausado'
+                    }
+                )
+
+                pausa = Pausa({'inicio' : current_hour, 'turno' : turno.id})
+                self.insert_data('Pausa', pausa.to_json())
+
+            if new_status == 'retorno':
+
+                pausa = Pausa(self.select('Pausa', 'turno', '=', turno.id)[-1])
+                pausa.fim = current_hour
+                self.update_data('Pausa', pausa.id, pausa.to_json())
+                
+                tempo_total = self.get_pausa(pausa.id).get_tempo()
+                self.update_data('turnos', turno.id,
+                    {
+                        'current_status' : 'clocked_in',
+                        'pausa' : tempo_total.seconds + turno.pausa
+                    }
+                )
+
+
             if new_status == 'clock_out' and current_status == 'clocked_in':
+
                 self.update_data('turnos', turno.id, 
                     {
                         'current_status': 'clocked_out',
@@ -285,7 +278,6 @@ class Database():
                     'almocou' : 1
                     }
                 )
-                
             if new_status == 'break_out' and current_status == 'break_in':
                 self.update_data('turnos', turno.id, 
                     {
@@ -294,7 +286,6 @@ class Database():
                     }
                 )
             
-
         else:
             if new_status == 'clock_in':
                         
@@ -304,15 +295,13 @@ class Database():
                     'hora_entrada' : current_hour,
                     'user_id' : funcionario.id,
                     'turno_funcionario' : funcionario.turno,
-                    'almocou' : False
+                    'almocou' : False,
+                    'pausa' : 0
                 }
-                
                 
                 self.insert_data('turnos', data)
                 
         return True
-    
-
         
     def get_cargo(self, cargo_id):
         c = self.get_row_by_id('cargos', cargo_id)
@@ -370,22 +359,15 @@ class Database():
         clientes = self.get_table_data('clientes')
         return [Cliente(c) for c in clientes] if clientes else None
 
-    def get_demanda(self, demanda_id):
-        return Demanda(self.get_row_by_id('demandas', demanda_id))
+    def get_servicos_by_funcionario(self, func_id):
+        servicos = self.select('ServicoEntregue', 'user_id', '=', func_id)
+        return [ServicoEntregue(satb) for satb in servicos] if servicos else None
 
-    def get_all_demandas(self):
-        demandas = self.get_table_data('demandas')
-        return [Demanda(d) for d in demandas] if demandas else None
-
-    def get_demandas_by_funcionario(self, func_id):
-        demandas = self.select('demandas', 'func_id', '=', func_id)
-        return [Demanda(d) for d in demandas] if demandas else None
-
-    def get_demandas_by_funcionario_and_daterange(self, func_id, date_inicio, date_fim):
-        demandas = self.multiple_select('demandas',[['func_id', '=', func_id],
-                                                    ['date', '>=', f"'{date_inicio}'"], 
-                                                    ['date', '<=', f"'{date_fim}'"]])
-        return [Demanda(d) for d in demandas] if demandas else None
+    def get_servicos_by_funcionario_and_daterange(self, func_id, date_inicio, date_fim):
+        servicos = self.multiple_select('ServicoEntregue',[['user_id', '=', func_id],
+                                                    ['entrega', '>=', f"'{date_inicio}'"], 
+                                                    ['entrega', '<=', f"'{date_fim}'"]])
+        return [ServicoEntregue(satb) for satb in servicos] if servicos else None
 
     def insert_push_endpoint(self, data, user):
         insertion_data = {
@@ -408,24 +390,78 @@ class Database():
         return self.get_table_data('push')
 
     def get_servico(self, serv_id):
-        serv = self.select('service', 'id', '=', serv_id)
+        serv = self.select('Servico', 'id', '=', serv_id)
         return Servico(serv[0]) if serv else None
-
     def get_servicos(self):
-        servs = self.get_table_data('service')
+        servs = self.get_table_data('Servico')
 
         return [Servico(s) for s in servs] if servs else None
 
-    def get_servico_atribuido(self, at_id):
-        serv_atb = self.select('servicos_atribuidos', 'id', '=', at_id)
+    def get_tag(self, id):
+        tag = TagServico(self.get_row_by_id('TagServico', id))
+        tag.set_servicos(self.get_servicos_by_tag(id))
+        return tag
 
-        return ServicoAtribuido(serv_atb[0]) if serv_atb else None
+    def get_tags(self):
+        tags = [TagServico(t) for t in self.get_table_data('TagServico')] if self.get_table_data('TagServico') else None
+        if tags:
+            for tag in tags:
+                tag.set_servicos(self.get_servicos_by_tag(tag.id))
+
+        return tags
+
+    def get_servicos_by_tag(self, id):
+        servs_ids = self.select('TagServico_Map', 'tag', '=', id)
+        servs = []
+
+        if servs_ids:
+            for serv_id in servs_ids:
+                servs.append(self.get_servico(serv_id['servico']))
+        
+        return servs
+
+    def get_servico_entregue(self, at_id):
+        serv_atb = self.select('ServicoEntregue', 'id', '=', at_id)
+
+        return ServicoEntregue(serv_atb[0]) if serv_atb else None
 
     def get_servicos_atribuidos(self):
-        svs_atb = self.get_table_data('servicos_atribuidos')
+        svs_atb = self.get_table_data('ServicoEntregue')
 
-        return [ServicoAtribuido(s) for s in svs_atb] if svs_atb else None
+        return [ServicoEntregue(s) for s in svs_atb] if svs_atb else None
+
+    def get_servicos_atribuidos_funcionario(self, func_id):
+        svs_atb = self.get_table_data('ServicoEntregue')
+        servicos = list()
+        for i in range(len(svs_atb)):
+            if svs_atb[i]['user_id'] == func_id:
+                servicos.append(ServicoEntregue(svs_atb[i]))
+
+        return servicos if len(servicos) > 0 else None
 
     def get_clientes(self):
 
         return self.get_table_data('cliente')
+
+    def get_atributo(self, atb_id):
+        atb = self.select('AtributoServico', 'id', '=', atb_id)
+        return AtributoServico(atb[0]) if atb else None
+
+    def get_atributo_from_serv(self, serv_atribuido):
+        value = self.select('AtributoValue', 'servico_entregue', '=', serv_atribuido)
+
+        if value:
+            value = value[0]
+            atributo = self.get_atributo(value['atributo'])
+            atributo.set_value(value['value'])
+            return atributo
+
+        return None
+
+    def get_pausa(self, pausa_id):
+        pausa = self.select('Pausa', 'id', '=', pausa_id)
+        return Pausa(pausa[0]) if pausa else None
+
+    def get_pausas_turno(self, turno_id):
+        pausas = self.select('Pausa', 'turno', '=', turno_id)
+        return [Pausa(p) for p in pausas] if pausas else None

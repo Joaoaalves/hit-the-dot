@@ -11,7 +11,7 @@
             <button title="Excluir" class="btn-danger btn"
                 onclick="excluir_cargo({{cargo['id']}}, '{{csrf_token()}}')"><i class="fas fa-times"></i></button>
             <button title="Editar" class="btn-warning btn" onclick="window.location.href = 'editar/{{cargo['id']}}'"><i
-                    class="fas fa-wrench"></i></button>
+                    class="fas fa-pencil"></i></button>
         </th>
     </tr>
     {% endfor %}

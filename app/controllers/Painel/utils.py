@@ -19,11 +19,14 @@ def render_filtered_painel_admin(start_date, end_date, func_id):
 
     horas_devendo = get_horas_devendo(segundos_trabalhados, segundos_totais)
     
-    dias_trabalhados = dias_uteis - faltas    
+    dias_trabalhados = dias_uteis - faltas
 
-    demandas, demanda_dict, demandas_pendentes = get_demandas(start_date, end_date, func_id)
+    servicos, servicos_dict, servicos_pendentes = get_servicos(start_date, end_date, func_id)
 
-    demandas_diarias, demandas_semanas, demandas_totais = get_relatorio(start_date, end_date, func_id)
+    pontuacao = get_pontuacao(func_id, start_date, end_date)
+
+    # 100 points = 60 minutes ->  100 points = 3600 seconds -> 1/36
+    indice_rendimento = pontuacao / (segundos_trabalhados / 36) if segundos_trabalhados else 0
 
     return render_template('painel-admin.html', user=user, painel_active='active',
                                             percentage=percentage,
@@ -39,18 +42,15 @@ def render_filtered_painel_admin(start_date, end_date, func_id):
                                             media_horas=media_horas,
                                             dias_trabalhados=dias_trabalhados,
                                             horas_devendo=horas_devendo,
-                                            demandas=demandas,
-                                            demanda_dict=demanda_dict,
-                                            demandas_pendentes=demandas_pendentes,
-                                            demandas_diarias=demandas_diarias,
-                                            demandas_semanas=demandas_semanas,
-                                            demandas_totais=demandas_totais)
+                                            servicos=servicos,
+                                            servicos_dict=servicos_dict,
+                                            servicos_pendentes=servicos_pendentes,
+                                            pontuacao=pontuacao,
+                                            indice_rendimento=indice_rendimento)
 
 
 def render_painel_admin(user, start_date, end_date):
-
     segundos_trabalhados, segundos_totais, dias_totais = get_trabalho_total(start_date, end_date)
-
 
     horas_extras, percentage_extras, segundos_trabalhados = get_horas_extras(segundos_trabalhados, segundos_totais)
     percentage = get_percentage_work(segundos_trabalhados, segundos_totais)
@@ -60,7 +60,7 @@ def render_painel_admin(user, start_date, end_date):
 
     start_date_html = start_date.strftime('%d-%m-%Y')
     end_date_html = end_date.strftime('%d-%m-%Y')
-    demandas, demanda_dict, demandas_pendentes = get_demandas(start_date, end_date)
+    servicos, servicos_dict, servicos_pendentes = get_servicos(start_date, end_date)
 
     return render_template('painel-admin.html', user=user, painel_active='active',
                                             percentage=percentage,
@@ -71,9 +71,9 @@ def render_painel_admin(user, start_date, end_date):
                                             funcionarios=db.get_all_funcionarios(),
                                             start_date=start_date_html,
                                             end_date=end_date_html,
-                                            demandas=demandas,
-                                            demanda_dict=demanda_dict,
-                                            demandas_pendentes=demandas_pendentes)
+                                            servicos=servicos,
+                                            servicos_dict=servicos_dict,
+                                            servicos_pendentes=servicos_pendentes)
 
 def render_painel_func(funcionario, start_date, end_date):
     segundos_trabalhados, faltas, assiduidade, segundos_totais, dias_totais = get_trabalho_total_funcionario(start_date, end_date, funcionario)
@@ -91,7 +91,9 @@ def render_painel_func(funcionario, start_date, end_date):
     start_date_html = start_date.strftime('%d-%m-%Y')
     end_date_html = end_date.strftime('%d-%m-%Y')
 
-    demandas, demanda_dict, demandas_pendentes = get_demandas(start_date, end_date, funcionario.id)
+    servicos, servicos_dict, servicos_pendentes = get_servicos(start_date, end_date, funcionario.id)
+    
+    pontuacao = get_pontuacao(funcionario.id, start_date, end_date)
     
     return render_template('painel-func.html', user=funcionario, painel_active='active',
                                             percentage=percentage,
@@ -106,9 +108,10 @@ def render_painel_func(funcionario, start_date, end_date):
                                             media_horas=media_horas,
                                             dias_trabalhados=dias_trabalhados,
                                             horas_devendo=horas_devendo,
-                                            demandas=demandas,
-                                            demanda_dict=demanda_dict,
-                                            demandas_pendentes=demandas_pendentes)
+                                            servicos=servicos,
+                                            servicos_dict=servicos_dict,
+                                            servicos_pendentes=servicos_pendentes,
+                                            pontuacao=pontuacao)
 
 
 def get_percentage_work(segundos_trabalhados, segundos_totais):
@@ -173,7 +176,7 @@ def get_trabalho_total_funcionario(start_date, end_date, funcionario):
                 len_turno = turno.turno_funcionario
 
                 turno.set_tempo_total()
-                segundos_trabalhados += turno._segundos_totais
+                segundos_trabalhados += turno._segundos_totais - turno.pausa
 
             else:
                 falta = db.get_falta_with_date(funcionario.id, dia.date())
@@ -184,7 +187,7 @@ def get_trabalho_total_funcionario(start_date, end_date, funcionario):
                 dias_totais += 1
                 tempo_total += len_turno * 3600
     
-    assiduidade = ( round((dias_totais - faltas) * 100/ dias_totais, 1)
+    assiduidade = ( round((dias_totais - faltas) * 100 / dias_totais, 1)
                     if faltas > 0 
                     else 100)
     
@@ -214,82 +217,49 @@ def get_start_end_date(args):
             end_date_datetime = now
         else:
             start_date_datetime = datetime(year=now.year, month=now.month, day=1)
-            end_date_datetime = datetime(year=now.year, month=now.month, day=now.day - 1)
+            end_date_datetime = datetime(year=now.year, month=now.month, day=now.day)
 
     return start_date_datetime, end_date_datetime
 
 
-def get_demandas(start_date, end_date, func_id=None):
+def get_servicos(start_date, end_date, func_id=None):
 
 
-    demanda_dict = { 'Segunda': 0, 'Terça': 0, 'Quarta': 0, 'Quinta': 0, 'Sexta': 0 }
+    servicos_dict = { 'Segunda': 0, 'Terça': 0, 'Quarta': 0, 'Quinta': 0, 'Sexta': 0 }
     week_days = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta']
     
-    demandas_veririficadas = list()
-    demandas_pendentes = list()
-    demandas = list()
+    servicos_verificados = list()
+    servicos_pendentes = list()
+    servicos = list()
     if func_id:
-        demandas = db.get_demandas_by_funcionario_and_daterange(func_id, start_date, end_date)
-        if not demandas:
-            return [], demanda_dict, []
-            
+        servicos = db.get_servicos_by_funcionario_and_daterange(func_id, start_date, end_date)
+        if not servicos:
+            return [], servicos_dict, []
     else:
         funcionarios = db.get_all_funcionarios()
         for f in funcionarios:
-            ds = db.get_demandas_by_funcionario_and_daterange(f.id, start_date, end_date)
+            ds = db.get_servicos_by_funcionario_and_daterange(f.id, start_date, end_date)
             if ds:
-                demandas += ds
+                servicos += ds
 
-    for demanda in demandas:
-        if demanda.status == 'Verificada':
+    for servico in servicos:
+        if servico.status == 'Verificado':         
             with suppress(TypeError):
-                week_day = week_days[demanda.date.weekday()] if demanda.date.weekday() < 5 else 'Sexta'
-                demanda_dict[week_day] += 1
-                demandas_veririficadas.append(demanda)
+                week_day = week_days[servico.entrega.weekday()] if servico.entrega.weekday() < 5 else 'Sexta'
+                servicos_dict[week_day] += 1
+                servicos_verificados.append(servico)
         else:
-            demandas_pendentes.append(demanda)
+            servicos_pendentes.append(servico)
+    return servicos_verificados, servicos_dict, servicos_pendentes
 
-    return demandas_veririficadas, demanda_dict, demandas_pendentes
+def get_pontuacao(func_id, start_date, end_date):
+    start_date = start_date.date()
+    end_date = end_date.date()
 
-def get_relatorio(start_date, end_date, func):
-    demandas_diarias = dict() 
-    demandas_semanas = dict()
-    calendario = calendar.monthcalendar(start_date.year, start_date.month)
-    month = start_date.month
-    year = start_date.year
-    total = 0
-    dias_semana = ['Segunda Feira', 'Terça Feira', 'Quarta Feira', 'Quinta Feira', 'Sexta-feira']
-    for week in calendario:
-        if week[0] != 0:
-            inicio = f"{'%.2d' % week[0]}/{'%.2d' % month}/{year}"
+    servicos_terminados = db.select('ServicoEntregue', 'user_id', '=', func_id)
+    soma_pontos = 0
+    for s in servicos_terminados:
+        if s['status'] == 'Verificado' and s['entrega'] >= start_date and s['entrega'] <= end_date:
+            soma_pontos += s['valor']
 
-        else:
-            inicio = f"01/{'%.2d' % month}/{year}"
-
-        if week[6] == 0:
-            fim = f"{end_date.day}/{'%.2d' % month}/{year}"
-
-        else:
-            fim = f"{week[6]}/{'%.2d' % month}/{year}"
-        inicio_dt = datetime.strptime(inicio, '%d/%m/%Y')
-        fim_dt = datetime.strptime(fim, '%d/%m/%Y')
-
-        dem = db.get_demandas_by_funcionario_and_daterange(func, inicio_dt, fim_dt)
-
-        qtd_sem = len(dem) if dem else 0
-        demandas_semanas[f"{inicio} - {fim}"] = qtd_sem 
-        total += qtd_sem
-        for day in week:
-            if  day > 0:
-                dia = f"{'%.2d' % day}/{'%.2d' % month}/{year}"
-                dt = datetime.strptime(dia, '%d/%m/%Y').date()
-                qtd = 0
-                if dt.weekday() < 5:
-                    if dem:
-                        for d in dem:
-                            if d.date == dt:
-                                qtd += 1
-
-                    demandas_diarias[f"{dia} ({dias_semana[dt.weekday()]})"] = qtd
-
-    return demandas_diarias, demandas_semanas, total
+    return soma_pontos

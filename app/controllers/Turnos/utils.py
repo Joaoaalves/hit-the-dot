@@ -1,4 +1,4 @@
-from . import db, Turno, Funcionario, datetime, BrazilDistritoFederal, rrule, DAILY
+from . import db, Turno, datetime, BrazilDistritoFederal, rrule, DAILY
 
 def get_sorted_turnos(funcionario=None):
 
@@ -40,7 +40,7 @@ def update_turno(form, user_id, turno):
     data = dict(form)
     if 'inicio_almoco' in data:
         data['almocou'] = True
-    data['dia'] = datetime.strptime(data['dia'], '%Y-%m-%d').strftime('%d/%m/%Y')
+    data['dia'] = datetime.strptime(data['dia'], '%Y-%m-%d').date()
     data['user_id'] = user_id
     data['current_status'] = 'clocked_out'
     data['turno_funcionario'] = turno.turno_funcionario

@@ -29,7 +29,7 @@ def log_in():
                 
                 # This gets the user info from db on login success
                 user = db.get_user_by_email(email)
-                flask.session['user'] = user.__dict__
+                flask.session['user'] = user.to_json()
                 flask.session['user']['role'] = user.__class__.__name__
                 users.append(user)
                 
@@ -122,6 +122,7 @@ def recuperar_senha():
 @login.route('/alterar-senha', methods=['POST'])
 @funcionario_required
 def alterar_senha():
+    
     if 'user' in session:
         try:
             email = request.form['email']

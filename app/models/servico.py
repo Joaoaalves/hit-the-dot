@@ -6,13 +6,13 @@ class Servico():
                 self.name = data['name']
                 self.valor = data['valor']
                 self.tempo = data['tempo']
-                self.categoria = data['categoria']
+
 
         def to_json(self):
                 return {
                         'id' : self.id,
                         'name' : self.name,
-                        'tempo' : self.tempo,
-                        'categoria' : self.categoria
+                        'valor' : self.valor,   
+                        'tempo' : self.tempo
                 }
                 

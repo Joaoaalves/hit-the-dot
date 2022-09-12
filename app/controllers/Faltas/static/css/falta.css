@@ -14,12 +14,13 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     
     width: 50%;
     margin-left: 10%;
     padding: 2.5%;
     height: 50%;
-    max-height: 400px;
+    height: 400px;
     text-align: center;
 }
 
@@ -30,8 +31,6 @@
 .container-falta form{
     display: flex;
     flex-direction: column;
-    margin-top: auto!important;
-    margin-bottom: auto!important;
 
     width: 60%;
 }
@@ -84,4 +83,8 @@
     border-radius: 100px;
     border: solid 1px;
     border-color: lightgray;
+}
+
+.btn.btn-dark{
+    width: 100%!important;
 }

@@ -7,15 +7,20 @@
   <ul class="nav nav-pills flex-column mt-auto mx-auto">
     <li class="nav-item">
       <a href="/painel" class="nav-link link-dark {{painel_active}}" aria-current="page">
-        <i class="fas fa-stream my-auto"></i>
+        <i class="fas fa-chart-simple my-auto"></i>
         Visão Geral
       </a>
     </li>
-
     <li class="nav-item">
-      <a href="/demandas" class="nav-link link-dark {{demandas_active}}" aria-current="page">
-        <i class="fas fa-tasks"></i>
-        Demandas
+      <a href="/servicos/entregar" class="nav-link link-dark {{entregar_servico_active}}" aria-current="page">
+        <i class="fas fa-check"></i>
+        Entregar Serviço
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="/servicos-entregues" class="nav-link link-dark {{servicos_entregues_active}}" aria-current="page">
+        <i class="fas fa-tasks my-auto"></i>
+        Serviços Entregues
       </a>
     </li>
     <li class="nav-item">
@@ -24,7 +29,6 @@
         Bater Ponto
       </a>
     </li>
-
     <li>
       <a href="/meus-turnos" class="nav-link link-dark {{turnos_active}}">
         <i class="far fa-calendar my-auto"></i>
@@ -32,12 +36,11 @@
       </a>
     </li>
     <li>
-      <a href="/feriados" class="nav-link link-dark {{feriados_active}}">
-        <i class="far fa-calendar my-auto"></i>
-        Feriados
+      <a href="/clientes" class="nav-link link-dark {{clientes_active}}">
+        <i class="fas fa-users my-auto"></i>
+          Clientes
       </a>
     </li>
-
 
   </ul>
 

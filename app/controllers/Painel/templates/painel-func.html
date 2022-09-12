@@ -52,6 +52,10 @@
 
                     {% include 'month-picker.html' %}
 
+                    <div class="ms-auto me-3 box-shadow container-coins">
+                        <h4>DB<b style="color:#f8be00">$</b> {{pontuacao}}</h4>
+                    </div>
+
                 </div>
                 <br>
                 <div class="second-line">
@@ -134,13 +138,13 @@
                         <div class="painel-desativado" id="painel-stats">
 
                             <div class="subtitle-container my-auto box-shadow container-stats gradient-background">
-                                <b style="font-size: 6vmin;">{{demandas | length}}</b>
+                                <b style="font-size: 6vmin;">{{servicos | length}}</b>
                                 <b class="subtitle">Verificadas</b>
                             </div>
                             <button class="btn btn-demandas box-shadow ms-auto" onclick="alternarPainelStats()">Ver Gráfico</button>
 
                             <div class="mt-auto box-shadow container-stats gradient-background">
-                                <b style="font-size: 6vmin;">{{demandas_pendentes | length}}</b>
+                                <b style="font-size: 6vmin;">{{servicos_pendentes | length}}</b>
                                 <b class="subtitle">Pendentes</b>
                             </div>
                         </div>
@@ -165,7 +169,7 @@
         {% endif %}
         
 
-        var unordered = JSON.parse('{{ demanda_dict | tojson}}');
+        var unordered = JSON.parse('{{ servicos_dict | tojson}}');
 
         var days = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'];
 

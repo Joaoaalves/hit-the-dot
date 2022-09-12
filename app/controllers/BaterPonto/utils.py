@@ -14,7 +14,7 @@ def get_current_date():
     now = datetime.now()
     return f"{now.day:02d}/{now.month:02d}/{now.year:04d}"
 
-def is_dia_util():
+def eh_dia_util():
     now = datetime.now()
     
     # Sabado ou domingo
@@ -24,18 +24,18 @@ def is_dia_util():
     feriados = db.get_feriados()
     list_ferias = db.get_all_ferias()
     
-    for f in feriados:
-        if f.get_date().date() == now.date():
-            return False
+    if feriados:
+        for f in feriados:
+            if f.get_date().date() == now.date():
+                return False
 
     if list_ferias:
         for ferias in list_ferias:
             if not ferias.is_working_day(now.date()):
                 return False
-        
     return True
     
-def get_current_shift_time(turno):
+def get_tempo_turno(turno):
     
     now = datetime.now()
 
@@ -45,7 +45,10 @@ def get_current_shift_time(turno):
                             hour=inicio_turno.hour, minute=inicio_turno.minute, 
                             second=inicio_turno.second)
 
-    return int((now - correct_date).total_seconds() - turno.get_tempo_almoco().seconds) if turno.almocou and 'fim_almoco' in vars(turno) else int((now - correct_date).total_seconds()) 
+    total_time = int((now - correct_date).total_seconds() - turno.get_tempo_almoco().seconds) if turno.almocou and 'fim_almoco' in vars(turno) else int((now - correct_date).total_seconds())
 
 
-app.jinja_env.globals.update(is_dia_util=is_dia_util)
+    return total_time - turno.pausa
+
+
+app.jinja_env.globals.update(eh_dia_util=eh_dia_util)

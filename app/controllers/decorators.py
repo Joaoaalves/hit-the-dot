@@ -4,8 +4,8 @@ from app import app
 
 from app.models.estagiario import Estagiario
 from app.models.funcionario import Funcionario
-from app.models.admin import Admin
 from app.models.gestor import Gestor
+from app.models.admin import Admin
 
 EST_PRIVILEGE = 2
 FUNC_PRIVILEGE = 3
@@ -97,7 +97,7 @@ def gestor_required(f):
     def verifica_funcionario(*args, **kwargs):
 
         user = get_user_object(session['user'])
-
+        print(user)
         if is_gestor(user):
             return f(*args, **kwargs)
 

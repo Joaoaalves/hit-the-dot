@@ -43,29 +43,27 @@
             {% if turno %}
 
             {% if turno.current_status == 'clocked_in' %}
-            <section class="ponto">
-                <form method="POST" class="bater-ponto">
+            <form method="POST" class="bater-ponto">
+                <div class="timer box-shadow flex-box">
+                    <h2>Turno</h2>
+                    {% include 'progress-circle.html' %}
+                    <h4 id="remaining-time"></h4>
+                    <h4 id="extra-time"></h4>
+                </div>
+                <div class="container-buttons flex-box box-shadow align-items-center">
+                    {% if not turno.almocou %}
+                    <button type='button' class="btn btn-dark"
+                        onclick="requestUpdateStatus('break_in', '{{csrf_token()}}')">Iniciar
+                        Almoço</button>
+                    {% endif %}
+                    <button type='button' class="btn btn-dark"
+                        onclick="requestUpdateStatus('clock_out','{{csrf_token()}}')">Terminar
+                        Turno</button>
+                    <button type="button" class="btn btn-dark" onclick="requestUpdateStatus('pausa', '{{csrf_token()}}')">
+                        Pausar</button>
+                </div>
 
-                    <div class="right-panel">
-
-                        <div class="timer box-shadow flex-box">
-                            <h2>Turno</h2>
-                            {% include 'progress-circle.html' %}
-                            <h4 id="remaining-time"></h4>
-                            <h4 id="extra-time"></h4>
-                        </div>
-                        <!-- <input type="submit" class="btn btn-dark" value="Terminar Turno"> -->
-                        <div class="container-buttons flex-box box-shadow align-items-center">
-                            <button type='button' class="btn btn-dark"
-                                onclick="requestUpdateStatus('break_in', '{{csrf_token()}}')">Iniciar
-                                Almoço</button>
-                            <button type='button' class="btn btn-dark"
-                                onclick="requestUpdateStatus('clock_out','{{csrf_token()}}')">Terminar
-                                Turno</button>
-                        </div>
-                    </div>
-                </form>
-            </section>
+            </form>
 
             {% elif turno.current_status == 'break_in' %}
             <div class="box-shadow center">
@@ -75,10 +73,18 @@
                     <input type="submit" class="btn btn-dark" value="Voltar do Almoço">
                 </form>
             </div>
+            {% elif turno.current_status == 'pausado' %}
+            <div class="box-shadow center">
+                <form method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name='status' value="retorno">
+                    <input type="submit" class="btn btn-dark" value="Voltar da Pausa">
+                </form>
+            </div>
             {% else %}
             <h1 class="ms-3 mt-3">Turno de Hoje</h1>
             <div class="grid">
-                <div class="turno box-shadow">
+                <div class="turno box-shadow gradient-background">
                     <h4>Turno</h4>
                     <div class="flex-row">
                         <div class="container-progress-ring">
@@ -95,7 +101,7 @@
                     </div>
                 </div>
                 {% if turno.almocou %}
-                <div class="turno box-shadow">
+                <div class="turno box-shadow gradient-background">
                     <h4>Almoço</h4>
                     <div class="flex-row">
                         <div class="container-progress-ring">
@@ -106,23 +112,29 @@
                             <ul>
                                 <li><b>Hora de Entrada:</b> {{turno.inicio_almoco}}</li>
                                 <li><b>Hora de Saída:</b> {{turno.fim_almoco}}</li>
-                                <li><b>Tempo total:</b> {{turno.get_tempo_almoco()}}<li>
+                                <li><b>Tempo total:</b> {{turno.get_tempo_almoco()}}
+                                <li>
                             </ul>
                         </div>
                     </div>
                 </div>
                 {% endif %}
+                <div class="reopen gradient-background box-shadow flex-box">
+                    <h4>Finalizou o turno sem querer?</h4>
+                    <button class="btn btn-dark" onclick="reabrirTurno('{{csrf_token()}}')">Abrir Novamente</button>
+                    <p style="color: red;">Atenção, só clique caso tenha terminado o turno sem querer!</p>
+                </div>
             </div>
             {% endif %}
             {% else %}
             <div class="box-shadow center iniciar-turno">
-                {% if is_estagiario(user) and user.is_active and is_dia_util() and not is_admin(user) %}
+                {% if is_estagiario(user) and user.is_active and eh_dia_util() and not is_admin(user) %}
                 <form method="POST">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <input type="hidden" name='status' value="clock_in">
                     <input type="submit" class="btn btn-dark mx-auto" value="Iniciar Turno">
                 </form>
-                {% elif not is_dia_util() %}
+                {% elif not eh_dia_util() %}
                 <h4 class="my-auto">Hoje não é um dia útil!</h4>
                 {% else %}
                 <h4 class="my-auto">Você não é um funcionário!</h4>
@@ -135,17 +147,15 @@
     </div>
 </body>
 
-{% if turno and turno.current_status != 'break_in' %}
+{% if turno and turno.current_status not in  ['break_in', 'pausado'] %}
 <footer>
     {% if turno.current_status == 'clocked_in'%}
     <script>
         // Seta o timestamp do inicio do turno
         // Para calcular o tempo total no front-end
         {% if is_func(user) %}
-        startTimer({{ current_shift_time }}, {{user.turno}});
-        {% else %}
-        startTimer({{current_shift_time}}, {{user.turno}}, "{{csrf_token()}}");
-        {% endif %}
+        startTimer({{current_shift_time }}, {{user.turno}}); {% else %}
+        startTimer({{current_shift_time}}, {{user.turno}}, "{{csrf_token()}}"); {%endif %}
     </script>
     {% else %}
     <script>
@@ -154,25 +164,43 @@
 
         var [hours, minutes, seconds] = trabalho.split(':');
         trabalho_total = (parseInt(hours) * 3600) + (parseInt(minutes) * 60) + (parseInt(seconds));
-        turno_total = {{ user.turno }} * 3600;
+        turno_total = {{user.turno }}* 3600;
         percentage = (trabalho_total * 100 / turno_total).toFixed(1);
- 
-        if(percentage > 100){
+
+        if (percentage > 100) {
             percentage = 100;
         }
 
-        config = [[percentage, '#E328AF', 'rgba(227,40,175,0.1)']];
+        config = [
+            [percentage, '#E328AF', 'rgba(227,40,175,0.1)']
+        ];
 
         {% if turno.almocou %}
-        almoco = {{ turno.get_tempo_almoco().seconds }};
+        almoco = {{turno.get_tempo_almoco().seconds}};
         max_almoco = 2 * 3600;
         percentage_almoco = ((almoco * 100) / max_almoco).toFixed(1);
         config_almoco = [percentage_almoco, '#1CBBFF', 'rgba(28,187,255,0.1)'];
-        config[1] = config_almoco;
-        {% endif %}
+        config[1] = config_almoco; {% endif %}
 
         setProgressCircles(config);
 
+        function reabrirTurno(csrf_token) {
+            if (confirm('Deseja abrir o turno novamente?')) {
+                // Request Delete
+                rqst = $.ajax({
+                    url: '/bater-ponto/reabrir',
+                    method: 'POST',
+                    beforeSend: function (request) {
+                        request.setRequestHeader("X-CSRFToken", csrf_token);
+                    }
+                })
+
+                // Request done
+                rqst.done(function () {
+                    location.reload();
+                });
+            }
+        }
     </script>
     {% endif %}
 </footer>

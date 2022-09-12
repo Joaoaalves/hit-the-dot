@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+        <link rel="shortcut icon" href="{{url_for('static', filename='favicon.ico')}}" type="image/x-icon">
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Hit the Dot</title>
+
+        {% include 'common-imports.html' %}
+
+        <link rel="stylesheet" href="{{url_for('static', filename='css/default-table.css')}}">
+        <link rel="stylesheet" href="{{url_for('servicos.static', filename='css/servicos-entregues.css')}}">
+
+        <script src="{{url_for('servicos.static', filename='js/servicos-entregues.js')}}"></script>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/sifter/0.5.4/sifter.min.js"
+                integrity="sha512-B60IUvYpG4cibCeQ30J8k/+qtN+fxKAIENb3DL2DVdzIt76IDIynAt92chPEwlCuKejOt//+OZL61i1xsvCIDQ=="
+                crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/microplugin/0.0.3/microplugin.min.js"
+                integrity="sha512-7amIsiQ/hxbdPNawBZwmWBWPiwQRNEJlxTj6eVO+xmWd71fs79Iydr4rYARHwDf0rKHpysFxWbj64fjPRHbqfA=="
+                crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <link rel="stylesheet"
+                href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.13.5/css/selectize.bootstrap5.min.css"
+                integrity="sha512-w4sRMMxzHUVAyYk5ozDG+OAyOJqWAA+9sySOBWxiltj63A8co6YMESLeucKwQ5Sv7G4wycDPOmlHxkOhPW7LRg=="
+                crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.13.5/js/selectize.min.js"
+                integrity="sha512-8MxMBA7Rt4u4Hub7fgUVqRm2XQxEUybzTK5D2KAKHfToOR/5+1Y3dll3U4rtnyleGdW0O5GG2wYGAp9ZaebsbQ=="
+                crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+
+<body>
+        {% include 'nav-bar.html' %}
+
+        <div class='container'>
+                <div class="col">
+                        {% include 'sidepanel/sidepanel.html' %}
+                </div>
+                <div class="col-6 content-container">
+                        <div class="container-table">
+                                {% if servicos %}
+                                {% include 'table-servicos-entregues.html' %}
+                                {% endif %}
+                        </div>
+                        <div class="utils-container">
+                                <div class="container-filtro box-shadow gradient-background">
+                                        <h4>Filtro</h4>
+                                        <form method='GET' class="my-auto">
+                                                <select name="funcionario" class="form-control mb-5"
+                                                        id="select-funcionario" placeholder="Selecione um funcionario"
+                                                        required>
+                                                        <option value="">Selecione um funcionario</option>
+                                                        {% for funcionario in funcionarios %}
+                                                        <option value="{{funcionario.id}}">{{funcionario.name}}
+                                                        </option>
+                                                        {% endfor %}
+                                                </select>
+
+
+                                                <input type="submit" class="btn btn-warning" value="Filtrar">
+                                                <a href="/servicos-entregues" class="btn btn-dark">Limpar Filtro</a>
+                                        </form>
+                                </div>
+                                {% if user.role == 'Gestor' -%}
+                                <div class="container-buttons box-shadow gradient-background">
+                                        <a class="btn btn-warning" href="/meus-servicos">Meus Serviços</a>
+                                </div>
+                                {%- endif %}
+                        </div>
+                </div>
+        </div>
+</body>
+
+<div class="modal" tabindex="-1" id='srv-apv' role="dialog">
+        <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                        <div class="modal-header">
+                                <h5 class="modal-title">Prazo da Demanda</h5>
+                                <button type="button" class="close btn-danger" onclick="closeModal()" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                </button>
+                        </div>
+                        <form>
+                                <input type="hidden" name="servico" id="serv_id">
+                                <div class="modal-body">
+                                        <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="prazo" id="prazo-1"
+                                                        value="0.7">
+                                                <label class="form-check-label" for="prazo-1">
+                                                        Atrasado
+                                                </label>
+                                        </div>
+                                        <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="prazo" id="prazo-2"
+                                                        value="1" checked>
+                                                <label class="form-check-label" for="prazo-2">
+                                                        Normal
+                                                </label>
+                                        </div>
+                                        <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="prazo" id="prazo-3"
+                                                        value="1.3">
+                                                <label class="form-check-label" for="prazo-3">
+                                                        Adiantado
+                                                </label>
+                                        </div>
+                                </div>
+                        </form>
+                        <div class="modal-footer">
+                                <button type="button" class="btn btn-success"
+                                onclick="enviarAprovacao('{{csrf_token()}}')"  >Aprovar</button>
+                                <button type="button" class="btn btn-" onclick="closeModal()">Cancelar</button>
+                        </div>
+                </div>
+        </div>
+</div>
+        <footer>
+                <script>
+                        $(document).ready(function () {
+                                $('#select-funcionario').selectize({
+                                        sortField: 'text'
+                                });
+                        });
+
+                        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+                        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(
+                                tooltipTriggerEl))
+                </script>
+        </footer>
+
+</html>

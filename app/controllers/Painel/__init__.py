@@ -14,3 +14,5 @@ from contextlib import suppress
 import calendar
 
 import numpy as np
+
+from app.models.servico_entregue import ServicoEntregue

@@ -1,3 +1,5 @@
+import json
+
 class User:
 
     _privilege = 1

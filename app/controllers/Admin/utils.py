@@ -27,7 +27,7 @@ def update_func_info(form, funcionario):
 
     funcionario.cargo = cargo_id
     
-    db.update_info('Users', vars(funcionario), key='id', value=funcionario.id )
+    db.update_data('users', funcionario.id, funcionario.to_json())
 
 def get_cargos():
     
@@ -37,14 +37,6 @@ def get_cargos():
 def timedelta_to_hours(time):
     return time.days * 24 + time.seconds //3600
 
-
-def excluir_funcionario(func_id):
-    # Remove Func
-    db.remove_user(func_id)
-    
-    # Remove Func's Turnos
-    db.remove_data('users', func_id)
-    
 
     
 def dias_uteis_mes():

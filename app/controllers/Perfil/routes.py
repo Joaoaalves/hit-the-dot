@@ -18,7 +18,7 @@ def perfil():
     else:
         funcionario = db.get_funcionario(user.id)
         
-        turnos = db.get_turnos(user.id)
+        turnos = [t for t in db.get_turnos() if t.user_id == user.id]
         funcionario.set_turnos(turnos)
         
         cargo = db.get_cargo(funcionario.cargo)
@@ -36,7 +36,7 @@ def editar_perfil():
     user = Funcionario(session['user'])
     
     if request.method == 'GET':
-        cargos = db.get_all_rows_from_firestore('Cargos')
+        cargos = db.get_cargos()
         
         return render_template('editar_perfil.html', user=user,
                                                     cargos=cargos)
@@ -52,15 +52,11 @@ def editar_perfil():
             
         if 'email' in form:
             data['email'] = form['email']
-            
-        db.update_info('Users',data,  key='id', value=data['id'])
-        
+
+        db.update_data(' users', user.id, user.to_json())
+    
         session['user'] = data
         
         session.modified = True
         
         return redirect(url_for('perfil.perfil'))
-    
-
-    
-    

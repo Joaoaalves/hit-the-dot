@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+        <link rel="shortcut icon" href="{{url_for('static', filename='favicon.ico')}}" type="image/x-icon">
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Hit the Dot</title>
+
+        {% include 'common-imports.html' %}
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/sifter/0.5.4/sifter.min.js"
+                integrity="sha512-B60IUvYpG4cibCeQ30J8k/+qtN+fxKAIENb3DL2DVdzIt76IDIynAt92chPEwlCuKejOt//+OZL61i1xsvCIDQ=="
+                crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/microplugin/0.0.3/microplugin.min.js"
+                integrity="sha512-7amIsiQ/hxbdPNawBZwmWBWPiwQRNEJlxTj6eVO+xmWd71fs79Iydr4rYARHwDf0rKHpysFxWbj64fjPRHbqfA=="
+                crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <link rel="stylesheet"
+                href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.13.5/css/selectize.bootstrap5.min.css"
+                integrity="sha512-w4sRMMxzHUVAyYk5ozDG+OAyOJqWAA+9sySOBWxiltj63A8co6YMESLeucKwQ5Sv7G4wycDPOmlHxkOhPW7LRg=="
+                crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.13.5/js/selectize.min.js"
+                integrity="sha512-8MxMBA7Rt4u4Hub7fgUVqRm2XQxEUybzTK5D2KAKHfToOR/5+1Y3dll3U4rtnyleGdW0O5GG2wYGAp9ZaebsbQ=="
+                crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+        <link rel="stylesheet" href="{{url_for('servicos.static', filename='css/criar-tag.css')}}">
+
+        <link rel="stylesheet" href="{{url_for('servicos.static', filename='css/criar-servico.css')}}">
+
+        <link rel="stylesheet" href="{{url_for('servicos.static', filename='css/servicos_tags_criar.css')}}">
+</head>
+
+<body>
+
+        {% include 'nav-bar.html' %}
+
+        <div class='container'>
+                <div class="col">
+                        {% include 'sidepanel/sidepanel.html' %}
+                </div>
+                <div class="col-6 content-container">
+                        <form method="POST" class="box-shadow" id="form-tag">
+                                <h2 class="mb-5" style="text-align: center;">Nova Tag</h2>
+                                <input type="hidden" value="{{csrf_token()}}" name="csrf_token">
+                                
+                                <div class="form-floating mb-3">
+                                        <input type="text" name="tag" class="form-control" required>
+
+                                        <label for="name">Tag</label>
+                                </div>
+
+                                <select name="servicos" class="form-control mb-5"
+                                id="select-servico" placeholder="Selecione os serviços" multiple="multiple"
+                                required>
+                                        <option value="">Selecione os serviços</option>
+                                        {% for servico in servicos %}
+                                        <option value="{{servico.id}}">{{servico.name}}</option>
+                                        {% endfor %}
+                                </select>
+                                
+                                <div class="container-buttons">
+                                        <input type="submit" class="btn btn-warning me-3" value="Salvar">
+                                        <a class="btn btn-dark ms-3" href="/servicos">Voltar</a>
+                                </div>
+                        </form>
+                </div>
+        </div>
+</body>
+<script>
+                $(document).ready(function () {
+                        $('#select-servico').selectize({
+                                sortField: 'text'
+                        });
+                });
+</script>
+
+</html>

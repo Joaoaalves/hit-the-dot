@@ -1,0 +1,22 @@
+{% if tags %}
+<table>
+        <thead>
+                <tr>
+                        <th>Tag</th>
+                        <th>Serviços</th>
+                        <th>Ações</th>
+                </tr>
+        </thead>
+        <tbody>
+                {% for tag in tags %}
+                <tr>
+                        <td>{{tag.tag}}</td>
+                        <td>{{tag.num_servicos()}}</td>
+                        <td>
+                                <button class="btn btn-warning" onclick="window.location.href = '/servicos/tags/editar/{{tag['id']}}'"><i class="fas fa-pencil"></i></button>
+                                <button class="btn btn-danger" onclick="excluirTag('{{csrf_token()}}',{{tag['id']}})"><i class="fas fa-trash"></i></button>
+                        </td>
+                </tr>
+                {% endfor %}
+</table>
+{% endif %}

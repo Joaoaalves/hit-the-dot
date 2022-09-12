@@ -34,9 +34,6 @@
                 <button class="btn btn-warning" onclick="editarFuncionario({{funcionario.id}})">
                     <i class="fas fa-pencil-alt"></i>
                 </button>
-                <button class="btn btn-danger" onclick="excluirFuncionario({{funcionario.id}}, '{{csrf_token()}}')">
-                    <i class="fas fa-times"></i>
-                </button>
             </th>
         </tr>
         {% endfor %}

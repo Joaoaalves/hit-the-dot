@@ -74,23 +74,6 @@ def status_funcionario(func_id):
         
     return abort(404, 'Funcionario não encontrado!')
 
-
-@admin_blueprint.route("/excluir-usuario", methods=['DELETE'])
-@admin_required
-def excluir_usuario():
-    #
-    #Route to delete a user from system
-    #
-    
-    func_id = int(flask.request.form['uid'])
-    
-    excluir_funcionario(func_id)
-    
-    return '', 200
-
-
-    # return flask.abort(400, str(status))
-
 @admin_blueprint.route('/funcionario/<int:func_id>', methods=['GET'])
 @admin_required
 def ver_funcionario(func_id):

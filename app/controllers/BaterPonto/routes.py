@@ -21,14 +21,15 @@ def baterponto():
     if request.method == 'GET':
         
         if turno:
+        
             if turno.current_status == 'clocked_in':
-                current_shift_time = get_current_shift_time(turno)
+                current_shift_time = get_tempo_turno(turno)
                 return render_template('bater_ponto.html', 
                                                         current_shift_time=current_shift_time,
                                                         turno=turno,
                                                         user=user,
                                                         bater_ponto_active='active')
-            else:
+            else: 
                 return render_template('bater_ponto.html',
                         turno=turno,    
                         user=user,
@@ -45,7 +46,7 @@ def baterponto():
         
         (redis_con.set(f"session:{user.id}", 'true')
             if status == 'clock_in' or status == 'break_out'
-            else 
+            else  
         redis_con.set(f"session:{user.id}", 'false'))
         
         if db.add_new_shitf_status(status, user):   
@@ -53,3 +54,20 @@ def baterponto():
         
 
         return flask.abort(400, 'Você ja bateu seu ponto!')
+
+@bater_ponto.route('/reabrir', methods=['POST'])
+@funcionario_required
+def reabrir_turno():
+    
+    user = get_user_object(session['user'])
+    
+    now = datetime.now().date()
+    
+    turno = db.get_turno(now, user.id)
+
+    turno.current_status = 'clocked_in'
+    turno.hora_saida = None
+
+    db.update_data('turnos', turno.id, turno.to_json())
+    
+    return '', 200

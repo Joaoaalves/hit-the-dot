@@ -19,13 +19,11 @@ def criar_cliente():
                 form = request.form
                 name = form['name']
                 try:
-                        image = get_secure_file('logo', 'image')
-
                         db.insert_data('cliente', {'name' : name})
 
                         cliente_criado = db.select('cliente', 'name', '=', name)[0]
-
-                        save_logo_cliente(image, cliente_criado['id'])
+                        
+                        save_logo_cliente(cliente_criado['id'])
 
                         return redirect(url_for('clientes.clientes'))
 
@@ -33,8 +31,8 @@ def criar_cliente():
                         return abort(500, e)
 
 
-@gestor_required
 @clientes_blueprint.route('/clientes')
+@gestor_required
 def clientes():
         user = get_user_object(session['user'])
         clientes = db.get_table_data('cliente')
@@ -47,7 +45,7 @@ def editar_cliente(id):
         
         if request.method == 'POST':
                 cliente = Cliente(request.form)
-        
+                save_logo_cliente(id)
                 db.update_data('cliente', id, cliente.to_json())
 
                 return redirect(url_for('clientes.clientes'))
