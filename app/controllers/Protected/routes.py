@@ -13,6 +13,5 @@ def protected_file(filename):
              os.path.join(app.instance_path, ''), filename)
 
     except Exception as e:
-        print(e)
         app.logger.warning(e)
         return 'Failed to load the image', 404

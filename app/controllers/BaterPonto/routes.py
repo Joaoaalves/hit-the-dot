@@ -12,6 +12,17 @@ bater_ponto = Blueprint('bater_ponto', __name__,
 @bater_ponto.route("/", methods=['GET', 'POST'])
 @funcionario_required
 def baterponto():
+    #
+    # Show the 'bater ponto' page
+    # GET:
+    # if current user already finished his shift, show the status for current day
+    # else show the bater ponto page
+    # POST:
+    # 1 - Check if the user already started his shift, if not, create a new shift
+    # 2 - Check if the user already finished his shift, if not, show current shift status and time
+    # 3 - If the user already finished his shift, show the status for current day
+    #
+
     user = get_user_object(session['user'])
     
     now = datetime.now().date()
@@ -58,6 +69,9 @@ def baterponto():
 @bater_ponto.route('/reabrir', methods=['POST'])
 @funcionario_required
 def reabrir_turno():
+    #
+    # Reopen a shift
+    #
     
     user = get_user_object(session['user'])
     
@@ -68,6 +82,6 @@ def reabrir_turno():
     turno.current_status = 'clocked_in'
     turno.hora_saida = None
 
-    db.update_data('turnos', turno.id, turno.to_json())
+    db.update_data('Turnos', turno.id, turno.to_json())
     
     return '', 200

@@ -4,18 +4,50 @@
         <th>Tempo Total</th>
         <th>Horário de Entrada</th>
         <th>Horário de Saída</th>
+        <th>Status</th>
         <th>Ações</th>
     </tr>
     {% for turno in turnos %}
     <tr class="box-shadow content">
+        <!-- Data -->
         <th>{{turno.get_formated_date()}}</th>
+        
+        <!-- Tempo total de turno -->
+        {% if turno.current_status == 'clocked_out' %}
         <th>{{turno.get_total_time_str()}}</th>
+        {% else %}
+        <th>Não Finalizado!</th>
+        {% endif %}
+        
         <th>{{turno.hora_entrada}}</th>
+        
+        <!-- Hora Saida -->
+        {% if turno.hora_saida %}
         <th>{{turno.hora_saida}}</th>
+        {% else %}
+        <th>--:--:--</th>
+        {% endif %}
+
+        <!-- Status Turno -->
+        {% if turno.current_status == 'clocked_out' %}
+        <th>Finalizado</th>
+        {% elif turno.current_status == 'pausado' %}
+        <th>Pausado</th>
+        {% elif turno.current_status == 'break_in' %}
+        <th>Almoçando</th>
+        {% else %}
+        <th>Aberto</th>
+        {% endif %}
+
+        <!-- Ações -->
         <th>
+            {% if turno.current_status == 'clocked_out' %}
             <button title="Ver" class="btn-success btn"
                 onclick="abrirTurno({{turno.user_id}}, '{{turno.dia}}')"><i
                     class="fas fa-eye"></i></button>
+            {% else %}
+            <button title="Não é possível ver" class="btn-secondary btn" disabled><i class="fas fa-eye"></i></button>
+            {% endif %}
         </th>
     </tr>
     {% endfor %}

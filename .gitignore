@@ -148,3 +148,7 @@ backups/*
 !backups/.gitkeep
 generate_db.sql
 migrade_db.py
+
+db/*
+!db/init.sql
+!db/Dockerfile

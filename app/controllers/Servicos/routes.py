@@ -1,395 +1,422 @@
 from . import *
+from .utils import *
 
-servicos_blueprint = Blueprint('servicos', 
-                                __name__,
-                                template_folder='templates',
-                                static_folder='static',
-                                static_url_path='/Servicos/static')
+servicos_blueprint = Blueprint('servicos',
+                               __name__,
+                               template_folder='templates',
+                               static_folder='static',
+                               static_url_path='/Servicos/static')
 
 
 @servicos_blueprint.route('/servicos')
 @admin_required
 def servicos():
-        user = get_user_object(session['user'])
-        
-        servicos = db.get_servicos()
+    #
+    #   List all services
+    #
+    user = get_user_object(session['user'])
 
-        return render_template('servicos.html', user=user, 
-                                                servicos_active='active',
-                                                servicos=servicos)
+    servicos = db.get_servicos()
+
+    return render_template('servicos.html', user=user,
+                           servicos_active='active',
+                           servicos=servicos)
+
 
 @servicos_blueprint.route('/servicos/tags')
 @admin_required
 def servicos_tags():
-        user = get_user_object(session['user'])
-        
-        servicos = db.get_servicos()
+    #
+    #  List all services tags
+    #
+    user = get_user_object(session['user'])
 
-        tags = db.get_tags()
+    servicos = db.get_servicos()
 
-        return render_template('servicos_tags.html', user=user, 
-                                                servicos_active='active',
-                                                tags=tags,
-                                                servicos=servicos)
+    tags = db.get_tags()
+
+    return render_template('servicos_tags.html', user=user,
+                           servicos_active='active',
+                           tags=tags,
+                           servicos=servicos)
 
 
 @servicos_blueprint.route('/servicos/tags/excluir/', methods=['DELETE'])
 @admin_required
 def servicos_tags_excluir():
-        tag_id = request.form['tag']
-        db.remove_data('TagServico', tag_id)
-        tag_map = db.select('TagServico_Map', 'tag', '==', tag_id)
-        for tm in tag_map:
-                db.remove_data('TagServico_Map', tm['id'])
-        
-        return '',200
+    #
+    #  Delete a service tag
+    #
+    tag_id = request.form['tag']
+
+    excluir_tag(tag_id)
+
+    return '', 200
+
 
 @servicos_blueprint.route('/servicos/tags/criar', methods=['GET', 'POST'])
 @admin_required
 def servicos_tags_criar():
-        user = get_user_object(session['user'])
-        servicos = db.get_servicos()
+    #
+    # Create a new service tag
+    # GET: Show the form
+    # POST: Create the tag
+    #
 
-        if request.method == 'GET':
-                return render_template('servicos_tags_criar.html', user=user, 
-                                                servicos_active='active',
-                                                servicos=servicos)
+    user = get_user_object(session['user'])
+    servicos = db.get_servicos()
 
-        else:
-                tag = request.form['tag']
-                servicos_selecionados = request.form.getlist('servicos')
-                
-                tag_id = db.insert_data('TagServico', {'tag': tag})
-                if servicos_selecionados:
-                        for servico in servicos_selecionados:
-                                db.insert_data('TagServico_Map', {'servico': servico, 'tag': tag_id})
-                        
-                return redirect(url_for('servicos.servicos_tags'))
+    if request.method == 'GET':
+        return render_template('servicos_tags_criar.html', user=user,
+                               servicos_active='active',
+                               servicos=servicos)
+
+    else:
+        criar_tag(request.form)
+
+        return redirect(url_for('servicos.servicos_tags'))
+
 
 @servicos_blueprint.route('/servicos/tags/editar/<tag_id>', methods=['GET', 'POST'])
 @admin_required
 def servicos_tags_editar(tag_id):
-        user = get_user_object(session['user'])
-        servicos = db.get_servicos()
+    #
+    # Edit a service tag
+    # GET: Show the form
+    # POST: Update the tag
+    #
 
-        if request.method == 'GET':
-                # Get tag
-                tag = db.get_tag(tag_id)
+    user = get_user_object(session['user'])
+    servicos = db.get_servicos()
 
-                # Get servicos that are mapped to this tag
-                servicos_selecionados = [s.to_json() for s in db.get_servicos_by_tag(tag_id)]
-                
-                return render_template('servicos_tags_editar.html', user=user, 
-                                                servicos_active='active',
-                                                servicos=servicos,
-                                                tag=tag,
-                                                servicos_selecionados=servicos_selecionados)
+    if request.method == 'GET':
+        # Get tag
+        tag = db.get_tag(tag_id)
 
-        else:
-                
-                tag = request.form['tag']
-                servicos_selecionados = request.form.getlist('servicos')
-                
-                # Update tag
-                db.update_data('TagServico', tag_id, {'tag': tag})
+        # Get servicos that are mapped to this tag
+        servicos_selecionados = [s.to_json()
+                                 for s in db.get_servicos_by_tag(tag_id)]
 
-                # Remove old tag map info
-                tag_map = db.select('TagServico_Map', 'tag', '=', tag_id)
-                if tag_map:
-                        for tm in tag_map:
-                                db.remove_data('TagServico_Map', tm['id'])
+        return render_template('servicos_tags_editar.html', user=user,
+                               servicos_active='active',
+                               servicos=servicos,
+                               tag=tag,
+                               servicos_selecionados=servicos_selecionados)
 
-                # Add new tag map info
-                for servico in servicos_selecionados:
-                        db.insert_data('TagServico_Map', {'servico': servico, 'tag': tag_id})
-                        
-                return redirect(url_for('servicos.servicos_tags'))
+    else:
+        editar_tag(request.form, tag_id)
 
-        
+        return redirect(url_for('servicos.servicos_tags'))
+
 
 @servicos_blueprint.route('/servicos/pesquisar', methods=['POST'])
 @limiter.limit('60/minute')
 def pesquisar_servico():
-        serv_name = request.form['service_name']
+    #
+    #  Search for a service
+    #
+    search_term = request.form['service_name']
 
-        # Get servicos that match the search term
-        servs = db.select('Servico', 'name', 'LIKE', f'%{serv_name}%')
-        
-        # Get tags that match the search term
-        tags = db.select('TagServico', 'tag', 'LIKE', f'%{serv_name}%')
+    servicos = pesquisa_servicos(search_term)
 
-        # Get servicos that are mapped to the tags that match the search term
-        for tag in tags:
-                servs_id = [ s['servico'] for s in db.select('TagServico_Map', 'tag', '=', tag['id'])]
+    # Sort servicos by name
+    servicos = sorted(servicos, key=lambda s: s['name']) if servicos else None
 
-                servs += db.select('Servico', 'id', 'IN', str(servs_id).replace('[', '(').replace(']', ')'))
+    # Get Atributos from Servicos
+    servicos_with_atributes = get_servicos_with_atributos(
+        servicos) if servicos else None
 
-        # Sort servicos by name
-        servs = sorted(servs, key= lambda s:s['name'])
-        
-        # Get atb values for each servico
-        for serv in servs:
-                atb = db.select('AtributoServico', 'servico', '=', serv['id'])
-                if atb:
-                        serv['atributo'] = atb[0]
-                        
-        return json.dumps(servs), 200
+    return json.dumps(servicos_with_atributes), 200
 
 
 @servicos_blueprint.route('/servicos/criar', methods=['GET', 'POST'])
 @gestor_required
-def adicionar_servico():
+def criar_servico():
+    #
+    # Create a new service
+    # GET: Show the form
+    # POST: Create the service
+    #
 
-        if request.method == 'POST':
+    if request.method == 'POST':
 
-                form = request.form
+        adicionar_servico(request.form)
 
-                servico = Servico(form)
-                servico_id = db.insert_data('Servico', servico.to_json())
+        return redirect(url_for('servicos.servicos'))
 
-                # Insert atributo        
-                if 'has_atb' in form:
-                        atb_name = form['atb_name']
-                        atb_type = form['atb_type']
-                        
-                        if atb_type == 'text':
-                                atb_default = form['atb_default']
-                        else:
-                                try:
-                                        atb_default = int(form['atb_default'])
-                                except:
-                                        atb_default = 0
-
-                        db.insert_data('AtributoServico', {'name': atb_name, 'servico': servico_id, 'type': atb_type, 'default_value': atb_default})
-                
-                return redirect(url_for('servicos.servicos'))
-
+    else:
         user = get_user_object(session['user'])
-        
+
         return render_template('criar-servico.html', user=user, servicos_active='active')
 
 
 @servicos_blueprint.route('/servicos/entregar', methods=['GET', 'POST'])
 @funcionario_required
 def entregar_servico():
-        user = get_user_object(session['user'])
-        if request.method == 'GET':
-                servicos = db.get_servicos()
-                clientes = db.get_clientes()
-                
-                return render_template('entrega-servico.html',  servicos=servicos,
-                                                                entregar_servico_active='active',
-                                                                user=user,
-                                                                clientes=clientes)
+    #
+    # Deliver a service
+    # GET: Show the form
+    # POST: Deliver the service
+    #
 
-        else:
-                form = request.form
+    user = get_user_object(session['user'])
+    if request.method == 'GET':
+        servicos = db.get_servicos()
+        clientes = db.get_clientes()
 
-                insertion_id = db.insert_data('ServicoEntregue', {
-                        'service_id' : form['servico'],
-                        'user_id' : user.id,
-                        'status' : 'Pendente',
-                        'cliente_id' : form['cliente'],
-                        'link_trello' : form['trello'],
-                        'descricao' : form['descricao'],
-                        'entrega' : datetime.now().date()
-                })
+        return render_template('entrega-servico.html',  servicos=servicos,
+                               entregar_servico_active='active',
+                               user=user,
+                               clientes=clientes)
 
-                if 'atributo' in form:
+    else:
+        adicionar_servico_entregue(request.form, user.id)
 
-                        db.insert_data('AtributoValue', {
-                                'value' :form['atributo'],
-                                'servico_entregue' : insertion_id,
-                                'atributo' : form['atb_id']
-                        })
+        return redirect(url_for('servicos.meus_servicos')) if not is_gestor(user) else redirect(url_for('servicos.servicos_entregues'))
 
-
-                return redirect(url_for('servicos.meus_servicos')) if not is_gestor(user) else redirect(url_for('servicos.servicos_entregues'))
 
 @servicos_blueprint.route('/servicos/<int:serv_id>', methods=['GET', 'POST'])
 @gestor_required
-def editar_servico(serv_id):
-        servico = db.get_servico(serv_id)
-        
-        if not servico:
-                return abort(404)
+def editar_serv(serv_id):
+    #
+    # Edit a service
+    # GET: Show edit form
+    # POST: Edit service
+    #
 
-        if request.method == 'GET':
+    servico = db.get_servico(serv_id)
 
-                user = get_user_object(session['user'])
-                
-                return render_template('editar-servico.html',   user=user,
-                                                                servico=servico,
-                                                                servicos_active='active')
-                
-        if request.method == 'POST':
-                form = request.form
-                
-                servico.name = form['name']
-                servico.tempo = form['tempo']
-                servico.valor = form['valor']
+    if not servico:
+        return abort(404)
 
-                db.update_data('Servico', servico.id, servico.to_json())
+    if request.method == 'GET':
 
-                return redirect(url_for('servicos.servicos'))
+        user = get_user_object(session['user'])
+
+        return render_template('editar-servico.html',   user=user,
+                               servico=servico,
+                               servicos_active='active')
+
+    if request.method == 'POST':
+        try:
+            editar_servico(request.form, servico)
+
+            return redirect(url_for('servicos.servicos'))
+
+        except Exception as e:
+            return abort(400, request.form)
+
 
 @servicos_blueprint.route('/servicos/excluir', methods=['DELETE'])
 @gestor_required
-def excluir_servico():
-        try:
-                servico_id = int(request.form['servico'])
+def excluir_serv():
+    #
+    # Delete a service
+    #
 
-                servicos_entregues = [ServicoEntregue(servico) for servico in db.select('ServicoEntregue', 'service_id', '=', servico_id)]
-                for serv in servicos_entregues:
-                        db.remove_data('ServicoEntregue', serv.id)
+    try:
+        servico_id = int(request.form['servico'])
 
-                db.remove_data('Servico', servico_id)
+        excluir_servico(servico_id)
 
-                return json.dumps({'status': 'ok'}), 200
+        return json.dumps({'status': 'ok'}), 200
 
-        except Exception as e:
-                print(e)
-                return json.dumps({'status': 'error'}), 400
+    except Exception as e:
+        print(e)
+        return json.dumps({'status': 'error'}), 400
+
 
 @servicos_blueprint.route('/servicos-entregues/invalidar', methods=['POST'])
 @gestor_required
-def invalidar_servico():
-        try:
-                servico_id = int(request.form['servico'])
-                
-                servico = db.get_servico_entregue(servico_id)
-                servico.status = 'Pendente'
+def invalidar_serv():
+    #
+    # Invalidate a delivered service
+    #
 
-                db.update_data('ServicoEntregue', servico_id, servico.to_json())
+    try:
+        servico_id = int(request.form['servico'])
+        invalidar_servico(servico_id)
 
-                return json.dumps({'status': 'ok'}), 200
+        return json.dumps({'status': 'ok'}), 200
 
-        except:
-                return json.dumps({'status': 'error'}), 400
+    except:
+        return json.dumps({'status': 'error'}), 400
 
 
 @servicos_blueprint.route('/servicos-entregues')
 @gestor_required
 def servicos_entregues():
+    #
+    # Show delivered services
+    #
 
-        user = get_user_object(session['user'])
+    user = get_user_object(session['user'])
 
-        try:
-                if 'funcionario' in request.args:
-                                func_id = request.args['funcionario']
-                                servicos = db.get_servicos_atribuidos_funcionario(int(func_id))
-                else:
-                        servicos = db.get_servicos_atribuidos()
+    func_id = request.args.get('funcionario', None)
 
-                if servicos:
-                        servicos.reverse()
+    servicos_entregues = get_servicos_entregues(func_id)
 
-        except Exception as e:
+    servicos_dict = {}
+    servicos = db.get_servicos()
 
-                servicos = None
+    if servicos:
+        servicos_dict = dict((s.id, s.name) for s in servicos)
 
-        servicos_dict = dict((s.id, s.name) for s in db.get_servicos())
+    funcionarios = db.get_all_funcionarios()
 
-        funcionarios = db.get_all_funcionarios()
+    funcionario_dict = dict((f.id, f.name) for f in funcionarios)
 
-        funcionario_dict = dict((f.id, f.name) for f in funcionarios)
-
-        return render_template('servicos-entregues.html',       user=user,
-                                                                servicos_entregues_active="active",
-                                                                servicos=servicos,
-                                                                funcionarios_dict=funcionario_dict,
-                                                                funcionarios=funcionarios,
-                                                                servicos_dict=servicos_dict)
+    return render_template('servicos-entregues.html',       user=user,
+                           servicos_entregues_active="active",
+                           servicos=servicos_entregues,
+                           funcionarios_dict=funcionario_dict,
+                           funcionarios=funcionarios,
+                           servicos_dict=servicos_dict)
 
 
 @servicos_blueprint.route('/servicos-entregues/<int:serv_id>', methods=['GET', 'POST'])
 @gestor_required
 def servico_entregue(serv_id):
+    #
+    # Show a delivered service
+    # GET: Show the service
+    # POST: Edit the service
+    #
 
-        servico_entregue = db.get_servico_entregue(serv_id)
-        if servico_entregue:
-                servico = db.get_servico(servico_entregue.service_id)
-                
-                atributo = db.get_atributo_from_serv(servico_entregue.id) 
+    servico_entregue = db.get_servico_entregue(serv_id)
 
-                if request.method == 'GET':
-                        user = get_user_object(session['user'])
-                        if user.id == servico_entregue.user_id:
-                                return redirect(url_for('servicos.servicos_entregues'))
-                        cliente = db.select('cliente', 'id', '=', servico_entregue.cliente_id)[0]
-                        funcionario = db.get_funcionario(servico_entregue.user_id)
+    if servico_entregue:
 
-                        if servico_entregue:
-                                return render_template('aprovar-servico.html', user=user,
-                                                                        servico_entregue=servico_entregue,
-                                                                        servico=servico,
-                                                                        servicos_entregues_active="active",
-                                                                        atributo=atributo,
-                                                                        cliente=cliente,
-                                                                        funcionario=funcionario)
-                if request.method == 'POST':
-                        form = request.form
+        servico = db.get_servico(servico_entregue.service_id)
 
-                        if 'status' in form and form['status'] == 'Pendente':
+        atributo = db.get_atributo_from_serv(servico_entregue.id)
 
-                                servico_entregue.status = 'Pendente'
+        if request.method == 'GET':
 
-                                db.update_data('ServicoEntregue', servico_entregue.id, servico_entregue.to_json())
+            user = get_user_object(session['user'])
+            if user.id == servico_entregue.user_id:
+                return redirect(url_for('servicos.servicos_entregues'))
 
-                                return '', 200
+            cliente = db.select('Clientes', 'id', '=',
+                                servico_entregue.cliente_id)[0]
+            funcionario = db.get_funcionario(servico_entregue.user_id)
 
-                        try:    
-                        
-                                servico_entregue.prazo = float(form['prazo'])
-                                quantidade = int(atributo.value) if atributo else 1
+            if servico_entregue:
+                return render_template('aprovar-servico.html', user=user,
+                                       servico_entregue=servico_entregue,
+                                       servico=servico,
+                                       servicos_entregues_active="active",
+                                       atributo=atributo,
+                                       cliente=cliente,
+                                       funcionario=funcionario)
+        if request.method == 'POST':
 
-                                servico_entregue.valor = servico.valor * servico_entregue.prazo * quantidade
+            try:
+                atualizar_servico_entregue(
+                    request.form, servico_entregue, atributo, servico)
 
-                                servico_entregue.status = 'Verificado'
-                        
-                                db.update_data('ServicoEntregue', servico_entregue.id, servico_entregue.to_json())
-                        
-                        except Exception as e:
-                                print(e)
-                                abort(400)
-                        
-                        return redirect(url_for('servicos.servicos_entregues'))
+            except Exception as e:
+                abort(400, e)
 
-        else:
-                        return abort(404, 'Nenhum serviço encontrado')
+            return redirect(url_for('servicos.servicos_entregues'))
+
+    else:
+        return abort(404, 'Nenhum serviço encontrado')
+
 
 @servicos_blueprint.route('/servicos-entregues/<int:serv_id>', methods=['DELETE'])
 @funcionario_required
 def excluir_servico_entregue(serv_id):
-        user = get_user_object(session['user'])
-        servico_id = int(serv_id)
+    #
+    # Delete a delivered service
+    #
 
-        servico_entregue = db.get_servico_entregue(servico_id)
-        if is_func(user) and servico_entregue.status != 'Pendente':
-                return json.dumps({'error': 'Serviço já foi verificado'}), 400
-        elif is_func(user) and servico_entregue.user_id != user.id:
-                return json.dumps({'error': 'Serviço não foi entregue por você'}), 400
-        else:
-                db.remove_data('ServicoEntregue', servico_id)
+    user = get_user_object(session['user'])
+    servico_id = int(serv_id)
 
-        return json.dumps({'status': 'ok'}), 200
-        
+    servico_entregue = db.get_servico_entregue(servico_id)
+
+    if is_func(user) and servico_entregue.status != 'Pendente':
+        return json.dumps({'error': 'Serviço já foi verificado'}), 400
+    elif is_func(user) and servico_entregue.user_id != user.id:
+        return json.dumps({'error': 'Serviço não foi entregue por você'}), 400
+    else:
+        db.remove_data('ServicosEntregues', servico_id)
+
+    return json.dumps({'status': 'ok'}), 200
+
 
 @servicos_blueprint.route('/meus-servicos')
 @funcionario_required
 def meus_servicos():
-        user = get_user_object(session['user'])
+    #
+    # Show delivered services for current user
+    #
 
-        servicos = db.get_servicos_atribuidos_funcionario(user.id)
-        if servicos:
-                servicos.reverse()
-        
-        servicos_dict = dict((s.id, s.name) for s in db.get_servicos())
+    user = get_user_object(session['user'])
 
-        clientes = dict((c['id'],c['name']) for c in db.get_table_data('cliente'))
+    servicos_atribuidos = db.get_servicos_atribuidos_funcionario(user.id)
 
-        return render_template('meus-servicos.html',    user=user,
-                                                        meus_servicos_active='active',
-                                                        servicos=servicos,
-                                                        servicos_dict=servicos_dict,
-                                                        clientes=clientes)
+    if servicos_atribuidos:
+        servicos_atribuidos.reverse()
+
+    servicos_dict = {}
+    servicos = db.get_servicos()
+    if servicos:
+        servicos_dict = dict((s.id, s.name) for s in servicos)
+
+    clientes = dict((c['id'], c['name'])
+                    for c in db.get_table_data('Clientes'))
+
+    return render_template('meus-servicos.html',    user=user,
+                           meus_servicos_active='active',
+                           servicos=servicos_atribuidos,
+                           servicos_dict=servicos_dict,
+                           clientes=clientes)
+
+
+@servicos_blueprint.route('/meus-servicos/<int:serv_id>', methods=['GET', 'POST'])
+@funcionario_required
+def editar_meu_serv(serv_id):
+    #
+    # Show or edit a delivered service for current user
+    # GET: Show the service
+    # POST: Edit the service
+    #
+
+    user = get_user_object(session['user'])
+    servico_entregue = db.get_servico_entregue(serv_id)
+    if servico_entregue and servico_entregue.user_id == user.id:
+
+        servico = db.get_servico(servico_entregue.service_id)
+        atributo = db.get_atributo_from_serv(servico_entregue.id)
+
+        if request.method == 'GET':
+
+            if user.id != servico_entregue.user_id:
+                return redirect(url_for('servicos.meus_servicos'))
+
+            clientes = db.get_table_data('Clientes')
+            funcionario = db.get_funcionario(servico_entregue.user_id)
+            atb = db.get_atributo_from_serv(serv_id)
+            if servico_entregue:
+                return render_template('editar-meu-servico.html', user=user,
+                                       servico_entregue=servico_entregue,
+                                       servico=servico,
+                                       atb=atb,
+                                       meus_servicos_active="active",
+                                       atributo=atributo,
+                                       clientes=clientes,
+                                       funcionario=funcionario)
+
+        if request.method == 'POST':
+
+            try:
+                editar_meu_servico(request.form, servico_entregue)
+
+            except Exception as e:
+                print(e)
+                abort(400)
+            return redirect(url_for('servicos.meus_servicos'))
+    else:
+        return abort(404, 'Nenhum serviço encontrado')

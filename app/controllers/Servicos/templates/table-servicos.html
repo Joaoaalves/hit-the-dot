@@ -13,7 +13,7 @@
                         <td>{{servico.name}}</td>
                         <td>DB$ {{servico.valor}}</td>
                         <td>{{servico.tempo}} min</td>
-                        <td style="display: flex;">
+                        <td style="display: flex;justify-content: center;">
                                 <button class="btn btn-danger me-1" onclick="excluirServico({{servico.id}}, '{{csrf_token()}}')"><i class="fas fa-trash"></i></button>
                                 <button class="btn btn-warning" onclick="window.location.href = 'servicos/{{servico.id}}'"><i class="fas fa-pencil"></i></button>
                         </td>

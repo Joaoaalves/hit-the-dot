@@ -1,9 +1,9 @@
 from . import *
 
-def render_filtered_painel_admin(start_date, end_date, func_id):
+def render_filtered_painel_admin(start_date, end_date, user_id):
     user = get_user_object(session['user'])
     
-    funcionario = db.get_funcionario(func_id)
+    funcionario = db.get_funcionario(user_id)
     
     segundos_trabalhados, faltas, assiduidade, segundos_totais, dias_uteis = get_trabalho_total_funcionario(start_date, end_date, funcionario)
 
@@ -21,9 +21,9 @@ def render_filtered_painel_admin(start_date, end_date, func_id):
     
     dias_trabalhados = dias_uteis - faltas
 
-    servicos, servicos_dict, servicos_pendentes = get_servicos(start_date, end_date, func_id)
+    servicos, servicos_dict, servicos_pendentes = get_servicos(start_date, end_date, user_id)
 
-    pontuacao = get_pontuacao(func_id, start_date, end_date)
+    pontuacao = get_pontuacao(user_id, start_date, end_date)
 
     # 100 points = 60 minutes ->  100 points = 3600 seconds -> 1/36
     indice_rendimento = pontuacao / (segundos_trabalhados / 36) if segundos_trabalhados else 0
@@ -222,7 +222,7 @@ def get_start_end_date(args):
     return start_date_datetime, end_date_datetime
 
 
-def get_servicos(start_date, end_date, func_id=None):
+def get_servicos(start_date, end_date, user_id=None):
 
 
     servicos_dict = { 'Segunda': 0, 'Terça': 0, 'Quarta': 0, 'Quinta': 0, 'Sexta': 0 }
@@ -231,8 +231,8 @@ def get_servicos(start_date, end_date, func_id=None):
     servicos_verificados = list()
     servicos_pendentes = list()
     servicos = list()
-    if func_id:
-        servicos = db.get_servicos_by_funcionario_and_daterange(func_id, start_date, end_date)
+    if user_id:
+        servicos = db.get_servicos_by_funcionario_and_daterange(user_id, start_date, end_date)
         if not servicos:
             return [], servicos_dict, []
     else:
@@ -252,11 +252,11 @@ def get_servicos(start_date, end_date, func_id=None):
             servicos_pendentes.append(servico)
     return servicos_verificados, servicos_dict, servicos_pendentes
 
-def get_pontuacao(func_id, start_date, end_date):
+def get_pontuacao(user_id, start_date, end_date):
     start_date = start_date.date()
     end_date = end_date.date()
 
-    servicos_terminados = db.select('ServicoEntregue', 'user_id', '=', func_id)
+    servicos_terminados = db.select('ServicosEntregues', 'user_id', '=', user_id)
     soma_pontos = 0
     for s in servicos_terminados:
         if s['status'] == 'Verificado' and s['entrega'] >= start_date and s['entrega'] <= end_date:

@@ -12,8 +12,12 @@ cargos_blueprint = Blueprint('cargos', __name__,
 @cargos_blueprint.route('/')
 @admin_required
 def cargos():
-    sem_cargo_id = db.select('cargos', 'nome', '=', 'Sem Cargo')[0]['id']
-    cargos = [c for c in db.get_table_data('cargos') if c['id'] != sem_cargo_id]
+    #
+    # List all the cargos
+    #
+
+    sem_cargo_id = 0
+    cargos = [c for c in db.get_table_data('Cargos') if c['id'] != sem_cargo_id]
 
     user = get_user_object(session['user'])
     
@@ -27,6 +31,12 @@ def cargos():
 @cargos_blueprint.route('/criar', methods=['GET', 'POST'])
 @admin_required
 def adicionar_cargo():
+    #
+    # Create a new cargo
+    # GET: Return the cargo creation page
+    # POST: Create the cargo
+    #
+
     user = get_user_object(session['user'])
     
     funcionarios = db.get_all_funcionarios()
@@ -46,6 +56,11 @@ def adicionar_cargo():
 @cargos_blueprint.route('/editar/<int:cargo_id>', methods=['GET','POST'])
 @admin_required
 def editar(cargo_id):
+    #
+    # Edit a cargo
+    # GET: Return the cargo edit page
+    # POST: Update the cargo
+    #
     
     user = get_user_object(session['user'])
     funcionarios = db.get_all_funcionarios()
@@ -68,6 +83,9 @@ def editar(cargo_id):
 @cargos_blueprint.route('/excluir', methods=['DELETE'])
 @admin_required
 def excluir():
+    #
+    # Delete a cargo
+    #
     
     try:
         cargo_id = int(request.form['cargo_id'])

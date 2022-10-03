@@ -7,6 +7,7 @@ import mysql.connector
 from configparser import ConfigParser
 from app.controllers.Push.utils import trigger_push_notification
 from app.models.turno import Turno
+from app import app
 
 config = ConfigParser()
 config.read('config/mysql.ini')
@@ -29,15 +30,15 @@ def finaliza_turno(funcionario, turno):
 
     turno.current_status = 'clocked_out'
     
-    db.update_data('turnos', turno.id, vars(turno))
+    db.update_data('Turnos', turno.id, vars(turno))
 
 
 def adiciona_falta(funcionario):
     from app import db
     now = datetime.now().date()
-    db.insert_data('faltas', {
+    db.insert_data('Faltas', {
         'data' : now,
-        'func_id' : funcionario.id,
+        'user_id' : funcionario.id,
         'current_status' : 'falta'
     })
 
@@ -51,25 +52,25 @@ def check_turnos():
     list_ferias = db.get_all_ferias()
 
     if BrazilDistritoFederal().is_working_day(day=now):
-        
-        for ferias in list_ferias:
-            if not ferias.is_working_day(current_date):
-                return
+        if list_ferias:
+            for ferias in list_ferias:
+                if not ferias.is_working_day(current_date):
+                    return
 
-            funcionarios = db.get_all_funcionarios()
+        funcionarios = db.get_all_funcionarios()
 
-            for funcionario in funcionarios:
-                turno_hoje = db.get_turno(current_date, funcionario.id)
+        for funcionario in funcionarios:
+            turno_hoje = db.get_turno(current_date, funcionario.id)
                     
-                if turno_hoje:
-                    # Finaliza turno ao fim do dia caso o funcionario tenha esquecido
-                    if turno_hoje.current_status != 'clocked_out':       
-                        finaliza_turno(funcionario, turno_hoje)
+            if turno_hoje:
+                # Finaliza turno ao fim do dia caso o funcionario tenha esquecido
+                if turno_hoje.current_status != 'clocked_out':       
+                    finaliza_turno(funcionario, turno_hoje)
 
-                else:
-                    # Caso o funcionario esteja ativo e não tenha turno no dia, uma falta é adicionada
-                    if funcionario.is_active:
-                        adiciona_falta(funcionario)
+            else:
+                # Caso o funcionario esteja ativo e não tenha turno no dia, uma falta é adicionada
+                if funcionario.is_active:
+                    adiciona_falta(funcionario)
             
 
 def backup_db():
@@ -95,7 +96,7 @@ def write_backup_file(filename):
         os.chmod(filename, 600)
         
     except Exception as e:
-        print(e)
+        app.logger.warning(e)
 
 def remove_old_backup_file(filename):
     try:
@@ -103,11 +104,11 @@ def remove_old_backup_file(filename):
             os.remove(filename)
         
     except Exception as e:
-        print(e)
+        app.logger.warning(e)
 
 def notifica_turnos():
     from app import db
-    turnos_abertos = [Turno(t) for t in db.select('turnos', 'current_status', '=' ,'clocked_in')]
+    turnos_abertos = [Turno(t) for t in db.select('Turnos', 'current_status', '=' ,'clocked_in')]
     for turno in turnos_abertos:
         
             now = datetime.now()

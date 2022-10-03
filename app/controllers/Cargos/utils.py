@@ -13,8 +13,8 @@ def adiciona_cargo(form):
         'descricao' : desc
     }
     
-    db.insert_data('cargos', data)
-    id = db.select('cargos', 'nome', '=', nome)[0]['id']
+    db.insert_data('Cargos', data)
+    id = db.select('Cargos', 'nome', '=', nome)[0]['id']
 
     update_funcs_cargo(funcs_ids, id)
     
@@ -33,7 +33,7 @@ def update_cargo(form, cargo_id, funcionarios_do_cargo):
             'descricao' : desc
         }
 
-        db.update_data('cargos', cargo_id, data)    
+        db.update_data('Cargos', cargo_id, data)    
     
         update_funcs_cargo(funcs, cargo_id, funcionarios_do_cargo)
     
@@ -41,7 +41,6 @@ def update_cargo(form, cargo_id, funcionarios_do_cargo):
         return
     
 def update_funcs_cargo(funcs_ids, cargo_id, funcionarios_do_cargo=[]):
-    sem_cargo_id = db.select('cargos', 'nome', '=', 'Sem Cargo')[0]['id']
 
     for fid in funcs_ids:
         if fid in funcionarios_do_cargo:
@@ -49,19 +48,19 @@ def update_funcs_cargo(funcs_ids, cargo_id, funcionarios_do_cargo=[]):
             
         funcionario = db.get_funcionario(fid)
         funcionario.cargo = cargo_id
-        db.update_data('users', fid, funcionario.to_json())
+        db.update_data('Users', fid, funcionario.to_json())
     
     for fid in funcionarios_do_cargo:
         funcionario = db.get_funcionario(fid)
-        funcionario.cargo = sem_cargo_id
-        db.update_data('users', fid, funcionario.to_json())
+        funcionario.cargo = 0
+        db.update_data('Users', fid, funcionario.to_json())
 
 def excluir_cargo(cargo_id):
     
-    funcionarios = db.select('users', 'cargo', '=', cargo_id)
+    funcionarios = db.select('Users', 'cargo', '=', cargo_id)
     if funcionarios:
         for funcionario in funcionarios:
             funcionario['cargo'] = 0
-            db.update_data('users', funcionario['id'], funcionario)
+            db.update_data('Users', funcionario['id'], funcionario)
 
-    db.remove_data('cargos', cargo_id)
+    db.remove_data('Cargos', cargo_id)
