@@ -43,9 +43,11 @@
                             <label for="cargo">Cargo</label>
                             <select name="cargo" id="cargo-select" class="form-control">
                                 <option disabled="disabled" selected hidden>Selecione um Cargo</option>
+                                {% if cargos %}
                                 {% for cargo in cargos %}
                                 <option value="{{cargo.name}}">{{cargo.name}}</option>
                                 {% endfor %}
+                                {% endif %}
                             </select>
                             <br>
                             <input type="submit" value="Buscar" class="btn-dark btn">

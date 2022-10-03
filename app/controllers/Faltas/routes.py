@@ -9,6 +9,10 @@ faltas_blueprint = Blueprint('faltas', __name__,
 @faltas_blueprint.route('/faltas')
 @admin_required
 def listar_faltas():
+    #
+    # List all the faltas
+    #
+
     user = get_user_object(session['user'])
     
     if 'funcionario' in request.args:
@@ -34,7 +38,10 @@ def listar_faltas():
 @faltas_blueprint.route('/minhas-faltas')
 @funcionario_required
 def minhas_faltas():
-    
+    #
+    # List all the faltas
+    #
+
     user = get_user_object(session['user'])
     
     faltas = db.get_faltas_funcionario(user.id)
@@ -47,7 +54,10 @@ def minhas_faltas():
 @faltas_blueprint.route('/abonar-falta', methods=['POST'])
 @admin_required
 def abonar_falta():
-    
+    #
+    # Change Falta status to ABONADA
+    #
+
     try:
         falta_id = int(request.form['falta_id'])
         falta = db.get_falta(falta_id)
@@ -56,7 +66,7 @@ def abonar_falta():
         
             falta.abonar()
         
-            db.update_data('faltas', falta.id, falta.to_json())
+            db.update_data('Faltas', falta.id, falta.to_json())
         
             return '', 200
         else:
@@ -71,12 +81,15 @@ def abonar_falta():
 @faltas_blueprint.route('/falta/<int:falta_id>')
 @admin_required
 def ver_falta(falta_id):
-    
+    #
+    # Show a falta
+    #
+
     falta = db.get_falta(falta_id)
 
     user = get_user_object(session['user'])
     
-    funcionario = db.get_funcionario(falta.func_id)
+    funcionario = db.get_funcionario(falta.user_id)
     
     return render_template('falta.html', user=user,
                                         falta=falta,

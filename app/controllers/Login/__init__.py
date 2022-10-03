@@ -7,5 +7,3 @@ from password_strength import PasswordPolicy, PasswordStats
 import re
 import os
 from subprocess import Popen
-
-from app.utils.phoneValidator import *

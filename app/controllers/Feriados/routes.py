@@ -9,20 +9,18 @@ feriado_blueprint = Blueprint('feriado', __name__,
 @feriado_blueprint.route('/feriados')
 @funcionario_required
 def feriados():
+    #
+    # List all the feriados
+    #
+
     user = get_user_object(session['user'])
     all_feriados = db.get_feriados()
     feriados = list()
     
     if 'mes' in request.args and request.args.get('mes') != '':
         try:
-            ano, mes = request.args.get('mes').split('-')
-
-            for f in all_feriados:
-                if f.repete and f.mes == int(mes):
-                    feriados.append(f)
-                else:
-                    if f.mes == int(mes) and f.ano == int(ano):
-                        feriados.append(f)
+            feriados = filtra_feriados_by_date(all_feriados, feriados, request.args.get('mes'))
+        
         except:
             return abort(400, 'Mês inválido')
                     
@@ -36,7 +34,12 @@ def feriados():
 @feriado_blueprint.route('/editar-feriado/<int:feriado_id>', methods=['GET', 'POST'])
 @admin_required
 def editar_feriado(feriado_id):
-    
+    #
+    # Edit a feriado
+    # GET: Return the feriado edit page
+    # POST: Update the feriado
+    #
+
     user = get_user_object(session['user'])
     feriado = db.get_feriado(feriado_id)
 
@@ -58,10 +61,14 @@ def editar_feriado(feriado_id):
 @feriado_blueprint.route('/excluir-feriado', methods=['DELETE'])
 @admin_required
 def excluir_feriado():
+    #
+    # Delete a feriado
+    #
+
     try:
         feriado_id = int(request.form['id'])
         
-        db.remove_data('feriados', feriado_id)
+        db.remove_data('Feriados', feriado_id)
         
         return '',200
 
@@ -72,10 +79,19 @@ def excluir_feriado():
 @feriado_blueprint.route('/adicionar-feriado', methods=['GET', 'POST'])
 @admin_required
 def adicionar_feriado():
+    #
+    # Add a feriado
+    # GET: Return the feriado add page
+    # POST: Add the feriado
+    #
+
     user = get_user_object(session['user'])
     
     if request.method == 'GET':
-        feriado_list = [f.get_html_date() for f in db.get_feriados()]
+        feriados = db.get_feriados()
+        
+        feriado_list = [f.get_html_date() for f in feriados] if feriados else []
+
         return render_template('adicionar_feriado.html', user=user,
                                                         feriados=feriado_list,
                                                         feriados_active='active')
@@ -88,7 +104,6 @@ def adicionar_feriado():
             create_feriado(form)
         
         except Exception as e:
-            
             return abort(400, e)
         
         return '', 200

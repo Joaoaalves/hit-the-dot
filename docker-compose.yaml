@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+  htd:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '5000:5000'
+    volumes:
+      - ./app:/app
+  db:
+    build:
+      context: ./db
+      dockerfile: Dockerfile
+    environment:
+      MYSQL_ROOT_PASSWORD: dbs2021
+      MYSQL_DATABASE: htd
+    volumes:
+      - ./db/data/:/var/lib/mysql
+    restart: always
+    expose:
+      - "3306"
+  redis:
+    image: redis
+    expose:
+      - "6379"
+    restart: always

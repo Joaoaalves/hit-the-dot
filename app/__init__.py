@@ -48,7 +48,7 @@ app.config.from_object("config")
 recaptcha = ReCaptcha(app=app)
 
 # Redis Connection
-redis_con = redis.Redis(host='localhost', port=6379, db=0)
+redis_con = redis.Redis(host='redis', port=6379, db=0)
 
 # init Database
 db = Database('htd')
@@ -60,8 +60,7 @@ try:
 
     
 except Exception as e:
-    print(e)
-
+    app.logger.warning(e)
     exit()
 
 # IP Ban
@@ -75,8 +74,8 @@ def create_app():
     from app.rotinas import notifica_turnos
     
     # Scheduler Diária Turno para fechar turnos abertos
-    rotina_turnos.add_job(check_turnos, 'cron', hour=11, minute=14)
-    rotina_turnos.add_job(backup_db, 'cron', hour=11, minute=6)
+    rotina_turnos.add_job(check_turnos, 'cron', hour=23, minute=58)
+    rotina_turnos.add_job(backup_db, 'cron', hour=0, minute=5)
 
     rotina_turnos.start()
 

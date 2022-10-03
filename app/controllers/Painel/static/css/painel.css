@@ -325,6 +325,7 @@ td.active.start-date.available.in-range{
     text-align: center;
     white-space: nowrap;
     min-width: 150px;
+    border: solid 2px #f8be00;
 }
 
 .container-coins h4 {

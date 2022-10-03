@@ -4,6 +4,10 @@ server_sent = Blueprint('sse', __name__)
 
 @server_sent.route('/listar-funcionarios/status')
 def get_sessions():
+    #
+    # Return the funcionarios status on redis
+    #
+
     redis_con = redis.Redis(host='localhost', port=6379, db=0)
 
     @stream_with_context

@@ -44,8 +44,8 @@
                             <label for="funcionario">Funcionario</label>
                             <select name="funcionario" id="funcionario" class="form-control">
                                 <option disabled selected>Selecione um Funcionário</option>
-                                {% for func_id in func_dict.keys() %}
-                                <option value="{{func_id}}">{{func_dict[func_id]}}</option>
+                                {% for user_id in func_dict.keys() %}
+                                <option value="{{user_id}}">{{func_dict[user_id]}}</option>
                                 {% endfor %}
                             </select>
 

@@ -8,7 +8,7 @@ class Falta():
         self.current_status = data['current_status']
         
         try:
-            self.func_id = int(data['func_id'])    
+            self.user_id = int(data['user_id'])    
         except:
             return None
         
@@ -28,6 +28,6 @@ class Falta():
         
         return {
             'data' : self.date,
-            'func_id' : self.func_id,
+            'user_id' : self.user_id,
             'current_status' : self.current_status
         }

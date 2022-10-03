@@ -9,7 +9,10 @@ painel_blueprint = Blueprint('painel', __name__,
 @painel_blueprint.route('/painel')
 @funcionario_required
 def painel():
-
+    #
+    # Painel do funcionario
+    #
+    
     user = get_user_object(session['user'])
     start_date, end_date = get_start_end_date(request.args)
     
@@ -19,9 +22,9 @@ def painel():
         
         else:
             try:
-                func_id = int(request.args.get('funcionario'))
+                user_id = int(request.args.get('funcionario'))
                 
-                return render_filtered_painel_admin(start_date, end_date, func_id)
+                return render_filtered_painel_admin(start_date, end_date, user_id)
             
             # Func not found
             except Exception as e:
@@ -30,5 +33,5 @@ def painel():
 
                 return flask.abort(404, e)
     else:
-
+        
         return render_painel_func(user,start_date, end_date)

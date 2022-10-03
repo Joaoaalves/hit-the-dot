@@ -54,6 +54,13 @@ class Turno:
     def get_formated_date(self):
         return datetime.strftime(self.dia, '%d/%m/%Y')
 
+    def get_formated_pausa(self):
+        hours = self.pausa // 3600
+        minutes = (self.pausa % 3600) // 60
+        seconds = self.pausa % 60
+
+        return '{:02}:{:02}:{:02}'.format(hours, minutes, seconds)
+
     def to_json(self):
         if self.almocou:
             return {

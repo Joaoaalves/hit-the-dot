@@ -32,6 +32,7 @@ class ServicoEntregue():
                         'cliente_id' : self.cliente_id, 
                         'link_trello' : self.link_trello,
                         'entrega' : datetime.strftime(self.entrega, '%Y-%m-%d'),
+                        'descricao' : self .descricao,
                         'prazo' : self.prazo,
                         'valor' : self.valor
                 }

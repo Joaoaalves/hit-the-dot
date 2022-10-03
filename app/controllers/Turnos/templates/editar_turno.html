@@ -35,6 +35,7 @@
                     <h4>Editar Turno</h4>
                     <form class="my-auto" method="POST">
                         <input class="form-control" type="hidden" name="csrf_token" value="{{csrf_token()}}">
+                        
                         <div class="date">
                             <label for="dia" class="form-label">Data</label>
                             <input class="form-control" type="date" name='dia' value='{{turno.dia}}' required>
@@ -47,7 +48,11 @@
                             </div>
                             <div>
                                 <label for="hora_saida" class="form-label ms-3">Horário de Saída</label>
-                                <input class="form-control ms-3" type="time" name="hora_saida" value="{{hora_saida}}" step="1" required>
+                                {% if hora_saida %}
+                                <input class="form-control ms-3" type="time" name="hora_saida" value="{{hora_saida}}" step="1" >
+                                {% else %}
+                                <input class="form-control ms-3" type="time" name="hora_saida" value="--:--:--" step="1" >
+                                {% endif %}
                             </div>
                         </div>
 
@@ -64,6 +69,11 @@
                             </div>
                         </div>
                         {% endif %}
+
+                        <div class="pausa">
+                            <label for="pausa" class="form-label">Pausa total</label>
+                            <input type="time" class="form-control" name="pausa" step="1" value="{{turno.get_formated_pausa()}}" required>
+                        </div>
 
                         <input class="btn btn-dark my-auto" type="submit" value="Salvar">
                     </form>

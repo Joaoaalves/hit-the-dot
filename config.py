@@ -24,7 +24,3 @@ MAIL_SERVER = 'smtp.gmail.com'
 MAIL_USE_SSL = True
 MAIL_PORT = 465
 MAIL_DEBUG = True
-
-VAPID_PUBLIC_KEY = "BObWHthIsKVsltD7pbOGaiVU4KR03eFRd2P4NoSmKZskh9xXiHLmHZni19QKOAvaSDNeVk6X6zvYPumCv9sZGhE"
-VAPID_PRIVATE_KEY = "ejHsud4Piz1m-Fsaj8Q0BmE61ODkf4o5W8E7aEfJn0Q"
-VAPID_CLAIM_EMAIL = 'desenvolvimento@dbsweb.com.br'

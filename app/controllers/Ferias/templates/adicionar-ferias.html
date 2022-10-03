@@ -11,6 +11,11 @@
 
     {% include 'common-imports.html' %}
 
+    <!-- Date Range -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{url_for('painel.static', filename='css/painel.css')}}">
     <link rel="stylesheet" href="{{url_for('ferias.static', filename='css/adicionar-ferias.css')}}">
@@ -29,28 +34,26 @@
             {% include 'sidepanel/sidepanel.html' %}
         </div>
         <div class="col-6 content-container">
-            
+
             <div class="box-shadow main-content my-auto" style='text-align: center;'>
-                <h1 class="mb-3">Adicionar Férias</h1>
+                <h1 class="mb-3">Editar Férias</h1>
                 <form method='POST'>
                     <input type="hidden" name="csrf_token" value='{{csrf_token()}}'>
 
-                    <div class="row">
-                        <div class="col">
-                            <label for="inicio" class="form-label">Data de Inicio</label>
-                            <input type="date" name='inicio' class="form-control">
+                    <div class="date-picker my-auto box-shadow">
+                        <i class="fa fa-calendar my-auto" aria-hidden="true"></i>
+                        <div style="width: 15vw; text-align: center;" class="mx-auto my-auto">
+                            <b style="font-size: 1.2em">Selecionar Período</b>
                         </div>
+                    
+                        <input type="text" id="month-picker" value="-1" name="daterange"/>
                         
-                        <div class="col">
-                            <label for="fim" class="form-label">Fim das Férias</label>
-                            <input type="date" name='fim' class="form-control">
-                        </div>
                     </div>
 
                     <div class="flex">
-                            <input type="submit" value="Criar" class="btn btn-warning">
-                        
-                            <a href="/ferias" class="btn btn-dark">Voltar</a>
+                        <input type="submit" value="Criar" class="btn btn-warning">
+
+                        <a href="/ferias" class="btn btn-dark">Voltar</a>
                     </div>
                 </form>
             </div>
@@ -62,10 +65,29 @@
 </body>
 <footer>
     <script>
-        $('#funcionarios').multiSelect({
-            selectableHeader : "<div class='custom-header'>Normal</div>",
-            selectionHeader  : "<div class='custom-header'>De férias</div>"}
-        );
+        minDate = moment();
+        maxDate = moment().add(1, 'years');
+
+
+        $(function () {
+            $('input[name="daterange"]').daterangepicker({
+                opens: 'center',
+                minDate: minDate,
+                maxDate: maxDate,
+                locale: {
+                    format: 'DD/MM/YYYY',
+                    cancelLabel: 'Cancelar',
+                    applyLabel: 'Selecionar',
+                    daysOfWeek: [
+                        'Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'
+                    ],
+                    monthNames: [
+                        'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+                        'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+                    ]
+                }
+            });
+        });
     </script>
 </footer>
 

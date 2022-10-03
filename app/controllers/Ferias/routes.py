@@ -12,13 +12,24 @@ ferias_blueprint = Blueprint('ferias', __name__,
 @ferias_blueprint.route('/')
 @admin_required
 def listar_ferias():
+    #
+    # List all the ferias
+    #
+
     user = get_user_object(session['user'])
     all_ferias = db.get_all_ferias()
+    
     return render_template('listar_ferias.html', ferias_active='active', all_ferias=all_ferias, user=user)
   
 @ferias_blueprint.route('/adicionar', methods=['GET', 'POST'])
 @admin_required
 def adicionar():
+    #
+    # Add a new ferias
+    # GET: Return the ferias add page
+    # POST: Add the ferias
+    #
+    
     user = get_user_object(session['user'])
     
     if request.method == 'GET':
@@ -26,32 +37,40 @@ def adicionar():
     
     else:
         form = dict(request.form)
-    
-        form['inicio'] = datetime.strptime(form['inicio'], '%Y-%m-%d')
-        form['fim'] = datetime.strptime(form['fim'], '%Y-%m-%d')
-        db.create_ferias(form)
+        
+        inicio, fim = form['daterange'].split(' - ')
+
+        ferias = {
+            'inicio': datetime.strptime(inicio, '%d/%m/%Y'),
+            'fim': datetime.strptime(fim, '%d/%m/%Y'),
+        }
+        
+        db.create_ferias(ferias)
         
         return redirect(url_for('ferias.listar_ferias'))
     
 @ferias_blueprint.route('/editar/<int:ferias_id>', methods=['GET', 'POST'])
 @admin_required
 def editar(ferias_id):
+    #
+    # Edit a ferias
+    # GET: Return the ferias edit page
+    # POST: Update the ferias
+    #
+
     user = get_user_object(session['user'])
     
     if request.method == 'GET':
         ferias = db.get_ferias(ferias_id)
+        inicio_ferias = ferias.inicio.strftime('%Y-%m-%d')
+        fim_ferias = ferias.fim.strftime('%Y-%m-%d')
+
         return render_template("editar-ferias.html", ferias_active='active',
-                                                    ferias=ferias, user=user)
+                                 user=user, ferias=ferias, inicio_ferias=inicio_ferias, fim_ferias=fim_ferias)
     
     else:
         
-        form = dict(request.form)
-        form['inicio'] = datetime.strptime(form['inicio'], '%Y-%m-%d')
-        form['fim'] = datetime.strptime(form['fim'], '%Y-%m-%d')
-        form['id'] = ferias_id
-        ferias = Ferias(form)
-
-        db.update_data('ferias', ferias.id, ferias.to_json())
+        editar_ferias(request.form, ferias_id)
         
         return redirect(url_for('ferias.listar_ferias'))
     
@@ -59,14 +78,17 @@ def editar(ferias_id):
 @ferias_blueprint.route('/excluir', methods=['DELETE'])
 @admin_required
 def excluir():
+    #
+    # Delete a ferias
+    #
     
-    form = request.form
     try:
-        ferias_id = int(form['id'])
+        ferias_id = int(request.form['id'])
         
-        db.remove_data('ferias', ferias_id)
+        db.remove_data('Ferias', ferias_id)
 
         return '', 200
+        
     except:
         
         return '', 404

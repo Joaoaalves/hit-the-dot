@@ -1,9 +1,11 @@
+from datetime import timedelta
 from . import db, Turno, datetime, BrazilDistritoFederal, rrule, DAILY
 
 def get_sorted_turnos(funcionario=None):
 
-    turnos = db.get_turnos()
-
+    turnos = [Turno(t) for t in db.get_table_data('Turnos')]
+    if not turnos:
+        return []
     if funcionario:
         turnos_funcionario = list()
         for t in turnos:
@@ -20,12 +22,12 @@ def get_funcionarios():
     if not funcionarios:
         return None, None
     
-    dict_func_ids = dict()
+    dict_user_ids = dict()
 
     for func in funcionarios:
-        dict_func_ids[func.id] = [func.name, func.turno]
+        dict_user_ids[func.id] = [func.name, func.turno]
         
-    return funcionarios, dict_func_ids
+    return funcionarios, dict_user_ids
 
 
 def filtra_turnos(turnos, filter):
@@ -40,14 +42,23 @@ def update_turno(form, user_id, turno):
     data = dict(form)
     if 'inicio_almoco' in data:
         data['almocou'] = True
+    
     data['dia'] = datetime.strptime(data['dia'], '%Y-%m-%d').date()
     data['user_id'] = user_id
-    data['current_status'] = 'clocked_out'
+
+    if not data['hora_saida']:
+        data['current_status'] = 'clocked_in'
+    else:
+        data['current_status'] = 'clocked_out'
+
     data['turno_funcionario'] = turno.turno_funcionario
     
+    pausa = datetime.strptime(data['pausa'], '%H:%M:%S')
+    data['pausa'] = timedelta(hours=pausa.hour, minutes=pausa.minute, seconds=pausa.second).seconds
+
     updated_turno = Turno(data)
     
-    db.update_data('turnos', turno.id, updated_turno.to_json())
+    db.update_data('Turnos', turno.id, updated_turno.to_json())
     
 def get_work(turno):
     
@@ -108,3 +119,20 @@ def get_trabalho_total_funcionario(start_date, end_date, funcionario):
                     else 100)
     
     return segundos_trabalhados, faltas, assiduidade, tempo_total, dias_totais
+
+def filter_turnos_by_date(turnos, date_str):
+    try:
+        date_arr = date_str.split('-')
+        date = f'{date_arr[2]}/{date_arr[1]}/{date_arr[0]}'
+        return filtra_turnos(turnos, lambda x: x.dia == date)
+
+    except:
+        return turnos
+
+def filter_turnos_by_funcionario(turnos, func_id):
+    try:
+        user_id = int(func_id)
+        turnos = filtra_turnos(turnos, lambda x: x.user_id == user_id)
+
+    except:
+        pass
