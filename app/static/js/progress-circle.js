@@ -38,7 +38,6 @@ function setProgressCircles(config) {
 function setProgressCircle(config) {
     p_ring = document.querySelector('.progress-ring');
     var [progress, color, color_background] = config[0];
-
     var background_circle = p_ring.childNodes[1];
     var circle = p_ring.childNodes[3];
     var text_inside = p_ring.childNodes[5];

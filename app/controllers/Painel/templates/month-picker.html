@@ -2,7 +2,7 @@
     <i class="fa fa-calendar my-auto" aria-hidden="true"></i>
     <div style="width: 15vw; text-align: center;" class="mx-auto my-auto">
         <b style="font-size: 1.2em">Filtrar Período</b>
-        <p style="font-size: 0.8em">{{start_date}} - {{end_date}}</p>
+        <p style="font-size: 0.8em">{{start_date | replace('-', '/')}} - {{end_date | replace('-', '/')}}</p>
     </div>
 
     <form method="get">

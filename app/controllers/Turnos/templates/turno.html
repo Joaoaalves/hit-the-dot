@@ -23,7 +23,7 @@
 
     <div class='container'>
         <div class="col-2">
-            {% include "sidebar.html" %}
+            {% include 'sidepanel/sidepanel.html' %}
         </div>
         <div class="col-6 content-container">
             <div class='painel'>
@@ -59,16 +59,16 @@
 
                 <div class="second_line">
                     <div class="ms-0 dia box-shadow">
-                        <b class="title">{{turno.dia}}</b>
+                        <b class="title">{{turno.get_formated_date()}}</b>
                         <span class='subtitle'>Data</span>
                     </div>
                     <div class="entrada box-shadow">
-                        <b class="title">{{turno.hora_entrada[:5]}}</b>
+                        <b class="title">{{turno.hora_entrada}}</b>
                         <span class="subtitle">Hora de Entrada</span>
                     </div>
 
                     <div class="saida box-shadow me-0">
-                        <b class="title">{{turno.hora_saida[:5]}}</b>
+                        <b class="title">{{turno.hora_saida}}</b>
                         <span class="subtitle">Hora de Saída</span>
                     </div>
 

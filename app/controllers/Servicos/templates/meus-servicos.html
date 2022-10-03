@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+        <link rel="shortcut icon" href="{{url_for('static', filename='favicon.ico')}}" type="image/x-icon">
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Hit the Dot</title>
+
+        {% include 'common-imports.html' %}
+
+        <link rel="stylesheet" href="{{url_for('static', filename='css/default-table.css')}}">
+        <link rel="stylesheet" href="{{url_for('servicos.static', filename='css/servicos-entregues.css')}}">
+
+        <script src="{{url_for('servicos.static', filename='js/servicos-entregues.js')}}"></script>
+        <script src="{{url_for('servicos.static', filename='js/meus-servicos.js')}}"></script>
+</head>
+<body>
+        {% include 'nav-bar.html' %}
+
+        <div class='container'>
+                <div class="col">
+                        {% include 'sidepanel/sidepanel.html' %}
+                </div>
+                <div class="col-6 content-container">
+                        <div class="container-table">
+                                {% if servicos %}
+                                {% include 'table-meus-servicos.html' %}
+                                {% endif %}
+                        </div>
+
+                        <div class="utils-container">
+                                <div class="container-buttons box-shadow gradient-background">
+                                        <a href="/servicos/entregar" class="btn btn-warning">Entregar Serviço</a>
+                                        {% if user.role == 'Gestor' -%}
+                                        <a href="/servicos-entregues" class="btn btn-warning">Serviços Entregues</a>
+                                        {%- endif %}
+                                </div>
+                        </div>
+                </div>
+        </div>
+</body>
+</html>

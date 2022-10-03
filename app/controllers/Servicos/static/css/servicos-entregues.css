@@ -1,0 +1,119 @@
+
+.content-container {
+        background-color: #f0f0f0;
+        display: flex;
+        border-top-left-radius: 14px;
+}
+.utils-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        height: 95vh;
+        max-height: calc(100vh - 64px);
+        width: 25%;
+        margin: 0px auto;
+}
+
+table button.btn{
+        width: 32px;
+        height: 32px;
+        font-size: 18px;
+        padding-right: 3px;
+        padding-left: 4px;
+        padding-top: 3px;
+}
+
+.container-filtro {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+
+        margin-top: 10%;
+
+        height: auto;
+        max-height: 300px;
+        min-height: 350px;
+
+        text-align: center;
+        padding: 8% 5%;
+}
+
+.container-filtro .btn {
+        width: 60%;
+        max-width: 250px;
+}
+
+.container-filtro form {
+        position: relative;
+        bottom: 0;
+        display: block;
+        width: 100%;
+}
+
+.container-filtro form input,
+.container-filtro form select {
+        margin: 5px 0;
+}
+
+.container-buttons {
+        margin-top: auto;
+        margin-bottom: 10%;
+        width: 100%;
+        height: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+}
+
+.container-buttons a.btn {
+        width: 80%;
+        max-width: 200px;
+        margin: 12px 0 !important;
+        background-color: #f8be00;
+        color: white;
+        transition: 0.2s;
+        font-size: 1.1em;
+}
+
+.container-buttons a.btn:hover {
+        transform: scale(1.05);
+}
+
+input:checked {
+        filter: invert(100%) hue-rotate(1deg) brightness(1.7);
+}
+
+a.btn.btn-warning.mt-3 {
+        color: white;
+}
+
+.servicos-column {
+        max-width: 20vw;
+        width: 20vw;
+        text-align: center ;
+}
+
+.servico {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        max-width: 20vw;
+        overflow: hidden;
+}
+
+.servicos-header {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        max-width: 20vw;
+        overflow: hidden;
+}
+
+.apv{
+        color: green;
+}
+
+.pndt{
+        color: red;
+}

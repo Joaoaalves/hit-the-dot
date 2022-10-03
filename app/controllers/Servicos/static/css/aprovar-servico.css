@@ -1,0 +1,100 @@
+form {
+        display: flex;
+        flex-direction: column;
+        justify-items: center;
+        align-items: center;
+}
+
+.form-label{
+        align-self: baseline;
+}
+
+.form-control{
+        height: 32px;
+        margin-bottom: 3%;
+}
+
+datalist {
+        display: flex;
+        justify-content: space-between;
+        color: black;
+        width: 100%;
+}
+
+.content-container{
+        background-color: #f0f0f0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border-top-left-radius: 14px;
+}
+
+.content-container form{
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        max-width: 100%;
+}
+
+.container-formulario{
+        width: 40%;
+        max-width: 500px;
+        height: auto;
+        max-height: 90%;
+        padding: 3%;
+        text-align: center;
+        margin: 0 auto;
+}
+
+.container-servico{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 50%;
+        max-width: 700px;
+        margin: 0 auto;
+        padding: 3% 0;
+}
+
+.buttons{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 5%;
+}
+
+.row{
+        width: 100%;
+}
+.col{
+        margin-left: 0;
+        padding: 0;
+}
+
+.form-floating{
+        width: 80%;
+}
+
+.container-prazo{
+        width: 100%;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+}
+
+.form-check{
+        width: 100px;
+        text-align: justify;
+}
+
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+
+        input[type='range']::-webkit-slider-thumb {
+          background: #f8be00;
+        }
+    
+    }

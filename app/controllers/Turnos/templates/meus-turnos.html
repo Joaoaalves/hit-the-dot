@@ -27,7 +27,7 @@
 
     <div class='container'>
         <div class="col">
-            {% include "sidebar-func.html" %}
+            {% include 'sidepanel/sidepanel.html' %}
         </div>
         <div class="col-6 content-container">
             <div class="flex">
@@ -52,6 +52,10 @@
                             <a href="/meus-turnos" class="btn btn-warning mt-3">Remover Filtro</a>
                         </form>
                     </div>
+
+                    <div class="container-buttons box-shadow">
+                        <a href='/minhas-faltas' class="btn btn-warning">Minhas Faltas</a>
+                    </div>
                 </section>
             </div>
         </div>
@@ -62,5 +66,6 @@
 <script>
     max_date = new Date().toISOString().split("T")[0];
     document.getElementById('date-picker').setAttribute('max', max_date);
+    ordenarPor('data');
 </script>
 </html>

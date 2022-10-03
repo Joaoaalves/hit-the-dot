@@ -2,6 +2,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
 }
 
 .flex{
@@ -25,7 +26,6 @@
     margin-bottom: 2.5vh;
     margin-top: 2.5vh;
     text-align: center;
-    margin-left: 17.5vw;
 }
 
 .timer{
@@ -49,21 +49,40 @@
 }
 
 .ponto{
-    width: 100vw;
+    width: 85vw;
+    height: 100%;
     text-align: center;
 }
 
 form.bater-ponto{
     display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
+.iniciar-turno{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.iniciar-turno h4{
+    height: 32px;
+    margin-top: 32px;
+}
+
+form.iniciar-turno input {
+    margin-bottom: auto;
+    margin-top: auto;
+}
 
 .container-buttons{
     text-align: center;
     padding: 0 10%;
     
     width: 45vw;
-    margin: 5vh 0 0 17.5vw;
+    margin: 5vh 0;
     
     height: 30vh;
     
@@ -143,13 +162,16 @@ fieldset > input{
 
 div.progress-circle{
     width: 50%;
-    left: 25%;
     height: 50%;
 }
 
 circle.progress-ring__circle{
     stroke-width: 6%;
     r: 30%;
+}
+
+.progress-circle{
+    position: initial!important;
 }
 
 div.center{
@@ -179,9 +201,21 @@ div.center form{
     padding-top: 4vh;
 }
 
+.reopen{
+    padding: 5%;
+    text-align: center;
+}
+
+.reopen *{
+    margin: 12px 0;
+}
+
+button.btn.btn-dark{
+    width: 50%;
+}
+
 .progress-circle{
     height: 60%!important;
     width: 40%!important;
     left: 30%!important;
 }
-

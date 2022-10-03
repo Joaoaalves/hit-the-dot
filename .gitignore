@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
+*.pyc
 
 # C extensions
 *.so
@@ -141,3 +142,13 @@ debug.log
 # Media files
 app/protected/*
 !app/protected/.gitkeep
+
+# Backup Files
+backups/*
+!backups/.gitkeep
+generate_db.sql
+migrade_db.py
+
+db/*
+!db/init.sql
+!db/Dockerfile

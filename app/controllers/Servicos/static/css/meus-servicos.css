@@ -1,0 +1,75 @@
+.utils-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        height: 95vh;
+        max-height: calc(100vh - 64px);
+        width: 25%;
+        margin: 0px auto;
+}
+
+.container-filtro {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+
+        margin-top: 10%;
+
+        height: auto;
+        max-height: 400px;
+        min-height: 400px;
+
+        text-align: center;
+        padding: 8% 5%;
+}
+
+.container-filtro .btn {
+        width: 60%;
+        max-width: 250px;
+}
+
+.container-filtro form {
+        position: relative;
+        bottom: 0;
+        display: block;
+        width: 100%;
+}
+
+.container-filtro form input,
+.container-filtro form select {
+        margin: 5px 0;
+}
+
+.funcionarios {
+        height: 100%;
+        max-height: 100%;
+        overflow-y: auto;
+        border-radius: 14px;
+}
+
+.container-buttons {
+        margin-top: auto;
+        margin-bottom: 10%;
+        width: 100%;
+        height: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+}
+
+.container-buttons a.btn {
+        width: 80%;
+        max-width: 200px;
+        margin: 12px 0 !important;
+        background-color: #f8be00;
+        color: white;
+        transition: 0.2s;
+        font-size: 1.1em;
+}
+
+.container-buttons a.btn:hover {
+        transform: scale(1.05);
+}

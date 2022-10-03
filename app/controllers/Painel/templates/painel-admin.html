@@ -22,7 +22,19 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    
+    <link rel="stylesheet" href="{{url_for('static', filename='css/default-table.css')}}">
 
+    <script src="{{url_for('static', filename='js/register_service_worker.js')}}"></script>
+
+    <script>
+        registerServiceWorker(
+            "/static/js/register_service_worker.js",
+            {{config['VAPID_PUBLIC_KEY'] | safe}},
+            "/api/push-subscriptions",
+            "{{csrf_token()}}"
+        );
+    </script>
 </head>
 
 <body>
@@ -30,7 +42,7 @@
 
     <div class='container'>
         <div class="col-2">
-            {% include "sidebar-admin.html" %}
+            {% include 'sidepanel/sidepanel.html' %}
         </div>
         <div class="col-6 content-container">
             <div class='painel'>
@@ -51,6 +63,7 @@
                             </select>
                         </form>
                     </div>
+
                 </div>
                 <br>
                 <div class="second-line">
@@ -95,24 +108,24 @@
                         and dias_trabalhados >= 0 %}
                     <!-- HORAS TOTAIS DE TRABALHO-->
                     <div class="ms-0 grid-stats">
-                        <div class="horas-totais box-shadow">
+                        <div class="horas-totais box-shadow gradient-background">
                             <b style="font-size: 6vmin;">{{horas_totais}}</b>
 
                             <b class="subtitle">Horas totais trabalhadas</b>
                         </div>
-                        <div class="media-horas box-shadow">
+                        <div class="media-horas box-shadow gradient-background">
                             <b style="font-size: 6vmin;">{{media_horas}}</b>
 
                             <b class="subtitle">Média de horas trabalhadas por dia</b>
                         </div>
-                        <div class="dias-trabalho box-shadow">
+                        <div class="dias-trabalho box-shadow gradient-background">
                             <b style='font-size: 6vmin;'>{{dias_trabalhados}}</b>
 
                             <b class="subtitle">Dias trabalhados</b>
                         </div>
 
                         {% if horas_devendo %}
-                        <div class="horas-devendo box-shadow">
+                        <div class="horas-devendo box-shadow  gradient-background ">
                             <b style='font-size: 6vmin'>{{horas_devendo}}</b>
 
                             <b class="subtitle">Horas que está devendo</b>
@@ -120,36 +133,64 @@
                         {% endif %}
 
                     </div>
-                        {% else %}
-                        <!-- HORAS TOTAIS DE TRABALHO-->
-                        <div class="ms-0 container-horas-totais box-shadow gradient-background">
-                                <div>
-                                    <b style="font-size: 6vmin;">{{horas_totais}}</b>
-                                    <br>
-                                    <b class="subtitle">Horas totais trabalhadas</b>
-                                </div>
+                    {% else %}
+                    <!-- HORAS TOTAIS DE TRABALHO-->
+                    <div class="ms-0 container-horas-totais box-shadow gradient-background">
+                        <div>
+                            <b style="font-size: 6vmin;">{{horas_totais}}</b>
+                            <br>
+                            <b class="subtitle">Horas totais trabalhadas</b>
+                        </div>
 
-                                <p>Esta estatística representa as horas totais trabalhadas de todos os funcionários juntos,
-                                    caso queira as informações de um funcionário em específico, utilize o filtro no canto superior
-                                    direito.
-                                </p>
-                                <a class="btn-funcionarios" href="/listar-funcionarios">Ver Funcionários</a>
+                        <p>Esta estatística representa as horas totais trabalhadas de todos os funcionários juntos,
+                            caso queira as informações de um funcionário em específico, utilize o filtro no canto
+                            superior
+                            direito.
+                        </p>
+                        <a class="btn-funcionarios" href="/listar-funcionarios">Ver Funcionários</a>
                     </div>
                     {% endif %}
 
                     <!-- ESTATISTICAS -->
-                    <div class="me-0 container-estatisticas box-shadow gradient-background">
-                        <div class="flex">
-                            <div class="subtitle-container my-auto">
-                                <b class="stats-title" style="color: black">Estatísticas</b>
-                                <p style="color: #a1a1a1; font-size: 1em">Tarefas terminadas por dia da semana</p>
+                    <div class="me-0 container-estatisticas box-shadow gradient-background" id="painel-demandas">
+                        <div id="painel-chart">
+                            <div class="flex">
+                                <div class="subtitle-container my-auto">
+                                    <b class="stats-title" style="color: black">Estatísticas</b>
+                                    <p style="color: #a1a1a1; font-size: 1em">Tarefas terminadas por dia da semana</p>
+                                </div>
+                                <button class="btn btn-demandas box-shadow ms-auto" onclick="alternarPainelStats()">Ver
+                                    Detalhes</button>
                             </div>
 
-                            <!-- <button class="btn-salvar-relatorio my-auto"><i class="fa fa-download"
-                                    aria-hidden="true"></i> Salvar Relatório</button> -->
+                            <canvas id="chartRelatorio"></canvas>
                         </div>
 
-                        <canvas id="chartRelatorio"></canvas>
+                        <div class="painel-desativado" id="painel-stats">
+
+                            <div class="subtitle-container my-auto box-shadow container-stats gradient-background">
+                                <b style="font-size: 6vmin;">{{servicos | length}}</b>
+                                <b class="subtitle">Verificadas</b>
+                            </div>
+                            <button class="btn btn-demandas box-shadow ms-auto" onclick="alternarPainelStats()">Ver
+                                Gráfico</button>
+
+                            <div class="mt-auto box-shadow container-stats gradient-background">
+                                <b style="font-size: 6vmin;">{{servicos_pendentes | length}}</b>
+                                <b class="subtitle">Pendentes</b>
+                            </div>
+
+                            {% if pontuacao -%}
+                            <div class="mt-auto box-shadow container-stats gradient-background">
+                                {% if indice_rendimento > 1 -%}
+                                <b style="font-size: 5vmin;color:green;">DB$ {{pontuacao}}</b>
+                                {% else %}
+                                <b style="font-size: 5vmin;color:red;">DB$ {{pontuacao}}</b>
+                                {%- endif %}
+                                <b class="subtitle">Pontuação</b>
+                            </div>
+                            {% endif %}
+                        </div>
 
                     </div>
                 </div>
@@ -157,21 +198,24 @@
         </div>
     </div>
 
-
 </body>
 <footer>
     <script src="{{url_for('static', filename='js/progress-circle.js')}}"></script>
     <!-- Generate the progress rings -->
     <script>
-
         {% if assiduidade %}
-        var config = [[{{ percentage }}, '#E328AF', 'rgba(227,40,175,0.1)'], [{{ assiduidade }}, '#19facc', 'rgba(25,250,204,0.1)'], [{{ percentage_extras }}, '#1CBBFF', 'rgba(28,187,255,0.1)']];
-        {% else %}
-        var config = [[{{ percentage }}, '#E328AF', 'rgba(227,40,175,0.1)'] , [{{ percentage_extras }}, '#1CBBFF', 'rgba(28,187,255,0.1)']];
-        {% endif %}
-        
+        var config = [
+            [{{percentage}}, '#E328AF', 'rgba(227,40,175,0.1)'],
+            [{{assiduidade}}, '#19facc', 'rgba(25,250,204,0.1)'],
+            [{{percentage_extras}}, '#1CBBFF', 'rgba(28,187,255,0.1)']
+        ]; {% else %}
+        var config = [
+            [{{percentage}}, '#E328AF', 'rgba(227,40,175,0.1)'],
+            [{{percentage_extras}}, '#1CBBFF', 'rgba(28,187,255,0.1)']
+        ]; {% endif %}
 
-        var unordered = { 'Segunda': 5, 'Terça': 2, 'Quarta': 6, 'Quinta': 3, 'Sexta': 7 };
+
+        var unordered = JSON.parse('{{ servicos_dict | tojson}}');
 
         var days = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'];
 
@@ -206,11 +250,10 @@
             });
         });
 
-    
-	$(document).ready( () => {
-		setProgressCircles(config);
-	});
 
+        $(document).ready(() => {
+            setProgressCircles(config);
+        });
     </script>
 
     <!-- Generate the charts -->

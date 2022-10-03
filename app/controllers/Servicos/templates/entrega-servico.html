@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+        <link rel="shortcut icon" href="{{url_for('static', filename='favicon.ico')}}" type="image/x-icon">
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Hit the Dot</title>
+        {% include 'common-imports.html' %}
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/sifter/0.5.4/sifter.min.js"
+                integrity="sha512-B60IUvYpG4cibCeQ30J8k/+qtN+fxKAIENb3DL2DVdzIt76IDIynAt92chPEwlCuKejOt//+OZL61i1xsvCIDQ=="
+                crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/microplugin/0.0.3/microplugin.min.js"
+                integrity="sha512-7amIsiQ/hxbdPNawBZwmWBWPiwQRNEJlxTj6eVO+xmWd71fs79Iydr4rYARHwDf0rKHpysFxWbj64fjPRHbqfA=="
+                crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <link rel="stylesheet"
+                href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.13.5/css/selectize.bootstrap5.min.css"
+                integrity="sha512-w4sRMMxzHUVAyYk5ozDG+OAyOJqWAA+9sySOBWxiltj63A8co6YMESLeucKwQ5Sv7G4wycDPOmlHxkOhPW7LRg=="
+                crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.13.5/js/selectize.min.js"
+                integrity="sha512-8MxMBA7Rt4u4Hub7fgUVqRm2XQxEUybzTK5D2KAKHfToOR/5+1Y3dll3U4rtnyleGdW0O5GG2wYGAp9ZaebsbQ=="
+                crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+        <link rel="stylesheet" href="{{url_for('servicos.static', filename='css/entrega-servico.css')}}">
+</head>
+
+<body>
+
+        {% include 'nav-bar.html' %}
+
+        <div class='container'>
+                <div class="col">
+                        {% include 'sidepanel/sidepanel.html' %}
+                </div>
+                <div class="col-6 content-container">
+                        <form method="POST" class="box-shadow" id="form-servico">
+                                <h2 style="text-align: center;">Enviar Serviço</h2>
+                                <input type="hidden" value="{{csrf_token()}}" name="csrf_token">
+                                <div class="search-container mt-5">
+                                        <select name="cliente" id="select-cliente" placeholder="Selecione um cliente" required>
+                                                <option value="">Selecione um Cliente</option>
+                                                {% for cliente in clientes -%}
+                                                <option value="{{cliente['id']}}">{{cliente['name']}}</option>
+                                                {%- endfor %}
+                                        </select>                                                                
+                                </div>
+                                <div class="flex mb-3 mt-3" id="service">
+                                        <div class="form-floating">
+                                                <input type="text" name='nome_servico' id='nome-servico' class="form-control" disabled required>
+                                                <label for="servico">Serviço</label>
+                                        </div>
+                                        <input type="hidden" name="servico" id="servico">
+                                        <button type="button" class="btn btn-warning search-button"  data-bs-toggle="modal" data-bs-target="#servicosModal">
+                                                <i class="fas fa-search"></i>
+                                        </button>
+                                </div>
+
+                                <div class="form-floating mb-3">
+                                        <input type="text" name="descricao" class="form-control" required>
+                                        <label for="trello">Descrição do Serviço</label>
+                                </div>
+                                
+
+                                <div class="form-floating">
+                                        <input type="text" name="trello" class="form-control" required>
+                                        <label for="trello">Card do Trello</label>
+                                </div>
+                                
+                                <input class="btn mt-3" type="submit" value="Enviar" id="sbmt-btn">
+                        </form>
+                </div>
+        </div>
+
+</body>
+<div class="modal fade" id="servicosModal" tabindex="-1" aria-labelledby="servicosModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+                <div class="modal-content">
+                        <div class="modal-header">
+                                <h5 class="modal-title" id="servicosModalLabel">Pesquisar Serviços</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                                <div class="servicos">
+                                        <table>
+                                                <tbody id="servicos-pesquisados">
+
+                                                </tbody>
+                                        </table>
+                                </div>
+                                <div class="pesquisa">
+                                        <span id="aviso-search"></span>
+                                        <input type="text" id='search-servico' class="form-control" placeholder="Pesquise o Serviço">
+                                </div>
+                        </div>
+                        <div class="modal-footer">
+                                <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Fechar</button>
+                        </div>
+                </div>
+        </div>
+</div>
+<script>
+        csrf_token = "{{csrf_token()}}"
+</script>
+<script src="{{url_for('servicos.static', filename='js/entrega-servico.js')}}"></script>
+</html>

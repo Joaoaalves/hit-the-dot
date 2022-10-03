@@ -1,0 +1,115 @@
+.search-container {
+        width: 450px;
+}
+
+.content-container {
+        background-color: #f0f0f0 !important;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        border-top-left-radius: 14px;
+}
+
+form {
+        width: 100% !important;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-top: auto;
+        margin-bottom: auto;
+        width: 600px;
+        max-width: 600px;
+        height: 500px;
+        background-color: white;
+}
+
+.form-control {
+        width: 450px;
+}
+
+form .btn {
+        margin-top: 5%;
+        color: white;
+        background-color: #f8be00;
+        width: 200px;
+        transition: all ease-in-out 0.2s;
+}
+
+form .btn:hover {
+        color: white;
+        transform: scale(1.1);
+}
+
+button.btn.btn-warning.search-button {
+        width: 50px;
+        height: calc(100% - 2px);
+        border-bottom-left-radius: 0%;
+        border-top-left-radius: 0%
+}
+
+input#nome-servico{
+        border-top-right-radius: 0%;
+        border-bottom-right-radius: 0%;
+        border-right: none;
+}
+
+.flex {
+        display: flex;
+
+        align-items: flex-end;
+        margin-bottom: 5%;
+}
+
+.flex div .form-control {
+        width: 400px
+}
+
+.modal-content {
+        width: 80vw;
+        max-height: 70vh;
+}
+
+.modal-body {
+        display: flex;
+        overflow-y: hidden;
+}
+
+.modal-dialog {
+        margin: 10vh 10vw;
+}
+
+.servicos {
+        border-right: 1px solid #dee2e6;
+        padding-right: 16px;
+        width: 90%;
+        overflow-y: auto;
+
+}
+
+.pesquisa {
+        margin-left: auto;
+        padding-left: 32px;
+}
+
+table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 20px;
+}
+
+input#search-servico{
+        width: 250px!important;
+}
+
+#aviso-search{
+        color: #E00B1F;
+}
+
+.select-service{
+        margin-left: auto;
+}
+
+.is-invalid{
+        border-color: #E00B1F;
+}

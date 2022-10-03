@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <link rel="shortcut icon" href="{{url_for('static', filename='favicon.ico')}}" type="image/x-icon">
+    
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hit the Dot</title>
+
+    {% include 'common-imports.html' %}
+    <link rel="stylesheet" href="{{url_for('painel.static', filename='css/painel.css')}}">
+    <link rel="stylesheet" href="{{url_for('turnos.static', filename='css/turnos.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/default-table.css')}}">
+    <link rel="stylesheet" href="{{url_for('faltas.static', filename='css/faltas.css')}}">
+    
+    <!-- custom JS -->
+    <script src="{{url_for('faltas.static', filename='js/faltas.js')}}"></script>
+
+</head>
+
+<body>
+
+    {% include 'nav-bar.html' %}
+
+    <div class='container'>
+        <div class="col">
+            {% include 'sidepanel/sidepanel.html' %}
+        </div>
+        <div class="col-6 content-container">
+            <div class="flex">
+                <div class="container-table">
+                    <div class="faltas">
+                        {% if faltas %}
+                        {% include 'table-faltas.html' %}
+                        {% endif %}
+                    </div>
+                </div>
+                <section class="container-utils">
+                    <div class="container-filtros box-shadow">
+                        <h4>Filtro</h4>
+                        <form method='GET'>
+                            <label for="funcionario">Funcionario</label>
+                            <select name="funcionario" id="funcionario" class="form-control">
+                                <option disabled selected>Selecione um Funcionário</option>
+                                {% for user_id in func_dict.keys() %}
+                                <option value="{{user_id}}">{{func_dict[user_id]}}</option>
+                                {% endfor %}
+                            </select>
+
+                            <input type="submit" value="Filtrar" class="btn btn-warning">
+                            <a href="/faltas" class="btn btn-dark">Limpar</a>
+                        </form>
+                    </div>
+
+                    <div class="container-buttons box-shadow">
+                        <a href="/turnos" class="btn btn-warning">Turnos</a>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,23 @@
+<table>
+        <thead>
+                <tr>
+                        <td>Serviço</td>
+                        <td>Valor</td>
+                        <td>Tempo</td>
+                        <td>Ações</td>
+                </tr>
+        </thead>
+        <tbody>
+                {% for servico in servicos -%}
+                <tr>
+                        <td>{{servico.name}}</td>
+                        <td>DB$ {{servico.valor}}</td>
+                        <td>{{servico.tempo}} min</td>
+                        <td style="display: flex;justify-content: center;">
+                                <button class="btn btn-danger me-1" onclick="excluirServico({{servico.id}}, '{{csrf_token()}}')"><i class="fas fa-trash"></i></button>
+                                <button class="btn btn-warning" onclick="window.location.href = 'servicos/{{servico.id}}'"><i class="fas fa-pencil"></i></button>
+                        </td>
+                </tr>
+                {%- endfor %}
+        </tbody>
+</table>

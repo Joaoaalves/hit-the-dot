@@ -1,0 +1,10 @@
+.btn{
+        background-color: #f8be00;
+        color: white;
+        width: 300px;
+        transition: all ease-in-out 0.2s;
+}
+
+.btn:hover{
+        transform: scale(1.1);
+}

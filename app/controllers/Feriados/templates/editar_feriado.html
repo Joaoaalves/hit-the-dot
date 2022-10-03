@@ -31,7 +31,7 @@
     <div class='container'>
 
         <div class="col">
-            {% include "sidebar.html" %}
+            {% include 'sidepanel/sidepanel.html' %}
         </div>
         <div class="col-6 content-container">
             <div id="my-calendar" class="box-shadow"></div>
@@ -41,15 +41,15 @@
                 <form>
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-                    <label for="name" class="form-label">Nome do Feriado</label>
-                    <input type="text" name='name' class="form-control" value="{{feriado['name']}}" required>
+                    <label for="nome" class="form-label">Nome do Feriado</label>
+                    <input type="text" name='name' class="form-control" value="{{feriado.nome}}" required>
 
                     <div class="form-check">
                         <label for="repetir-feriado" class="form-check-label">Este feriado se repete nesta data todo ano?</label>
-                        {% if feriado['repeat'] %}
-                        <input type="checkbox" class="form-check-input" name="repetir-feriado" id='repeat' checked>
+                        {% if feriado.repete %}
+                        <input type="checkbox" class="form-check-input" name="repetir-feriado" id='repete' checked>
                         {% else %}
-                        <input type="checkbox" class="form-check-input" name='repetir-feriado' id='repeat'>
+                        <input type="checkbox" class="form-check-input" name='repetir-feriado' id='repete'>
                         {% endif %}
                     </div>
 
@@ -64,8 +64,8 @@
     <script src="{{url_for('feriado.static', filename='js/editar_feriado.js')}}"></script>
 
     <script>
-        myCalendar.addSelected('{{date}}');
-        myCalendar.setFocusMonth('{{month}}')
+        myCalendar.addSelected('{{feriado.get_html_date()}}');
+        myCalendar.setFocusMonth('{{feriado.mes}}')
     </script>
 </footer>
 

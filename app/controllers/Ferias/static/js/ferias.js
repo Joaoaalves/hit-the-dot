@@ -1,4 +1,4 @@
-function removerUsuarioFerias(func_id, csrf_token){
+function removerUsuarioFerias(user_id, csrf_token){
     if(confirm("Deseja realmente excluir as férias?")){
         
         // Request Delete
@@ -9,7 +9,7 @@ function removerUsuarioFerias(func_id, csrf_token){
                 request.setRequestHeader("X-CSRFToken", csrf_token);
             },
             data : {
-                id : func_id
+                id : user_id
             },
             error: function (request, status, error) {
                 alert(request.responseText);
@@ -23,3 +23,10 @@ function removerUsuarioFerias(func_id, csrf_token){
 
     }
 }
+
+function getUrlParam(paramName) {
+    var match = window.location.search.match("[?&]" + paramName + "(?:&|$|=([^&]*))");
+    return match ? (match[1] ? decodeURIComponent(match[1]) : "") : null;
+}
+
+$('.monthPicker').val(getUrlParam('mes'));

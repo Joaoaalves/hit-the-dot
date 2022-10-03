@@ -4,7 +4,6 @@ body{
     margin: 0;
     padding: 0;
     overflow: hidden;
-    /* background-color: #f0f0f0; */
 }
 
 .container{
@@ -17,13 +16,13 @@ body{
     width: 100%;
     min-width: 99%;
     
-    max-height: 90vh;
-    min-height: 90vh;
+    max-height: 94vh;
+    min-height: 94vh;
 }
 
 .col-2{
-    height: 90vh;
-    max-height: 90vh;
+    height: 94vh;
+    max-height: 94vh;
     width: 15vw;
     flex: 0 0 0% !important;
     padding: 0 !important;
@@ -52,10 +51,40 @@ li.ms-hover{
 }
 
 .gradient-background{
-    background-image: linear-gradient(135deg, rgba(255, 255, 255, 1) 70%, rgba(211, 211, 211, 0.3)100%);
+    background-image: linear-gradient(135deg, rgba(255, 255, 255, 1) 75%, rgba(211, 211, 211, 0.8)100%);
 }
-    
-@media only screen and (max-width: 1280px){
+
+.btn.btn-warning{
+    background-color: #f8be00!important;
+    border-color: #f8be00!important;
+    color: white!important;
+}
+
+.btn.btn-warning:hover{
+    cursor: pointer;
+    color: white!important;
+}
+
+.btn.btn-danger{
+    background-color: #E00B1F!important;
+    border-color: #E00B1F!important;
+}
+
+.btn.btn-success{
+    background-color: #16E045!important;
+    border-color: #16E045;
+}
+
+.btn{
+    transition: all ease-in-out 0.2s;
+    font-weight: 800;
+}
+
+.btn:hover{
+    transform: scale(1.1);
+}
+
+@media only screen and (max-width: 1270x){
     *{
         display: none;
     }

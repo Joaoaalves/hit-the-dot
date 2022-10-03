@@ -56,12 +56,9 @@
             <label class="form-label mb-0" for="cargo">Cargo</label>
             <select name="cargo" class="form-control mt-0">
                 {% for cargo in cargos %}
-                <option value="{{cargo['id']}}">{{cargo['nome']}}</option>
+                <option value="{{cargo.id}}">{{cargo.name}}</option>
                 {% endfor %}
             </select>
-
-            <label for="inicio_trabalho" class="form-label mb-0">Data de Inicio</label>
-            <input type="date" name="inicio_trabalho" class="form-control mt-0" placeholder="dd-mm-yyyy" required>
 
             <span class="mb-0">Turno</span>
             <div class="input-group mt-0">
@@ -86,5 +83,6 @@
 
 {# <footer>
     <script src="{{url_for('login.static', filename='js/signup.js')}}"></script>
-</footer> #}
+</footer> 
+#}
 </html>

@@ -26,8 +26,12 @@
     <div class='container'>
 
         <div class="col">
-            {% include "sidebar-admin.html" %}
-        </div>
+	    {% if is_admin(user)%}
+            {% include 'sidepanel/sidepanel.html' %}
+            {% else %}
+	    {% include 'sidepanel/sidepanel.html' %}
+	    {% endif %}
+	</div>
         <div class="col-6 content-container">
             <div class='painel'>
                 <div class="container-user box-shadow">
@@ -36,7 +40,7 @@
                         <input type="hidden" value="{{csrf_token()}}" name="csrf_token">
                         <div class="mb-3">
                             <label for="nome" class="form-label">Nome</label>
-                            <input class="form-control" type="text" value="{{user.name}}" name='nome'
+                            <input class="form-control" type="text" value="{{user.name}}" name='name'
                                 placeholder="Nome" required>
                         </div>
 
@@ -62,11 +66,11 @@
                             <label for="cargo" class="form-label">Cargo</label>
                             <select name="cargo" class="form-control" disabled required>
                                 {% for cargo in cargos %}
-                                {% if cargo['id'] == user.cargo %}
-                                <option value="{{cargo['id']}}" selected>{{cargo['nome']}}</option>
-                                {% else %}
-                                <option value="{{cargo['id']}}">{{cargo['nome']}}</option>
-                                {% endif %}
+                                    {% if cargo['id'] == user.cargo %}
+                                    <option value="{{cargo['id']}}" selected>{{cargo['nome']}}</option>
+                                    {% else %}
+                                    <option value="{{cargo['id']}}">{{cargo['nome']}}</option>
+                                    {% endif %}
                                 {% endfor %}
                             </select>
                         </div>

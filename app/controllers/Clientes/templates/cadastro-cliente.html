@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+        <link rel="shortcut icon" href="{{url_for('static', filename='favicon.ico')}}" type="image/x-icon">
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Hit the Dot</title>
+        {% include 'common-imports.html' %}
+        <link rel="stylesheet" href="{{url_for('clientes.static', filename='css/criar-cliente.css')}}">
+</head>
+<body>
+        {% include 'nav-bar.html' %}
+
+        <div class='container'>
+                <div class="col">
+                        {% include 'sidepanel/sidepanel.html' %}
+                </div>
+                <div class="col-6 content-container">
+                        <form method="POST" enctype="multipart/form-data" class="box-shadow">
+                                <h3 class="mb-5">Cadastro de Cliente</h3>
+                                <input type="hidden" name='csrf_token' value="{{csrf_token()}}">
+                                <div class="form-floating mb-3">
+                                        <input type="text" name="name" required class="form-control">
+
+                                        <label for="name">Nome do Cliente</label>
+                                </div>
+
+                                <label for="logo" class="form-label" style="align-self: baseline;">Logo</label>
+                                <input type="file" accept="image/jpeg, image/png" class="form-control mb-3" name="logo" />
+                                
+                                <input type="submit" class="btn mt-3">
+                        </form>
+                </div>
+        </div>
+</body> 
+</html>

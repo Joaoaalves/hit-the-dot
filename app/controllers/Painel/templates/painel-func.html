@@ -24,7 +24,16 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <script src="{{url_for('static', filename='js/register_service_worker.js')}}"></script>
 
+    <script>
+        registerServiceWorker(
+            "/static/js/register_service_worker.js",
+            {{config["VAPID_PUBLIC_KEY"] | safe}},
+            "/api/push-subscriptions",
+            "{{csrf_token()}}"
+        );
+    </script>
 </head>
 
 <body>
@@ -32,7 +41,7 @@
 
     <div class='container'>
         <div class="col-2">
-            {% include "sidebar-func.html" %}
+            {% include 'sidepanel/sidepanel.html' %}
         </div>
         <div class="col-6 content-container">
             <div class='painel'>
@@ -42,6 +51,10 @@
                     </div>
 
                     {% include 'month-picker.html' %}
+
+                    <div class="ms-auto me-3 box-shadow container-coins">
+                        <h4>DB<b style="color:#f8be00">$</b> {{pontuacao}}</h4>
+                    </div>
 
                 </div>
                 <br>
@@ -109,19 +122,32 @@
                     </div>
 
                     <!-- ESTATISTICAS -->
-                    <div class="me-0 container-estatisticas  box-shadow">
-                        <div class="flex">
-                            <div class="subtitle-container my-auto">
-                                <b class="stats-title" style="color: black">Estatísticas</b>
-                                <p style="color: #a1a1a1; font-size: 1em">Tarefas terminadas por dia da semana</p>
+                    <div class="me-0 container-estatisticas box-shadow gradient-background" id="painel-demandas">
+                        <div id="painel-chart">
+                            <div class="flex">
+                                <div class="subtitle-container my-auto">
+                                    <b class="stats-title" style="color: black">Estatísticas</b>
+                                    <p style="color: #a1a1a1; font-size: 1em">Tarefas terminadas por dia da semana</p>
+                                </div>
+                                <button class="btn btn-demandas box-shadow ms-auto" onclick="alternarPainelStats()">Ver Detalhes</button>
                             </div>
-
-                            <!-- <button class="btn-salvar-relatorio my-auto" onclick="alert('Ainda não foi desenvolvida essa feature');"><i class="fa fa-download"
-                                    aria-hidden="true"></i> Salvar Relatório</button> -->
+                            <canvas id="chartRelatorio"></canvas>
                         </div>
+                        
+                        <div class="painel-desativado" id="painel-stats">
 
-                        <canvas id="chartRelatorio"></canvas>
+                            <div class="subtitle-container my-auto box-shadow container-stats gradient-background">
+                                <b style="font-size: 6vmin;">{{servicos | length}}</b>
+                                <b class="subtitle">Verificadas</b>
+                            </div>
+                            <button class="btn btn-demandas box-shadow ms-auto" onclick="alternarPainelStats()">Ver Gráfico</button>
 
+                            <div class="mt-auto box-shadow container-stats gradient-background">
+                                <b style="font-size: 6vmin;">{{servicos_pendentes | length}}</b>
+                                <b class="subtitle">Pendentes</b>
+                            </div>
+                        </div>
+                        
                     </div>
                 </div>
             </div>
@@ -142,7 +168,7 @@
         {% endif %}
         
 
-        var unordered = { 'Segunda': 5, 'Terça': 2, 'Quarta': 6, 'Quinta': 3, 'Sexta': 7 };
+        var unordered = JSON.parse('{{ servicos_dict | tojson}}');
 
         var days = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'];
 
@@ -153,8 +179,7 @@
         })
 
 
-        var month_work = {{ month_work| tojson}};
-        minDate = '01/10/2021';
+        minDate = '01/12/2021';
         maxDate = new Date().toLocaleString('pt-BR');        
         
         $(function () {

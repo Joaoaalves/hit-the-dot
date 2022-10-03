@@ -1,6 +1,8 @@
-from app.utils.phoneValidator import international_phone
 from . import users, flask, invalid_sessions, app, PasswordPolicy, PasswordStats
-from . import re, db, random, request, Popen, os, get_user_object, session, is_a_valid_phone, international_phone
+from . import re, db, random, request, Popen, os, get_user_object, session
+
+import phonenumbers
+
 
 policy = PasswordPolicy.from_names(
     length=8,  # min length: 8
@@ -13,6 +15,9 @@ policy = PasswordPolicy.from_names(
 email_regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
 
 def clear_session():
+    #
+    #    Clear the session and the invalid_sessions list
+    #
     current_user = get_user_object(session['user'])
         
     for i in range(len(users)):
@@ -26,26 +31,10 @@ def clear_session():
 
     app.logger.warning(f"{current_user['name']} logged out ({flask.request.remote_addr})")
 
-def generate_user_id():
-    ids = list()
-    query = db.get_all_rows_from_firestore("Users", 'id')
-
-    for i in query:
-        ids.append(int(i))
-    
-    while True:
-        user_id = random.randint(1001, 9999)
-        
-        if user_id not in ids:
-            break
-
-    return user_id
-
-
 def weak_password(password):
-    """
-        Verify if the password is strong enough
-    """
+    #
+    #   Verify if the password is strong enough
+    #
 
     stats = PasswordStats(password)
     password_strength = stats.strength()
@@ -57,6 +46,9 @@ def weak_password(password):
         raise Exception("Senha fraca, tente aumentar o tamanho e adicionar caracteres especiais")
 
 def verify_entrys(nome, email, password, pass_confirm, image):
+    #
+    #   Verify if the signup entrys are valid
+    #
     if image == None:
         raise Exception("Envie uma imagem válida! (JPG ou PNG)")
         
@@ -73,7 +65,9 @@ def verify_entrys(nome, email, password, pass_confirm, image):
 
 
 def cadastrar(form):
- 
+    #
+    #  Create a new user
+    #
     role = 'Funcionario'
     email = form['email']
     nome = form['name']
@@ -82,7 +76,6 @@ def cadastrar(form):
     turno = int(form['turno'])
     dias_trabalho = int(form['dias_trabalho'])
     cargo_id = int(form['cargo'])
-    inicio_trabalho = str(form['inicio_trabalho']).replace('-', '/')
     
     if 'celular' in form and is_a_valid_phone(form['celular']):
         celular = international_phone(form['celular'])
@@ -96,11 +89,7 @@ def cadastrar(form):
     # Throw exceptions on fails
     verify_entrys(nome, email, password, password_confirm, image)
     
-    id = generate_user_id()
-    
-    
     user_data = {
-        'id' : id,
         'email' : email,
         'name' : nome,
         'password' : password,
@@ -109,7 +98,7 @@ def cadastrar(form):
         'dias_trabalho' : dias_trabalho,
         'turno' : int(turno),
         'celular' : celular,
-        'inicio_trabalho' : inicio_trabalho
+        'is_active' : True
     }
     
     if create_user( user_data, image):    
@@ -118,9 +107,13 @@ def cadastrar(form):
     raise Exception('Falha ao criar conta')
 
 def create_user(data, image):
+    #
     # Create user on db and save the profile image on protected/ folder
+    #
+
     if db.create_user(data):
-        save_profile_image(image, data['id'])
+        user = db.select('Users', 'email', '=', data['email'])[0]
+        save_profile_image(image, user['id'])
         return True
     
     return False
@@ -128,6 +121,7 @@ def get_secure_file(filename, type):
     #
     #    Verify if the file is really an image to prevent the upload of malicious files
     #    (Just a simple check, a more complex one should be implemented)
+    #
 
     image_format = ['image/jpg', 'image/png', 'image/jpeg']
     permited_ext = ['png', 'jpg', 'jpeg']
@@ -149,10 +143,24 @@ def get_secure_file(filename, type):
         return None
     
 def save_profile_image(image, user_id):
+    #
+    #   Save the profile image on protected/ folder
+    #
+
     os.makedirs("app/protected/" + str(user_id), exist_ok=True)
     image.save(os.path.join(app.config['PROFILE_UPLOAD_FOLDER'] + str(user_id),  "profile.jpg"))
 
+def is_a_valid_phone(number):
+    phone = phonenumbers.parse(number, region='BR')
+    return phonenumbers.is_valid_number(phone)
 
-def get_cargos():
-    
-    return db.get_all_rows_from_firestore('Cargos')
+def international_phone(number):
+    phone = phonenumbers.parse(number, region='BR')
+    return phonenumbers.format_number(phone, phonenumbers.PhoneNumberFormat.INTERNATIONAL)
+
+def national_phone(number):
+    phone = phonenumbers.parse(number, region='BR')
+    return phonenumbers.format_number(phone, phonenumbers.PhoneNumberFormat.NATIONAL)
+
+app.jinja_env.globals.update(national_phone=national_phone)
+app.jinja_env.globals.update(international_phone=international_phone)

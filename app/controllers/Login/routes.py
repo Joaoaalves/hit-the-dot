@@ -10,34 +10,47 @@ login = Blueprint("login", __name__,
 
 @login.route("/login", methods=['GET', 'POST'])
 def log_in():
+    #
+    # This function handles the login process
+    # GET: returns the login page
+    # POST: checks the credentials and redirects to the home page
+    #
     if request.method == 'GET':
+        if 'user' in session:
+            return redirect(url_for('painel.painel'))
 
         return render_template("login.html")
 
     else:
+        if recaptcha.verify():
+            try:
+        
+                form = request.form
+                email = form['email']
+                senha = form['password']
+                
+                # Throw exception on login fail
+                db.login(email, senha)
+                
+                # Get the user info from db on login success
+                user = db.get_user_by_email(email)
+                
+                flask.session['user'] = user.to_json()
+                flask.session['user']['role'] = user.__class__.__name__
 
-        try:
-    
-            form = request.form
-            email = form['email']
-            senha = form['password']
-            
-            # This throws exception on login fail
-            db.login(email, senha)
-            
-            # This gets the user info from db on login success
-            user = db.get_user('email', email)
-
-            flask.session['user'] = user.__dict__
-            flask.session['user']['role'] = user.__class__.__name__
-            users.append(user)
-            
-        except Exception as e:
-            app.logger.warning(e)
-            return  render_template(
-                'login.html',
-                erro='Email ou senha incorreto(s)!'
-            ), 401
+                users.append(user)
+                
+            except Exception as e:
+                app.logger.warning('Erro no login: ' + str(e))
+                ip_ban.add()
+                return  render_template(
+                    'login.html',
+                    erro='Email ou senha incorreto(s)!'
+                ), 401
+        else:
+            ip_ban.add()
+            return render_template('login.html',
+                                   erro='Recaptcha inválido!'), 401
             
 
         return redirect(url_for('painel.painel'))
@@ -57,7 +70,7 @@ def logout():
 
     except Exception as e:
         
-        app.logger.critical(e)
+        app.logger.critical('Erro no logout: ' + str(e))
         return redirect("/login")
 
 @login.route('/registrar', methods=['GET', 'POST'])
@@ -65,10 +78,10 @@ def logout():
 def registrar():
     #
     # Signup Route
-    # GET -> Show Signup Page
-    # POST -> Try to signup a new user
+    # GET: Show Signup Page
+    # POST: Try to signup a new user
     #
-    cargos = get_cargos()
+    cargos = db.get_cargos()
 
     if request.method == 'GET':
         return render_template('signup.html',
@@ -85,15 +98,15 @@ def registrar():
 
         
         except Exception as e:
-
+            app.logger.warning('Erro no registro: ' + str(e))
             return render_template('signup.html', error=e, cargos=cargos)
         
 @login.route("/recuperar-senha", methods=['GET', 'POST'])
 def recuperar_senha():
     #
-    #Remembers the user's password by sending an email
-    #post -> Sends an email with a link to reset the password.
-    #get -> Show the reset password page.
+    # Remembers the user's password by sending an email
+    # POST: Sends an email with a link to reset the password.
+    # GET: Show the reset password page.
     #
     
     if not 'user' in session:
@@ -109,13 +122,17 @@ def recuperar_senha():
 
             except Exception as e:
 
-                app.logger.warning(e)
+                app.logger.warning('Erro recuperação de senha: ' + str(e))
 
             return flask.redirect("/login")
         
 @login.route('/alterar-senha', methods=['POST'])
 @funcionario_required
 def alterar_senha():
+    #
+    # Change the user's password
+    # POST: Change the user's password
+    #
     if 'user' in session:
         try:
             email = request.form['email']
@@ -123,5 +140,5 @@ def alterar_senha():
             
             return '',200
         except Exception as e:
-            app.logger.warning('Erro de alteração de senha:' + str(e))
+            app.logger.warning('Erro de alteração de senha: ' + str(e))
             return '',200

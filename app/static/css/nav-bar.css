@@ -1,7 +1,7 @@
 nav{
     width: 100vw;
-    height: 10vh;
-    max-height: 64px;
+    height: 6vh;
+    min-height: 48px;
     padding-right: 50px;
 }
 

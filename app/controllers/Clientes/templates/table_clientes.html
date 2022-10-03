@@ -1,0 +1,35 @@
+<table>
+    <thead>
+        <tr class="box-shadow">
+            <th></th>
+            <th id="func-label">Cliente</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for cliente in clientes %}
+        <tr class="box-shadow">
+            <th class="imagem-funcionario">
+                <div class="my-auto">
+                    <img class="img-funcionario" width='64' height='64' src="{{url_for('static', filename='images/clientes/' + cliente['id']|string + '.jpg')}}" alt="" srcset="">
+                </div>
+            </th>
+            <th>
+                <div class="funcionario">
+                    <div class="info-funcionario my-auto" style="text-align: left;"> 
+                        <span>{{cliente.name}}</span>
+                    </div>
+                </div>
+            </th>
+            <th>
+                <button class="btn btn-warning" onclick="editarCliente({{cliente['id']}})">
+                    <i class="fas fa-pencil-alt"></i>
+                </button>
+                <button class="btn btn-danger" onclick="excluirCliente({{cliente['id']}}, '{{csrf_token()}}')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </th>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

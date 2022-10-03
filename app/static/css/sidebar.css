@@ -1,5 +1,5 @@
 .sidebar {
-    height: 110vh;
+    height: 100vh;
     width: 15vw !important;
     min-width: 15vw;
     max-width: 240px;
@@ -24,11 +24,13 @@ form {
     display: flex;
 }
 
-.nav-pills .nav-link.active, .nav-pills .show>.nav-link, .nav-link.active i{
+.nav-pills .nav-link.active, .nav-pills .show > .nav-link, .nav-link.active i{
     background: none !important;
     color: #f8be00;
     font-weight: bold;
-    font-size: 1.1em;
+    font-size: 1em;
+    padding: 0.3em 0!important;
+    
 }
 
 li a.nav-link.link-dark,
@@ -38,6 +40,7 @@ li i {
     line-height: 3vmin;
     font-size: 1em;
     font-weight: bold;
+    padding: 0.3em 0!important;
 }
 
 li:hover a.nav-link.link-dark,
@@ -47,7 +50,7 @@ li:hover i {
 
 .disclaimer {
     width: 65%;
-    margin: 0 auto 10vh auto;
+    margin: 0 auto 3vh auto;
     font-weight: 400;
     font-size: 0.8em;
     text-align: center;

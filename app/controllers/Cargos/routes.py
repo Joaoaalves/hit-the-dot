@@ -1,5 +1,6 @@
 from . import *
 from .utils import *
+from app.models.cargo import Cargo
 
 cargos_blueprint = Blueprint('cargos', __name__,
                             template_folder='templates',
@@ -11,22 +12,13 @@ cargos_blueprint = Blueprint('cargos', __name__,
 @cargos_blueprint.route('/')
 @admin_required
 def cargos():
-    cargos = db.get_all_rows_from_firestore('Cargos')
-    
-    # Remove o cargo com ids menores ou iguais a 0
-    i = 0
-    length = len(cargos)
-    while(i < length):
-        cargo = cargos[i]
-        if cargo['id'] <= 0:
-            cargos.remove(cargo)
-            length -= 1
-            continue
-        
-        else:
-            cargo['funcionarios'] = db.get_rows_from_firestore('Users', 'cargo', '==', cargo['id'])
-            i += 1
-            
+    #
+    # List all the cargos
+    #
+
+    sem_cargo_id = 0
+    cargos = [c for c in db.get_table_data('Cargos') if c['id'] != sem_cargo_id]
+
     user = get_user_object(session['user'])
     
     if cargos:
@@ -39,6 +31,12 @@ def cargos():
 @cargos_blueprint.route('/criar', methods=['GET', 'POST'])
 @admin_required
 def adicionar_cargo():
+    #
+    # Create a new cargo
+    # GET: Return the cargo creation page
+    # POST: Create the cargo
+    #
+
     user = get_user_object(session['user'])
     
     funcionarios = db.get_all_funcionarios()
@@ -58,6 +56,11 @@ def adicionar_cargo():
 @cargos_blueprint.route('/editar/<int:cargo_id>', methods=['GET','POST'])
 @admin_required
 def editar(cargo_id):
+    #
+    # Edit a cargo
+    # GET: Return the cargo edit page
+    # POST: Update the cargo
+    #
     
     user = get_user_object(session['user'])
     funcionarios = db.get_all_funcionarios()
@@ -80,6 +83,9 @@ def editar(cargo_id):
 @cargos_blueprint.route('/excluir', methods=['DELETE'])
 @admin_required
 def excluir():
+    #
+    # Delete a cargo
+    #
     
     try:
         cargo_id = int(request.form['cargo_id'])

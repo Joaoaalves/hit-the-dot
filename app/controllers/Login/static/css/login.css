@@ -33,8 +33,8 @@ input {
     background: #FFFFFF;
     box-shadow: 15px 15px 15px rgba(0, 0, 0, 0.5);
     border-radius: 14px;
-    height: 68vh;
-    max-height: 550px;
+    height: 90vh;
+    max-height: 650px;
     width: 28.75vw;
     max-width: 650px;
     padding: 3%;
@@ -74,7 +74,7 @@ svg {
     border: solid 1px lightgray;
     height: 44px;
     width: 38px;
-    margin-bottom: 32px;
+    margin-bottom: 0;
     background-color: white;
     margin-left: -32px;
 
@@ -87,4 +87,14 @@ svg {
     align-items: center;
     width: 100%;
     padding: 0%;
+}
+.g-recaptcha{
+    width: 100%;
+}
+.g-recaptcha div{
+    display: inline;
+}
+div#rc-anchor-container {
+    margin-left: auto;
+    margin-right: auto;
 }

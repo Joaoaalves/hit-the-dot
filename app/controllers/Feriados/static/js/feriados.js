@@ -1,22 +1,21 @@
 function excluirFeriado(feriado_id, csrf_token){
     if(confirm("Deseja realmente excluir o feriado?")){
-        
+
         // Request Delete
         rqst = $.ajax({
             url : '/excluir-feriado',
-            method : 'delete',
+            type : 'DELETE',
             beforeSend: function(request) {
                 request.setRequestHeader("X-CSRFToken", csrf_token);
             },
             data : {
                 id : feriado_id
+            },
+            success: function(){
+                location.reload();
             }
         })
         
-        // Request done
-        rqst.done(function(){   
-            location.reload();
-        });
     }
 }
 
@@ -24,21 +23,9 @@ function editarFeriado(feriado_id){
     window.location.href = '/editar-feriado/' + feriado_id;
 }
 
-$(function() {
-    month_input = document.getElementById('month');
+function getUrlParam(paramName) {
+    var match = window.location.search.match("[?&]" + paramName + "(?:&|$|=([^&]*))");
+    return match ? (match[1] ? decodeURIComponent(match[1]) : "") : null;
+}
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const month_param = urlParams.get('month');
-
-    if(month_param){
-        month_input.value = month_param;
-    }else{
-        d = new Date();
-        month_int = d.getMonth();
-        month = month_int.toLocaleString('en-US', {
-            minimumIntegerDigits: 2
-        });
-
-        month_input.value = d.getYear().toString() + '-' + month;
-    }
-});
+$('.monthPicker').val(getUrlParam('mes'));

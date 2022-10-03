@@ -15,6 +15,8 @@
 
     <link rel="stylesheet" href="{{url_for('painel.static', filename='css/painel.css')}}">
 
+    <script src="{{url_for('admin.static', filename='js/editar_funcionario.js')}}"></script>
+
 
 </head>
 
@@ -25,14 +27,16 @@
     <div class='container'>
 
         <div class="col">
-            {% include "sidebar-admin.html" %}
+            {% include 'sidepanel/sidepanel.html' %}
         </div>
         <div class="col-6 content-container">
             <div class='painel'>
                 <div class="container-user box-shadow">
                     <h1>Alterar Funcionario</h1>
+
                     <form method="POST">
                         <input type="hidden" value="{{csrf_token()}}" name="csrf_token">
+                        
                         <div class="mb-3">
                             <label for="nome" class="form-label">Nome do Funcionário</label>
                             <input class="form-control" type="text" value="{{funcionario.name}}" name='nome'
@@ -55,6 +59,7 @@
                         <div class="mb-3">
                             <label for="cargo" class="form-label">Cargo</label>
                             <select name="cargo" class="form-control" required>
+                                {% if cargos %}
                                 {% for cargo in cargos %}
                                 {% if cargo['id'] == funcionario.cargo %}
                                 <option value="{{cargo['id']}}" selected>{{cargo['nome']}}</option>
@@ -62,6 +67,7 @@
                                 <option value="{{cargo['id']}}">{{cargo['nome']}}</option>
                                 {% endif %}
                                 {% endfor %}
+                                {% endif %} 
                             </select>
                         </div>
 
@@ -79,7 +85,14 @@
                             </div>
 
                         </div>
-                        <input class="btn btn-dark form-control mt-5" type="submit" value="Alterar">
+                        <div class="input-group buttons">
+                            <input class="btn btn-dark mt-5" type="submit" value="Alterar">
+                            {% if funcionario.is_active -%}
+                            <button type="button" onclick='statusFuncionario("{{csrf_token()}}", {{funcionario.id}}, false)' class="btn btn-warning mt-5">Desativar</button>
+                            {% else %}
+                            <button type="button" onclick='statusFuncionario("{{csrf_token()}}", {{funcionario.id}}, true)' class="btn btn-success mt-5">Ativar</button>
+                            {%- endif %}
+                        </div>
                     </form>
                 </div>
             </div>

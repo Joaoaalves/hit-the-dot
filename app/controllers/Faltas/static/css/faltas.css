@@ -1,0 +1,77 @@
+.flex{
+    height: 100%;
+    max-height: 100%!important;
+}
+
+.container-utils{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    height: 95vh;
+    max-height: calc(100vh - 64px);
+
+    margin-left: auto;
+    margin-right: 2%;
+    width: 25%;
+}
+
+.container-filtros{
+    padding: 10%;
+    height: auto;
+    width: 100%;
+
+    margin-top: 10%;
+    text-align: center;
+}
+
+.container-filtros h4{
+    margin-bottom: 10%;
+}
+
+.container-filtros form{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0!important;
+}
+
+.container-filtros form select{
+    margin-bottom: 15%;
+}
+
+.container-buttons{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    padding: 5%;
+
+    margin-top: auto;
+    margin-bottom: 10%;
+    
+    width: 100%;
+}
+
+.container-buttons a.btn,
+.container-filtros .btn{
+    width: 80%;
+    color: white;
+    margin: 0!important;
+}
+
+select{
+    font-size: 0.9em!important;
+}
+label{
+    align-self: baseline;
+} 
+
+.faltas{
+    height: 100%;
+    max-height: 100%;
+    overflow-y: auto;
+    border-radius: 14px;
+}

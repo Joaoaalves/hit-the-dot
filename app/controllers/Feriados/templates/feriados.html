@@ -15,6 +15,11 @@
     <link rel="stylesheet" href="{{url_for('feriado.static', filename='css/feriados.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename='css/default-table.css')}}">
 
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.1/jquery.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js"></script>
+    <link rel="stylesheet" type="text/css" media="screen"
+        href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/themes/base/jquery-ui.css">
+
 </head>
 
 
@@ -22,7 +27,7 @@
 
 <div class='container'>
     <div class="col">
-        {% include "sidebar.html" %}
+        {% include 'sidepanel/sidepanel.html' %}
     </div>
     <div class="col-6 content-container">
         <div class="container-table">
@@ -38,17 +43,16 @@
                 <h4 class="mx-auto ">Filtro</h4>
                 <form method="get" class="mt-3">
                     <label for="month" class="form-label">Mês</label>
-                    <input type="month" name='month' id="month" class="form-control">
+                    <input type="month" name="mes" class="form-control monthPicker">
                     <br>
-                    
+
                     <input type="submit" value="Buscar" class="btn-dark btn form-control mt-3">
-                    <a href="/feriados" class="btn btn-warning mb-3">Limpar Filtro</a>   
+                    <a href="/feriados" class="btn btn-warning mb-3">Limpar Filtro</a>
                 </form>
             </div>
             {% if is_admin(user) %}
             <div class="align-items-center container-buttons box-shadow">
                 <a href='/adicionar-feriado' class="btn btn-warning">Adicionar Feriado</i></a>
-                <a href="#" class="btn btn-warning">Adicionar Férias</a>
             </div>
             {% endif %}
         </div>
@@ -58,7 +62,8 @@
 </div>
 </body>
 <footer>
-    <!-- custom js -->
+
     <script src="{{url_for('feriado.static', filename='js/feriados.js')}}"></script>
 </footer>
+
 </html>

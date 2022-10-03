@@ -1,4 +1,5 @@
-from app import app, db, users, invalid_sessions
+from asyncio.log import logger
+from app import app, db, users, invalid_sessions, app
 import flask
 from flask import Blueprint, render_template, redirect, url_for, request, session, abort
 
